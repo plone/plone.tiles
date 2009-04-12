@@ -114,6 +114,7 @@ def encode(data, schema, ignore=()):
     for name, field in getFieldsInOrder(schema):
         if name in ignore or name not in data:
             continue
+        
         converter = type_to_converter.get(field.__class__, None)
         if converter is None:
             raise KeyError(u"Cannot URL encode %s of type %s" % (name, field.__class__,))
@@ -121,6 +122,10 @@ def encode(data, schema, ignore=()):
         encoded_name = name
         if converter:
             encoded_name = "%s:%s" % (name, converter,)
+        
+        value = data[name]
+        if value is None:
+            continue
         
         if ISequence.providedBy(field):
             value_type_converter = type_to_converter.get(field.value_type.__class__, None)
@@ -130,18 +135,23 @@ def encode(data, schema, ignore=()):
             
             if value_type_converter:
                 encoded_name = "%s:%s:%s" % (name, value_type_converter, converter,)
+            
+            for item in value:
+                
+                if isinstance(item, bool):
+                    item = item and '1' or ''
+                
+                encode.append((encoded_name, item,))
+                
+        else:
+            
         
-        value = data[name]
+            # The :bool converter just does bool() value, but urlencode() does
+            # str() on the object. The result is False => 'False' => True :(
+            if isinstance(value, bool):
+                value = value and '1' or ''
         
-        # The :bool converter just does bool() value, but urlencode() does
-        # str() on the object. The result is False => 'False' => True :(
-        if isinstance(value, bool):
-            if value:
-                value = '1'
-            else:
-                value = ''
-        
-        encode.append((encoded_name, data[name]))
+            encode.append((encoded_name, value))
     
     return urllib.urlencode(encode)
 
