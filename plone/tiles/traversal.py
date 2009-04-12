@@ -33,6 +33,10 @@ class TileTraverser(object):
             raise TraversalError(self.context, name)
         
         view_name = further.pop(0)
+        
+        if view_name and view_name.startswith('@@'):
+            view_name = view_name[2:]
+        
         tile = queryMultiAdapter((self.context, self.request), IBasicTile, name=view_name)
         
         if tile is None:

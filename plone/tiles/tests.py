@@ -14,4 +14,8 @@ def test_suite():
                      setUp=zope.app.testing.placelesssetup.setUp,
                      tearDown=zope.app.testing.placelesssetup.tearDown),
 
+        zope.testing.doctest.DocFileSuite('data.txt',
+                     setUp=zope.app.testing.placelesssetup.setUp,
+                     tearDown=zope.app.testing.placelesssetup.tearDown),
+
         ))
