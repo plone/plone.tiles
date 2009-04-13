@@ -13,3 +13,6 @@ class TileType(object):
         self.add_permission = add_permission
         self.description = description
         self.schema = schema
+    
+    def __repr__(self):
+        return u"<TileType %s (%s)>" % (self.__name__, self.title,)

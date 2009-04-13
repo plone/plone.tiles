@@ -1,5 +1,4 @@
 from zope.interface import Interface
-from zope.component import provideUtility
 
 from zope import schema
 from zope.configuration.fields import GlobalObject, GlobalInterface, Path
@@ -12,6 +11,8 @@ from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from plone.tiles.interfaces import ITileType
 from plone.tiles.type import TileType
 from plone.tiles.tile import Tile
+
+from zope.component.zcml import utility
 
 try:
     from Products.Five.browser.metaconfigure import page
@@ -91,11 +92,7 @@ def tile(_context, name,
     
         type_ = TileType(name, title, add_permission, description, schema)
         
-        _context.action(
-            discriminator = ('utility', ITileType, name),
-            callable = provideUtility,
-            args = ('registerUtility', type_, ITileType, name),
-            )
+        utility(_context, provides=ITileType, component=type_, name=name)
     
     if for_ is not None or layer is not None or class_ is not None or template is not None or permission is not None:
         if class_ is None and template is None:
