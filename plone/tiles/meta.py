@@ -85,7 +85,7 @@ def tile(_context, name,
             for_=None, layer=None, class_=None, template=None, permission=None):
     """Implements the <plone:tile /> directive
     """
-
+    
     if title is not None or description is not None or add_permission is not None or schema is not None:
         if title is None or add_permission is None:
             raise ConfigurationError(u"When configuring a new type of tile, 'title' and 'add_permission' are required")

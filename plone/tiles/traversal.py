@@ -6,7 +6,7 @@ from zope.traversing.interfaces import TraversalError
 
 from zope.publisher.interfaces.browser import IBrowserRequest
 
-from plone.tiles.interfaces import IBasicTile, ITileType, ITileAddView
+from plone.tiles.interfaces import ITileType, ITileAddView
 
 class TileTraverser(object):
     """Implements the ++tile++ namespace.
@@ -30,6 +30,9 @@ class TileTraverser(object):
     def traverse(self, name, further):
         
         if len(further) == 0:
+            further = self.request.get('TraversalRequestNameStack', []) # zope 2
+        
+        if len(further) == 0:
             raise TraversalError(self.context, name)
         
         view_name = further.pop(0)
@@ -37,7 +40,7 @@ class TileTraverser(object):
         if view_name and view_name.startswith('@@'):
             view_name = view_name[2:]
         
-        tile = queryMultiAdapter((self.context, self.request), IBasicTile, name=view_name)
+        tile = queryMultiAdapter((self.context, self.request), Interface, name=view_name)
         
         if tile is None:
             raise TraversalError(self.context, name)
