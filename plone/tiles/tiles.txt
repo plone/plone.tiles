@@ -277,7 +277,7 @@ We can write data to the context's annotations using an ITileDataManager:
 This writes data to annotations:
 
     >>> sorted(dict(context.__annotations__).items()) # doctest: +ELLIPSIS
-    [(u'plone.tiles.data.layout1-tile2', <persistent.dict.PersistentDict object at ...>)]
+    [(u'plone.tiles.data.layout1-tile2', ...)]
 
 If we now look up the tile again, we will get the new value:
 
