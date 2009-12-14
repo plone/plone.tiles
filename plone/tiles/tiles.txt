@@ -70,7 +70,7 @@ using the `<plone:tile />` directive. Here's how to create one manually:
 
     >>> from plone.tiles.type import TileType
     >>> sample_tile_type = TileType(
-    ...     name=u'sample-tile',
+    ...     name=u'sample.tile',
     ...     title=u"Sample tile",
     ...     description=u"A tile used for testing",
     ...     add_permission="dummy.Permission",
@@ -85,7 +85,7 @@ tile's configurable data - more on this below.
 To register a tile in ZCML, we could do::
 
     <plone:tile
-        name="sample-tile"
+        name="sample.tile"
         title="Sample tile"
         description='A tile used for testing
         add_permission="dummy.Permission"
@@ -103,8 +103,8 @@ We'll register the sample tile directly here, for later testing.
     >>> from zope.interface import Interface
     >>> from plone.tiles.interfaces import IBasicTile
 
-    >>> provideUtility(sample_tile_type, name=u'sample-tile')
-    >>> provideAdapter(SampleTile, (Interface, Interface), IBasicTile, name=u"sample-tile")
+    >>> provideUtility(sample_tile_type, name=u'sample.tile')
+    >>> provideAdapter(SampleTile, (Interface, Interface), IBasicTile, name=u"sample.tile")
 
 The tile traverser
 ------------------
@@ -116,7 +116,7 @@ encoded into the URL, and may be the basis for looking up tile data.
 
 For example, a tile may be saved in a layout as a link like::
 
-    <a rel="tile" href="./++tile++layout1-tile1/sample-tile" />
+    <a rel="tile" href="./++tile++layout1-tile1/sample.tile" />
 
 During rendering, the tile's context will be the current object (since that
 is the context before the `++tile++` namespace). The tile name will be
@@ -138,7 +138,7 @@ and verify how the tile is instantiated.
     >>> from zope.traversing.interfaces import ITraversable
 
     >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
-    >>> tile = traversable.traverse(u'layout1-tile1', ['sample-tile'])
+    >>> tile = traversable.traverse(u'layout1-tile1', ['sample.tile'])
 
 The tile will now be aware of its name and type:
 
@@ -150,7 +150,7 @@ The tile will now be aware of its name and type:
     >>> tile.__name__
     u'layout1-tile1'
     >>> tile.__type_name__
-    'sample-tile'
+    'sample.tile'
 
 Transient tile data 
 -------------------
@@ -166,7 +166,7 @@ A simple schema may look like:
     ...     count = zope.schema.Int(title=u"Number of things to show in the tile")
 
 We would normally have listed this interface when registering this tile in
-ZCML. We can simple update the utility here.
+ZCML. We can simply update the utility here.
 
     >>> sample_tile_type.schema = ISampleTileData
 
@@ -206,7 +206,7 @@ match the schema:
 
 When saved into a layout, the tile link would now look like::
 
-    <a rel="tile" href="./++tile++layout1-tile1/sample-tile?title=My+title&count%3Along=5" />
+    <a rel="tile" href="./++tile++layout1-tile1/sample.tile?title=My+title&count%3Along=5" />
 
 Let's simulate traversal once more and see how the data is now available to
 the tile instance:
@@ -215,14 +215,14 @@ the tile instance:
     >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'css_class': u'foo'})
 
     >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
-    >>> tile = traversable.traverse(u'layout1-tile1', ['sample-tile'])
+    >>> tile = traversable.traverse(u'layout1-tile1', ['sample.tile'])
     >>> tile.data
     {'count': 5, 'css_class': 'foo', 'title': u'My title'}
 
 Notice also how the data has been properly decoded according to the schema.
 
 Persistent tiles
------------------
+----------------
 
 Of course, not all types of data can be placed in a query string. For more
 substantial data require, you can use persistent tiles, which store data in
@@ -251,20 +251,20 @@ Now, let's create a persistent tile with a schema.
     ...         return u"<b>You said</b> %s" % self.data['text']
 
     >>> persistent_sample_tile_type = TileType(
-    ...     name=u'persistent-sample-tile',
+    ...     name=u'sample.persistenttile',
     ...     title=u"Persistent sample tile",
     ...     description=u"A tile used for testing",
     ...     add_permission="dummy.Permission",
     ...     schema=IPersistentSampleData)
     
-    >>> provideUtility(persistent_sample_tile_type, name=u'persistent-sample-tile')
-    >>> provideAdapter(PersistentSampleTile, (Interface, Interface), IBasicTile, name=u"persistent-sample-tile")
+    >>> provideUtility(persistent_sample_tile_type, name=u'sample.persistenttile')
+    >>> provideAdapter(PersistentSampleTile, (Interface, Interface), IBasicTile, name=u"sample.persistenttile")
 
 We can now traverse to the tile as before. By default, there is no data, and
 the field's missing value will be used.
 
     >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
-    >>> tile = traversable.traverse(u'layout1-tile2', ['persistent-sample-tile'])
+    >>> tile = traversable.traverse(u'layout1-tile2', ['sample.persistenttile'])
     >>> tile()
     u'<b>You said</b> Missing!'
 
@@ -281,7 +281,7 @@ This writes data to annotations:
 
 If we now look up the tile again, we will get the new value:
 
-    >>> tile = traversable.traverse(u'layout1-tile2', ['persistent-sample-tile'])
+    >>> tile = traversable.traverse(u'layout1-tile2', ['sample.persistenttile'])
     >>> tile()
     u'<b>You said</b> Hello!'
 
@@ -290,3 +290,93 @@ We can also remove the annotation using the data manager:
     >>> dm.delete()
     >>> sorted(dict(context.__annotations__).items()) # doctest: +ELLIPSIS
     []
+
+Add view traverser
+------------------
+
+As mentioned, this package does not provide UI support for tiles, but it does
+provide a traverser which can be used to write edit views.
+
+A tile edit view requires three pieces of information: the context and
+request, as usual, and the tile type. The add view traverser thus allows the
+add view to be registered as a multi-adapter on these three discriminators.
+
+To illustrate this, let's register a generic add view, which can operate on
+any tile type.
+
+    >>> from zope.interface import Interface, implements
+    >>> from zope.component import adapts
+    >>> from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+
+    >>> from plone.tiles.interfaces import ITileAddView, ITileType
+
+    >>> class DefaultAddView(object):
+    ...     implements(ITileAddView)
+    ...     adapts(Interface, IDefaultBrowserLayer, ITileType)
+    ...     
+    ...     def __init__(self, context, request, tileType):
+    ...         self.context = context
+    ...         self.request = request
+    ...         self.tileType = tileType
+    ...     
+    ...     def __call__(self):
+    ...         return "Adding %s" % self.tileType
+
+    >>> from zope.component import provideAdapter
+    >>> provideAdapter(DefaultAddView)
+
+The tile add view traverser is called `++addtile++`, and can normally be
+invoked with a URL like::
+
+    http://example.com/site/obj/++addtile++my.tile
+
+Here, my.tile is the name of the tile type. We will simulate this now, using
+our sample tile from above.
+
+    >>> context = Context()
+    >>> request = TestRequest()
+
+    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"addtile")
+    >>> addview = traversable.traverse(u'sample.tile', [])
+
+The add view returned should be an instance of our generic add view, which
+was registered as an unnamed adapter providing `ITileAddView`:
+
+    >>> isinstance(addview, DefaultAddView)
+    True
+    >>> addview.tileType is sample_tile_type
+    True
+    >>> addview.__name__
+    u'sample.tile'
+    >>> addview.__parent__ is context
+    True
+
+This works well for a default add view, but sometimes we will want a more
+specific add view for a particular type of tile. One way to do that would
+be to have a more-specific interface than the generic `ITileType` for this
+type of tile. However, that would be cumbersome, especially since tiles are
+normally registered with a ZCML directive that configures the tile type object
+automatically. Instead, we can register a *named* multi-adapter, where the
+name matches the tile name:
+
+    >>> class SpecificAddView(object):
+    ...     implements(ITileAddView)
+    ...     adapts(Interface, IDefaultBrowserLayer, ITileType)
+    ...     
+    ...     def __init__(self, context, request, tileType):
+    ...         self.context = context
+    ...         self.request = request
+    ...         self.tileType = tileType
+    ...     
+    ...     def __call__(self):
+    ...         return "Adding specific %s" % self.tileType
+
+    >>> provideAdapter(SpecificAddView, name=u"sample.tile")
+
+We can now try traversal again:
+
+    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"addtile")
+    >>> addview = traversable.traverse(u'sample.tile', [])
+
+    >>> isinstance(addview, SpecificAddView)
+    True
