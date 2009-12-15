@@ -40,7 +40,7 @@ class Tile(BrowserView):
                     self.__cached_data = decode(self.request.form, tile_type.schema, missing=True)
                 except (ValueError, UnicodeDecodeError,):
                     LOGGER.exception(u"Could not convert form data to schema")
-                    self.__cached_data = self.request.form
+                    self.__cached_data = self.request.form.copy()
         return self.__cached_data
 
 class PersistentTile(Tile):

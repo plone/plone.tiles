@@ -6,5 +6,40 @@
     <adapter factory=".traversal.TileAddViewTraverser" name="addtile" />
     
     <adapter factory=".data.AnnotationsTileDataManager" />
+    
+    <!-- Absolute URL -->
+    <view
+        for=".interfaces.ITile"
+        name="absolute_url"
+        factory=".absoluteurl.TileAbsoluteURL"
+        type="zope.publisher.interfaces.http.IHTTPRequest"
+        permission="zope.Public"
+        allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
+        />
+      
+    <view
+        for=".interfaces.ITile"
+        factory=".absoluteurl.TileAbsoluteURL"
+        type="zope.publisher.interfaces.http.IHTTPRequest"
+        permission="zope.Public"
+        provides="zope.traversing.browser.interfaces.IAbsoluteURL"
+        />
+
+    <view
+        for=".interfaces.IPersistentTile"
+        name="absolute_url"
+        factory=".absoluteurl.PersistentTileAbsoluteURL"
+        type="zope.publisher.interfaces.http.IHTTPRequest"
+        permission="zope.Public"
+        allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
+        />
+      
+    <view
+        for=".interfaces.IPersistentTile"
+        factory=".absoluteurl.PersistentTileAbsoluteURL"
+        type="zope.publisher.interfaces.http.IHTTPRequest"
+        permission="zope.Public"
+        provides="zope.traversing.browser.interfaces.IAbsoluteURL"
+        />
 
 </configure>

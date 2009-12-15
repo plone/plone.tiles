@@ -63,6 +63,7 @@ class ITile(IBasicTile):
         
     data = zope.schema.Dict(
             title=u"The tile's configuration data",
+            description=u"This attribute cannot be set, but the dictionary may be updated",
             key_type=zope.schema.Id(title=u"The data element name"),
             value_type=zope.schema.Field(title=u"The value"),
             required=True,

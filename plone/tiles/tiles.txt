@@ -126,8 +126,12 @@ Let's create a sample context, invoke the traversal namespace directly,
 and verify how the tile is instantiated.
 
     >>> from zope.interface import implements
+
+    >>> class IContext(Interface):
+    ...     pass
+
     >>> class Context(object):
-    ...     implements(Interface)
+    ...     implements(IContext)
     
     >>> from zope.publisher.browser import TestRequest
     
@@ -291,6 +295,74 @@ We can also remove the annotation using the data manager:
     >>> sorted(dict(context.__annotations__).items()) # doctest: +ELLIPSIS
     []
 
+Tile URLs
+---------
+
+As we have seen, tiles have a canonical URL. For transient tiles, this may
+also encode some tile data.
+
+If you have a tile instance and you need to know the canonical tile URL,
+you can use the `IAbsoluteURL` API.
+
+For the purposes of testing, we need to ensure that we can get an absolute URL
+for the context. We'll achieve that with a dummy adapter:
+
+    >>> from zope.interface import implements
+    >>> from zope.component import adapts
+
+    >>> from zope.traversing.browser.interfaces import IAbsoluteURL
+    >>> from zope.publisher.interfaces.http import IHTTPRequest
+
+    >>> class DummyAbsoluteURL(object):
+    ...     implements(IAbsoluteURL)
+    ...     adapts(IContext, IHTTPRequest)
+    ...     
+    ...     def __init__(self, context, request):
+    ...         self.context = context
+    ...         self.request = request
+    ...     
+    ...     def __unicode__(self):
+    ...         return u"http://example.com/context"
+    ...     def __str__(self):
+    ...         return u"http://example.com/context"
+    ...     def __call__(self):
+    ...         return self.__str__()
+    ...     def breadcrumbs(self):
+    ...         return ({'name': u'context', 'url': 'http://example.com/context'},)
+    >>> provideAdapter(DummyAbsoluteURL, name=u"absolute_url")
+    >>> provideAdapter(DummyAbsoluteURL)
+    
+    >>> from zope.traversing.browser.absoluteurl import absoluteURL
+    >>> from zope.component import getMultiAdapter
+
+    >>> context = Context()
+    >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'css_class': u'foo'})
+    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
+    >>> transientTile = traversable.traverse(u'layout1-tile1', ['sample.tile'])
+
+    >>> absoluteURL(transientTile, request)
+    'http://example.com/context/++tile++layout1-tile1/sample.tile?title=My+title&css_class=foo&count%3Along=5'
+    
+    >>> getMultiAdapter((transientTile, request), IAbsoluteURL).breadcrumbs() == \
+    ...     ({'url': 'http://example.com/context', 'name': u'context'},
+    ...      {'url': 'http://example.com/context/++tile++layout1-tile1/sample.tile', 'name': u'layout1-tile1'})
+    True
+    
+For persistent tiles, the are no data parameters:
+
+    >>> context = Context()
+    >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'css_class': u'foo'})
+    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
+    >>> persistentTile = traversable.traverse(u'layout1-tile2', ['sample.persistenttile'])
+
+    >>> absoluteURL(persistentTile, request)
+    'http://example.com/context/++tile++layout1-tile2/sample.persistenttile'
+    
+    >>> getMultiAdapter((persistentTile, request), IAbsoluteURL).breadcrumbs() == \
+    ...     ({'url': 'http://example.com/context', 'name': u'context'},
+    ...      {'url': 'http://example.com/context/++tile++layout1-tile2/sample.persistenttile', 'name': u'layout1-tile2'})
+    True
+    
 Add view traverser
 ------------------
 
