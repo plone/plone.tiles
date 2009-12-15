@@ -2,30 +2,30 @@ Introduction
 ============
 
 plone.tiles implements low-level, non-Plone/Zope2-specific support for
-creating "tiles" in the Deco layout system. For the purposes of this package,
-a tile is a browser view and an associated utility providing some metadata
-about that view. The metadata includes a title and description, an 'add'
-permission and optionally a schema interface describing configurable aspects
-of the tile. The idea is that a UI (such as Deco) can present the user with
-a list of insertable tiles and optionally render a form to configure the tile
-upon insertion.
+creating "tiles" in the Deco layout system.
 
-A tile is inserted into a layout as a link, optionally containing a query
-string. For example::
+For the purposes of this package, a tile is a browser view and an associated
+utility providing some metadata about that view. The metadata includes a title
+and description, an 'add' permission and optionally a schema interface
+describing configurable aspects of the tile. The idea is that a UI (such as
+Deco) can present the user with a list of insertable tiles and optionally
+render a form to configure the tile upon insertion.
 
-    <a rel="tile" href="./++tile++layout1-tile1/my-tile?option1=value1" />
+A tile is inserted into a layout as a link::
 
-The `++tile++` namespace is used to let the tile instance know its id
-(`layout1-tile1` in this example). This will be set as the `__name__`
-attribute on the instantiated tile when it is rendered. `my-tile` is the name
-of the browser view that implements the tile. This is made available as the
-`__type_name__` attribute.
+    <a rel="tile" href="./@@sample.tile?id=layout1-tile1&option1=value1" />
+
+The `id` parameter lets the tile instance know its id (`layout1-tile1` in this
+example). This will be set as the `id` attribute on the instantiated tile when
+it is rendered. `sample.tile` is the name of the browser view that implements
+the tile. This is made available as the `__name__` attribute. Other parameters
+may be turned into tile data, available under the `data` attribute, a dict.
 
 There are three interfaces describing tiles in this package:
 
   * `IBasicTile` is the low-level interface for tiles. It extends
-    `IBrowserView` to describe the semantics of the `__name__` and 
-    `__type_name__` attributes.
+    `IBrowserView` to describe the semantics of the `__name__` and  `id`
+    attributes.
   * `ITile` describes a tile that can be configured with some data. The data
     is accessible via a dict called `data`. The default implementation of this
     interface, `plone.tiles.Tile`, will use the schema of the tile type and
@@ -47,10 +47,10 @@ with the same name as the tile browser view. There is a convenience ZCML
 directive - `<plone:tile />` - to register both of these components in one
 go.
 
-To support the UI in creating appropriate tile links, `plone.tiles.data`
-contains two methods - `encode()` and `decode()` - to help turn a data
-dictionary into a query string and turn a `request.form` dict into a
-data dict that complies with a tile's schema interface.
+To support creation of appropriate tile links, `plone.tiles.data` contains two
+methods - `encode()` and `decode()` - to help turn a data dictionary into a
+query string and turn a `request.form` dict into a data dict that complies
+with a tile's schema interface.
 
 Creating a simple tile
 ----------------------
@@ -73,7 +73,7 @@ To register the tile, use ZCML like this::
     <configure xmlns:plone="http://namespaces.plone.org/plone">
     
         <plone:tile
-            name="my-tile"
+            name="sample.tile"
             
             title="A title for the tile"
             description="My tile's description"
@@ -97,7 +97,7 @@ If you want to register a persistent tile with a custom schema, but a template
 only, you can do e.g.::
 
         <plone:tile
-            name="my-persistent-tile"
+            name="sample.persistenttile"
             title="A title for the tile"
             description="My tile's description"
             add_permission="my.add.Permission"
@@ -112,7 +112,7 @@ If you want to override an existing tile, e.g. with a new layer or more
 specific context, you can omit the tile metadata::
 
         <plone:tile
-            name="my-persistent-tile"
+            name="sample.persistenttile"
             template="override.pt"
             permission="zope.Public"
             for="*"
@@ -120,4 +120,3 @@ specific context, you can omit the tile metadata::
             />
 
 See `tiles.txt` and `directives.txt` for more details.
-

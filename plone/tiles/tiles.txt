@@ -42,13 +42,15 @@ to do this is to subclass the `Tile` class.
     >>> from plone.tiles import Tile
     >>> class SampleTile(Tile):
     ...
+    ...     __name__ = 'sample.tile' # would normally be set by ZCML handler
+    ...
     ...     def __call__(self):
     ...         return "<b>My tile</b>"
 
 The tile is a browser view, and has two special attributes that will be set
-upon traversal by the `++tile++` namespace: `__name__`, the name of the
-instance of the tile when it has been added to a layout, and `__type_name__`,
-which will be set to the name of the view as registered.
+upon traversal: `id`, the name of the instance of the tile when it has been
+added to a layout, and `__name__`, which will be set to the name of the view
+as registered.
 
     >>> from plone.tiles.interfaces import ITile
     >>> ITile.implementedBy(SampleTile)
@@ -59,9 +61,9 @@ which will be set to the name of the view as registered.
     True
     
     >>> tile = SampleTile(None, None)
-    >>> tile.__name__ is None
-    True
-    >>> tile.__type_name__ is None
+    >>> tile.__name__
+    'sample.tile'
+    >>> tile.id is None
     True
     
 This tile is registered as a normal browser view, alongside a utility that
@@ -106,24 +108,20 @@ We'll register the sample tile directly here, for later testing.
     >>> provideUtility(sample_tile_type, name=u'sample.tile')
     >>> provideAdapter(SampleTile, (Interface, Interface), IBasicTile, name=u"sample.tile")
 
-The tile traverser
-------------------
+Tile traversal
+--------------
 
-Whilst tiles are publishable as a normal browser view, they will usually be
-traversed to using the ++tile++ traversal namespace. This allows tiles to be
-made aware of their name. The name is a unique ID saved with the layout and
-encoded into the URL, and may be the basis for looking up tile data.
+Tiles are publishable as a normal browser view. They will normally be called
+with an `id` query string parameter. This allows tiles to be made aware of
+their instance name. The id is unique within the page layout where the tile
+is used, and may be the basis for looking up tile data.
 
 For example, a tile may be saved in a layout as a link like::
 
-    <a rel="tile" href="./++tile++layout1-tile1/sample.tile" />
+    <a rel="tile" href="./@@sample.tile?id=layout1-tile1" />
 
-During rendering, the tile's context will be the current object (since that
-is the context before the `++tile++` namespace). The tile name will be
-`layout1-tile`.
-
-Let's create a sample context, invoke the traversal namespace directly,
-and verify how the tile is instantiated.
+Let's create a sample context, look up the view as it would be during
+traversal, and verify how the tile is instantiated.
 
     >>> from zope.interface import implements
 
@@ -136,24 +134,22 @@ and verify how the tile is instantiated.
     >>> from zope.publisher.browser import TestRequest
     
     >>> context = Context()
-    >>> request = TestRequest()
+    >>> request = TestRequest(form={'id': 'layout1-tile1'})
 
+    >>> from zope.interface import Interface
     >>> from zope.component import getMultiAdapter
-    >>> from zope.traversing.interfaces import ITraversable
 
-    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
-    >>> tile = traversable.traverse(u'layout1-tile1', ['sample.tile'])
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
 
-The tile will now be aware of its name and type:
+The tile will now be aware of its name and id:
 
     >>> isinstance(tile, SampleTile)
     True
     >>> tile.__parent__ is context
     True
-    
+    >>> tile.id
+    'layout1-tile1'
     >>> tile.__name__
-    u'layout1-tile1'
-    >>> tile.__type_name__
     'sample.tile'
 
 Transient tile data 
@@ -210,16 +206,15 @@ match the schema:
 
 When saved into a layout, the tile link would now look like::
 
-    <a rel="tile" href="./++tile++layout1-tile1/sample.tile?title=My+title&count%3Along=5" />
+    <a rel="tile" href="./@@sample.tile?id=layout1-tile1&title=My+title&count%3Along=5" />
 
 Let's simulate traversal once more and see how the data is now available to
 the tile instance:
 
     >>> context = Context()
-    >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'css_class': u'foo'})
+    >>> request = TestRequest(form={'id': 'layout1-tile1', 'title': u'My title', 'count': 5, 'css_class': u'foo'})
 
-    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
-    >>> tile = traversable.traverse(u'layout1-tile1', ['sample.tile'])
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
     >>> sorted(tile.data.items())
     [('count', 5), ('css_class', 'foo'), ('title', u'My title')]
 
@@ -284,6 +279,7 @@ Now, let's create a persistent tile with a schema.
     >>> from plone.tiles import PersistentTile
     >>> class PersistentSampleTile(PersistentTile):
     ...
+    ...     __name__ = 'sample.persistenttile' # would normally be set by ZCML handler
     ...     def __call__(self):
     ...         return u"<b>You said</b> %s" % self.data['text']
 
@@ -300,8 +296,14 @@ Now, let's create a persistent tile with a schema.
 We can now traverse to the tile as before. By default, there is no data, and
 the field's missing value will be used.
 
-    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
-    >>> tile = traversable.traverse(u'layout1-tile2', ['sample.persistenttile'])
+    >>> request = TestRequest(form={'id': 'layout1-tile2'})
+
+    >>> tile = getMultiAdapter((context, request), name=u"sample.persistenttile")
+    >>> tile.__name__
+    'sample.persistenttile'
+    >>> tile.id
+    'layout1-tile2'
+
     >>> tile()
     u'<b>You said</b> Missing!'
 
@@ -332,7 +334,7 @@ only be looked up once.
 
 If we now look up the tile again, we will get the new value:
 
-    >>> tile = traversable.traverse(u'layout1-tile2', ['sample.persistenttile'])
+    >>> tile = getMultiAdapter((context, request), name=u"sample.persistenttile")
     >>> tile()
     u'<b>You said</b> Hello!'
 
@@ -386,33 +388,31 @@ for the context. We'll achieve that with a dummy adapter:
     >>> from zope.component import getMultiAdapter
 
     >>> context = Context()
-    >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'css_class': u'foo'})
-    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
-    >>> transientTile = traversable.traverse(u'layout1-tile1', ['sample.tile'])
-
+    >>> request = TestRequest(form={'id': 'layout1-tile1', 'title': u'My title', 'count': 5, 'css_class': u'foo'})
+    >>> transientTile = getMultiAdapter((context, request), name=u"sample.tile")
+    
     >>> absoluteURL(transientTile, request)
-    'http://example.com/context/++tile++layout1-tile1/sample.tile?title=My+title&css_class=foo&count%3Along=5'
+    'http://example.com/context/@@sample.tile?id=layout1-tile1&title=My+title&css_class=foo&count%3Along=5'
     
     >>> getMultiAdapter((transientTile, request), IAbsoluteURL).breadcrumbs() == \
-    ...     ({'url': 'http://example.com/context', 'name': u'context'},
-    ...      {'url': 'http://example.com/context/++tile++layout1-tile1/sample.tile', 'name': u'layout1-tile1'})
+    ... ({'url': 'http://example.com/context', 'name': u'context'},
+    ...  {'url': 'http://example.com/context/@@sample.tile?id=layout1-tile1', 'name': 'sample.tile'})
     True
     
 For persistent tiles, the are no data parameters:
 
     >>> context = Context()
-    >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'css_class': u'foo'})
-    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
-    >>> persistentTile = traversable.traverse(u'layout1-tile2', ['sample.persistenttile'])
+    >>> request = TestRequest(form={'id': 'layout1-tile2', 'title': u'My title', 'count': 5, 'css_class': u'foo'})
+    >>> persistentTile = getMultiAdapter((context, request), name=u"sample.persistenttile")
 
     >>> absoluteURL(persistentTile, request)
-    'http://example.com/context/++tile++layout1-tile2/sample.persistenttile'
+    'http://example.com/context/@@sample.persistenttile?id=layout1-tile2'
     
     >>> getMultiAdapter((persistentTile, request), IAbsoluteURL).breadcrumbs() == \
-    ...     ({'url': 'http://example.com/context', 'name': u'context'},
-    ...      {'url': 'http://example.com/context/++tile++layout1-tile2/sample.persistenttile', 'name': u'layout1-tile2'})
+    ... ({'url': 'http://example.com/context', 'name': u'context'},
+    ...  {'url': 'http://example.com/context/@@sample.persistenttile?id=layout1-tile2', 'name': 'sample.persistenttile'})
     True
-    
+
 Add view traverser
 ------------------
 
@@ -457,7 +457,8 @@ our sample tile from above.
 
     >>> context = Context()
     >>> request = TestRequest()
-
+    
+    >>> from zope.traversing.interfaces import ITraversable
     >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"addtile")
     >>> addview = traversable.traverse(u'sample.tile', [])
 

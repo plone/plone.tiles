@@ -19,18 +19,18 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         tile = self.context
         request = self.request
 
+        id = tile.id
         name = tile.__name__
-        typeName = tile.__type_name__
         context = tile.__parent__
         
-        if name is None or typeName is None or context is None:
+        if id is None or name is None or context is None:
             raise TypeError("Insufficient context to determine URL")
         
         url = str(getMultiAdapter((context, request), IAbsoluteURL))
         
         if name:
-            url += '/++tile++%s/%s' % (urllib.quote(name.encode('utf-8'), _safe), 
-                                       urllib.quote(typeName.encode('utf-8'), _safe),)
+            url += '/@@%s?id=%s' % (urllib.quote(name.encode('utf-8'), _safe), 
+                                    urllib.quote(id.encode('utf-8'), _safe),)
 
         return url
 
@@ -38,15 +38,15 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         tile = self.context
         request = self.request
         
+        id = tile.id
         name = tile.__name__
-        typeName = tile.__type_name__
         context = tile.__parent__
 
         base = tuple(getMultiAdapter((context, request), IAbsoluteURL).breadcrumbs())        
         base += ({'name': name,
-                  'url': "%s/++tile++%s/%s" % (base[-1]['url'],
-                                               urllib.quote(name.encode('utf-8'), _safe), 
-                                               urllib.quote(typeName.encode('utf-8'), _safe),),
+                  'url': "%s/@@%s?id=%s" % (base[-1]['url'],
+                                            urllib.quote(name.encode('utf-8'), _safe), 
+                                            urllib.quote(id.encode('utf-8'), _safe),),
                   },)
         
         return base
@@ -60,9 +60,9 @@ class TransientTileAbsoluteURL(BaseTileAbsoluteURL):
         url = super(TransientTileAbsoluteURL, self).__str__()
         data = ITileDataManager(self.context).get()
         if data:
-            tileType = queryUtility(ITileType, name=self.context.__type_name__)
+            tileType = queryUtility(ITileType, name=self.context.__name__)
             if tileType is not None and tileType.schema is not None:
-                url += '?' + encode(data, tileType.schema)
+                url += '&' + encode(data, tileType.schema)
         return url
 
 class PersistentTileAbsoluteURL(BaseTileAbsoluteURL):

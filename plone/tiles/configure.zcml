@@ -3,7 +3,6 @@
     i18n_domain="plone.tiles">
 
     <!-- Traverser -->
-    <adapter factory=".traversal.TileTraverser" name="tile" />
     <adapter factory=".traversal.TileAddViewTraverser" name="addtile" />
     
     <!-- Data manager -->

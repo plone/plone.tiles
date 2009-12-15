@@ -32,30 +32,31 @@ class IBasicTile(IBrowserView):
     The tile should be a named multi adapter on (<context>, <layer>)
     providing IBasicTile.
     
-    Ordinarily, the ++tile++ namespace traversal adapter will be used to
-    initialise the tile instance. Thus, if a tile is published as:
+    It will normally be traversed to like this::
     
-        http://localhost:8080/plone-site/object/++tile++tile1/tile-type
+        http://localhost:8080/plone-site/object/@@my.tile?id=tile1
     
-    then __type_name__ is set to 'tile-type', __name__ is set to 'tile1'.
-    The tile context is the content object at /plone-site/object.
+    In this case:
+    
+    * The tile context is the content object at /plone-site/object.
+    * The `__name__` is 'my.tile'
+    * The `id` is `tile1`
     """
     
-    __type_name__ = zope.schema.DottedName(
+    __name__ = zope.schema.DottedName(
             title=u"The name of the type of this tile",
             description=u"This should be a dotted name prefixed with the "
                          "package that defined the tile",
         )
     
-    __name__ = zope.schema.DottedName(
-            title=u"Tile instance name",
-            description=u"The name is set upon traversal. A given tile type "
-                          "may be instantiated multiple times, each with a "
+    id = zope.schema.DottedName(
+            title=u"Tile instance id",
+            description=u"The id is normally set using a query string"
+                          "parameter `id`. A given tile type may be used "
+                          "multiple times on the same page, each with a "
                           "unique id. The id must be unique even across "
                           "multiple layouts for the same context. "
         )
-    
-    
     
 class ITile(IBasicTile):
     """A tile with some data (probably from a query string).
@@ -78,7 +79,7 @@ class IPersistentTile(ITile):
 class ITileDataManager(Interface):
     """Support for getting and setting tile data dicts.
     
-    This is an adapter on (context, tile). The tile's __name__ must be set.
+    This is an adapter on (context, tile). The tile's id must be set.
     """
     
     def get():

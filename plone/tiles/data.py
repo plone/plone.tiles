@@ -31,7 +31,7 @@ class TransientTileDataManager(object):
     
     def __init__(self, tile):
         self.tile = tile
-        self.tileType = queryUtility(ITileType, name=tile.__type_name__)
+        self.tileType = queryUtility(ITileType, name=tile.__name__)
     
     def get(self):
         # If we don't have a schema, just take the request
@@ -62,9 +62,9 @@ class PersistentTileDataManager(object):
     
     def __init__(self, tile):
         self.tile = tile
-        self.tileType = queryUtility(ITileType, name=tile.__type_name__)
+        self.tileType = queryUtility(ITileType, name=tile.__name__)
         self.annotations = IAnnotations(self.tile.context)
-        self.key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.__name__,)
+        self.key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.id,)
         
     def get(self):
         data = dict(self.annotations.get(self.key, {}))
@@ -124,7 +124,7 @@ type_to_converter = {
     
 }
 
-def encode(data, schema, ignore=()):
+def encode(data, schema, ignore=('id',)):
     """Given a data dictionary with key/value pairs and schema, return an
     encoded query string. This is similar to urllib.urlencode(), but field
     names will include the appropriate field type converters, e.g. an int

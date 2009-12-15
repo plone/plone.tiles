@@ -8,49 +8,6 @@ from zope.publisher.interfaces.browser import IBrowserRequest
 
 from plone.tiles.interfaces import ITileType, ITileAddView
 
-class TileTraverser(object):
-    """Implements the ++tile++ namespace.
-    
-    Traversing to /path/to/obj/++tile++tile-id/tile-name will:
-    
-      * Look up the tile as a named multi-adapter with name 'tile-name', 
-        providing IBasicTile and adapting 'obj' and the request
-      * Set the tile's __type_name__ to be 'tile-name'
-      * Set the tile's __name__ to be 'tile-id'
-      * Return the tile.
-    """
-    
-    implements(ITraversable)
-    adapts(Interface, IBrowserRequest)
-    
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
-        
-    def traverse(self, name, further):
-        
-        if len(further) == 0:
-            further = self.request.get('TraversalRequestNameStack', []) # zope 2
-        
-        if len(further) == 0:
-            raise TraversalError(self.context, name)
-        
-        view_name = further.pop(0)
-        
-        if view_name and view_name.startswith('@@'):
-            view_name = view_name[2:]
-        
-        tile = queryMultiAdapter((self.context, self.request), Interface, name=view_name)
-        
-        if tile is None:
-            raise TraversalError(self.context, name)
-        
-        tile.__name__ = name
-        tile.__type_name__ = view_name
-        tile.__parent__ = self.context
-        
-        return tile
-
 class TileAddViewTraverser(object):
     """Implements the ++addtile++ namespace.
     
