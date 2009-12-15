@@ -14,7 +14,7 @@
     <view
         for=".interfaces.ITile"
         name="absolute_url"
-        factory=".absoluteurl.TileAbsoluteURL"
+        factory=".absoluteurl.TransientTileAbsoluteURL"
         type="zope.publisher.interfaces.http.IHTTPRequest"
         permission="zope.Public"
         allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
@@ -22,7 +22,7 @@
       
     <view
         for=".interfaces.ITile"
-        factory=".absoluteurl.TileAbsoluteURL"
+        factory=".absoluteurl.TransientTileAbsoluteURL"
         type="zope.publisher.interfaces.http.IHTTPRequest"
         permission="zope.Public"
         provides="zope.traversing.browser.interfaces.IAbsoluteURL"

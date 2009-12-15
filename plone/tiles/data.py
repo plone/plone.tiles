@@ -36,14 +36,14 @@ class TransientTileDataManager(object):
     def get(self):
         # If we don't have a schema, just take the request
         if self.tileType is None or self.tileType.schema is None:
-            return self.request.form.copy()
+            return self.tile.request.form.copy()
     
         # Try to decode the form data properly if we can
         try:
             return decode(self.tile.request.form, self.tileType.schema, missing=True)
         except (ValueError, UnicodeDecodeError,):
             LOGGER.exception(u"Could not convert form data to schema")
-            return self.request.form.copy()
+            return self.tile.request.form.copy()
     
     def set(self, data):
         self.tile.request.form.clear()

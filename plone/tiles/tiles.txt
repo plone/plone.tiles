@@ -87,7 +87,7 @@ To register a tile in ZCML, we could do::
     <plone:tile
         name="sample.tile"
         title="Sample tile"
-        description='A tile used for testing
+        description="A tile used for testing"
         add_permission="dummy.Permission"
         class=".mytiles.SampleTile"
         for="*"

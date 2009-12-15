@@ -6,7 +6,7 @@ from zope.component import queryUtility
 from zope.traversing.browser.interfaces import IAbsoluteURL
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 
-from plone.tiles.interfaces import ITileType
+from plone.tiles.interfaces import ITileType, ITileDataManager
 from plone.tiles.data import encode
 
 _safe = '@+'
@@ -51,14 +51,14 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         
         return base
 
-class TileAbsoluteURL(BaseTileAbsoluteURL):
+class TransientTileAbsoluteURL(BaseTileAbsoluteURL):
     """Absolute URL for a transient tile. Includes the tile traverser and
     tile data encoded in the query string.
     """
     
     def __str__(self):
-        url = super(TileAbsoluteURL, self).__str__()
-        data = self.context.data
+        url = super(TransientTileAbsoluteURL, self).__str__()
+        data = ITileDataManager(self.context).get()
         if data:
             tileType = queryUtility(ITileType, name=self.context.__type_name__)
             if tileType is not None and tileType.schema is not None:
