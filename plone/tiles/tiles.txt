@@ -272,6 +272,11 @@ the field's missing value will be used.
     >>> tile()
     u'<b>You said</b> Missing!'
 
+At this point, there is nothing in the annotations for the type either:
+
+    >>> dict(getattr(context, '__annotations__', {})).keys()
+    []
+
 We can write data to the context's annotations using an ITileDataManager:
 
     >>> from plone.tiles.interfaces import ITileDataManager
@@ -280,8 +285,10 @@ We can write data to the context's annotations using an ITileDataManager:
 
 This writes data to annotations:
 
-    >>> sorted(dict(context.__annotations__).items()) # doctest: +ELLIPSIS
-    [(u'plone.tiles.data.layout1-tile2', ...)]
+    >>> dict(context.__annotations__).keys()
+    [u'plone.tiles.data.layout1-tile2']
+    >>> context.__annotations__[u'plone.tiles.data.layout1-tile2']
+    {'text': u'Hello!'}
 
 If we now look up the tile again, we will get the new value:
 
