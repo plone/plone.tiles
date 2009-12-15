@@ -220,10 +220,43 @@ the tile instance:
 
     >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"tile")
     >>> tile = traversable.traverse(u'layout1-tile1', ['sample.tile'])
-    >>> tile.data
-    {'count': 5, 'css_class': 'foo', 'title': u'My title'}
+    >>> sorted(tile.data.items())
+    [('count', 5), ('css_class', 'foo'), ('title', u'My title')]
 
 Notice also how the data has been properly decoded according to the schema.
+
+The tile data manager
+---------------------
+
+The `data` attribute is a convenience attribute to get hold of a (cached)
+copy of the data returned by an `ITileDataManager`. This interface provides
+three methods: get(), to return the tile's data, set(), to update it with a
+new dictionary of data, and delete(), to delete the data.
+
+This adapter is mostly useful for writing UI around tiles. Using our tile
+above, we can get the data like so:
+
+    >>> from plone.tiles.interfaces import ITileDataManager
+    >>> dataManager = ITileDataManager(tile)
+    >>> dataManager.get() == tile.data
+    True
+    
+We can also update the tile data:
+
+    >>> dataManager.set({'count': 1, 'css_class': 'bar', 'title': u'Another title'})
+    >>> sorted(dataManager.get().items())
+    [('count', 1), ('css_class', 'bar'), ('title', u'Another title')]
+
+The data can also be deleted:
+
+    >>> dataManager.delete()
+    >>> sorted(dataManager.get().items())
+    [('count', None), ('css_class', None), ('title', None)]
+
+Note that in the case of a transient, all we are doing is modifying the `form`
+in the request. The data needs to be encoded into the query string, either
+using the `encode()` method or via the tile's `IAbsoluteURL` adapter (see
+below for details).
 
 Persistent tiles
 ----------------
@@ -279,9 +312,8 @@ At this point, there is nothing in the annotations for the type either:
 
 We can write data to the context's annotations using an ITileDataManager:
 
-    >>> from plone.tiles.interfaces import ITileDataManager
-    >>> dm = getMultiAdapter((context, tile), ITileDataManager)
-    >>> dm.set({'text': u"Hello!"})
+    >>> dataManager = ITileDataManager(tile)
+    >>> dataManager.set({'text': u"Hello!"})
 
 This writes data to annotations:
 
@@ -290,15 +322,26 @@ This writes data to annotations:
     >>> context.__annotations__[u'plone.tiles.data.layout1-tile2']
     {'text': u'Hello!'}
 
+We can get this from the data manager too, of course:
+
+    >>> dataManager.get()
+    {'text': u'Hello!'}
+
+Note that as with transient tiles, the `data` attribute is cached and will
+only be looked up once.
+
 If we now look up the tile again, we will get the new value:
 
     >>> tile = traversable.traverse(u'layout1-tile2', ['sample.persistenttile'])
     >>> tile()
     u'<b>You said</b> Hello!'
 
+    >>> tile.data
+    {'text': u'Hello!'}
+
 We can also remove the annotation using the data manager:
 
-    >>> dm.delete()
+    >>> dataManager.delete()
     >>> sorted(dict(context.__annotations__).items()) # doctest: +ELLIPSIS
     []
 

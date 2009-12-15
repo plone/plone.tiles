@@ -1,16 +1,9 @@
-import logging
-
 from zope.interface import implements
-from zope.component import getMultiAdapter, queryUtility
 
 from zope.publisher.browser import BrowserView
 
 from plone.tiles.interfaces import ITile, IPersistentTile
-from plone.tiles.interfaces import ITileType, ITileDataManager
-
-from plone.tiles.data import decode
-
-LOGGER = logging.getLogger('plone.tiles')
+from plone.tiles.interfaces import ITileDataManager
 
 class Tile(BrowserView):
     """Basic implementation of a transient tile. Subclasses should override
@@ -22,7 +15,7 @@ class Tile(BrowserView):
     __name__ = None
     __type_name__ = None
     
-    __cached_data = None
+    __cachedData = None
     
     def __call__(self, *args, **kwargs):
         if not hasattr(self, 'index'):
@@ -31,17 +24,10 @@ class Tile(BrowserView):
     
     @property
     def data(self):
-        if self.__cached_data is None:
-            tile_type = queryUtility(ITileType, name=self.__type_name__)
-            if tile_type is None or tile_type.schema is None:
-                self.__cached_data = {}
-            else:
-                try:
-                    self.__cached_data = decode(self.request.form, tile_type.schema, missing=True)
-                except (ValueError, UnicodeDecodeError,):
-                    LOGGER.exception(u"Could not convert form data to schema")
-                    self.__cached_data = self.request.form.copy()
-        return self.__cached_data
+        if self.__cachedData is None:
+            reader = ITileDataManager(self)
+            self.__cachedData = reader.get()
+        return self.__cachedData
 
 class PersistentTile(Tile):
     """Base class for persistent tiles. Identical to `Tile`, except that the
@@ -49,12 +35,3 @@ class PersistentTile(Tile):
     """
     
     implements(IPersistentTile)
-    
-    __cached_data = None
-    
-    @property
-    def data(self):
-        if self.__cached_data is None:
-            reader = getMultiAdapter((self.context, self,), ITileDataManager)
-            self.__cached_data = reader.get()
-        return self.__cached_data

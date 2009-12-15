@@ -1,3 +1,4 @@
+import logging
 import urllib
 
 from zope.interface import implements
@@ -8,51 +9,75 @@ from zope.schema.interfaces import ISequence
 
 from zope import schema
 
-from zope.annotation.interfaces import IAnnotatable, IAnnotations
+from zope.annotation.interfaces import IAnnotations
 
 from plone.tiles.interfaces import ITileType
+from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITileDataManager
 
 from persistent.dict import PersistentDict
 
 ANNOTATIONS_KEY_PREFIX = u'plone.tiles.data'
+LOGGER = logging.getLogger('plone.tiles')
 
-class AnnotationsTileDataManager(object):
+class TransientTileDataManager(object):
+    """A data manager for transient tile data, which reads data from the
+    request query string.
+    """
+    
+    implements(ITileDataManager)
+    adapts(ITile)
+    
+    def __init__(self, tile):
+        self.tile = tile
+        self.tileType = queryUtility(ITileType, name=tile.__type_name__)
+    
+    def get(self):
+        # If we don't have a schema, just take the request
+        if self.tileType is None or self.tileType.schema is None:
+            return self.request.form.copy()
+    
+        # Try to decode the form data properly if we can
+        try:
+            return decode(self.tile.request.form, self.tileType.schema, missing=True)
+        except (ValueError, UnicodeDecodeError,):
+            LOGGER.exception(u"Could not convert form data to schema")
+            return self.request.form.copy()
+    
+    def set(self, data):
+        self.tile.request.form.clear()
+        self.tile.request.form.update(data)
+    
+    def delete(self):
+        self.tile.request.form.clear()
+
+class PersistentTileDataManager(object):
     """A data reader for persistent tiles operating on annotatable contexts.
     The data is retrieved from an annotation.
     """
     
     implements(ITileDataManager)
-    adapts(IAnnotatable, IPersistentTile)
+    adapts(IPersistentTile)
     
-    def __init__(self, context, tile):
-        self.context = context
+    def __init__(self, tile):
         self.tile = tile
-        
-        self.tile_type = queryUtility(ITileType, name=tile.__type_name__)
-        
-        self.annotations = IAnnotations(context)
+        self.tileType = queryUtility(ITileType, name=tile.__type_name__)
+        self.annotations = IAnnotations(self.tile.context)
         self.key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.__name__,)
         
     def get(self):
-        """Get the data 
-        """
         data = dict(self.annotations.get(self.key, {}))
-        if self.tile_type is not None and self.tile_type.schema is not None:
-            for name, field in getFields(self.tile_type.schema).items():
+        if self.tileType is not None and self.tileType.schema is not None:
+            for name, field in getFields(self.tileType.schema).items():
                 if name not in data:
                     data[name] = field.missing_value
         return data
 
     def set(self, data):
-        """Set the data
-        """
         self.annotations[self.key] = PersistentDict(data)
     
     def delete(self):
-        """Delete the data
-        """
         if self.key in self.annotations:
             del self.annotations[self.key]
 
