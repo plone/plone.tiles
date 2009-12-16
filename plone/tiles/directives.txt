@@ -172,27 +172,37 @@ Finally, let's check that we can look up the tiles.
     True
     >>> print tile1()
     <b>test!</b>
+    >>> tile1.__name__
+    'dummy1'
     
     >>> tile2 = getMultiAdapter((context, request), name="dummy2")
     >>> isinstance(tile2, DummyTile)
     True
     >>> print tile2()
     dummy
+    >>> tile2.__name__
+    'dummy2'
     
     >>> tile3 = getMultiAdapter((context, request), name="dummy3")
     >>> isinstance(tile3, Tile)
     True
     >>> print tile3()
     <b>test!</b>
+    >>> tile3.__name__
+    'dummy3'
 
     >>> tile4 = getMultiAdapter((context, request), name="dummy4")
     >>> isinstance(tile4, PersistentTile)
     True
     >>> print tile4()
     <b>test!</b>
-
+    >>> tile4.__name__
+    'dummy4'
+    
     >>> tile3_layer = getMultiAdapter((context, layer_request), name="dummy3")
     >>> isinstance(tile3_layer, DummyTile)
     True
     >>> print tile3_layer()
     dummy
+    >>> tile3_layer.__name__
+    'dummy3'
