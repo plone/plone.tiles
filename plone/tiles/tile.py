@@ -12,15 +12,15 @@ class Tile(BrowserView):
     
     implements(ITile)
     
-    __name__ = None
-    id = None
-    
     __cachedData = None
+    __id = None
     
-    def __init__(self, context, request):
-        super(Tile, self).__init__(context, request)
-        if request is not None:
-            self.id = request.form.get('id', None)
+    # Id - may be set explicitly, but defaults to the 'id' request parameter
+    def __getId(self):
+        return self.__id or self.request.form.get('id', None)
+    def __setId(self, value):
+        self.__id = value
+    id = property(__getId, __setId)
     
     def __call__(self, *args, **kwargs):
         if not hasattr(self, 'index'):

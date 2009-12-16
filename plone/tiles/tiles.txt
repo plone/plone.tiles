@@ -47,10 +47,10 @@ to do this is to subclass the `Tile` class.
     ...     def __call__(self):
     ...         return "<b>My tile</b>"
 
-The tile is a browser view, and has two special attributes that will be set
-upon traversal: `id`, the name of the instance of the tile when it has been
-added to a layout, and `__name__`, which will be set to the name of the view
-as registered.
+The tile is a browser view. It has a `__name__` (normally set at class level
+by the `<plone:tile />` ZCML directive), as well as a property `id`. The id
+may be set explicitly, but defaults to the value of the `id` query string
+parameter.
 
     >>> from plone.tiles.interfaces import ITile
     >>> ITile.implementedBy(SampleTile)
@@ -58,12 +58,6 @@ as registered.
     
     >>> from zope.publisher.interfaces.browser import IBrowserView
     >>> IBrowserView.implementedBy(SampleTile)
-    True
-    
-    >>> tile = SampleTile(None, None)
-    >>> tile.__name__
-    'sample.tile'
-    >>> tile.id is None
     True
     
 This tile is registered as a normal browser view, alongside a utility that
@@ -415,10 +409,12 @@ For persistent tiles, the are no data parameters:
 
 If the tile doesn't have an id, we don't get an `id` parameter:
 
-    >>> transientTile.id = None
+    >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'css_class': u'foo'})
+    >>> transientTile = getMultiAdapter((context, request), name=u"sample.tile")
     >>> absoluteURL(transientTile, request)
     'http://example.com/context/@@sample.tile?title=My+title&css_class=foo&count%3Along=5'
     
-    >>> persistentTile.id = None
+    >>> request = TestRequest()
+    >>> persistentTile = getMultiAdapter((context, request), name=u"sample.persistenttile")
     >>> absoluteURL(persistentTile, request)
     'http://example.com/context/@@sample.persistenttile'
