@@ -23,16 +23,16 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         name = tile.__name__
         context = tile.__parent__
         
-        if id is None or name is None or context is None:
+        if name is None or context is None:
             raise TypeError("Insufficient context to determine URL")
         
         url = str(getMultiAdapter((context, request), IAbsoluteURL))
         
-        if name:
-            url += '/@@%s?id=%s' % (urllib.quote(name.encode('utf-8'), _safe), 
-                                    urllib.quote(id.encode('utf-8'), _safe),)
-
-        return url
+        tileFragment = "@@" + urllib.quote(name.encode('utf-8'), _safe)
+        if id:
+            tileFragment += '?id=' + urllib.quote(id.encode('utf-8'), _safe)
+        
+        return '%s/%s' % (url, tileFragment,)
 
     def breadcrumbs(self):
         tile = self.context
@@ -41,12 +41,14 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         id = tile.id
         name = tile.__name__
         context = tile.__parent__
-
+        
+        tileFragment = "@@" + urllib.quote(name.encode('utf-8'), _safe)
+        if id:
+            tileFragment += '?id=' + urllib.quote(id.encode('utf-8'), _safe)
+        
         base = tuple(getMultiAdapter((context, request), IAbsoluteURL).breadcrumbs())        
         base += ({'name': name,
-                  'url': "%s/@@%s?id=%s" % (base[-1]['url'],
-                                            urllib.quote(name.encode('utf-8'), _safe), 
-                                            urllib.quote(id.encode('utf-8'), _safe),),
+                  'url': "%s/%s" % (base[-1]['url'], tileFragment,),
                   },)
         
         return base
@@ -62,7 +64,10 @@ class TransientTileAbsoluteURL(BaseTileAbsoluteURL):
         if data:
             tileType = queryUtility(ITileType, name=self.context.__name__)
             if tileType is not None and tileType.schema is not None:
-                url += '&' + encode(data, tileType.schema)
+                if '?' in url:
+                    url += '&' + encode(data, tileType.schema)
+                else:
+                    url += '?' + encode(data, tileType.schema)
         return url
 
 class PersistentTileAbsoluteURL(BaseTileAbsoluteURL):

@@ -413,6 +413,16 @@ For persistent tiles, the are no data parameters:
     ...  {'url': 'http://example.com/context/@@sample.persistenttile?id=layout1-tile2', 'name': 'sample.persistenttile'})
     True
 
+If the tile doesn't have an id, we don't get the URL:
+
+    >>> transientTile.id = None
+    >>> absoluteURL(transientTile, request)
+    'http://example.com/context/@@sample.tile?title=My+title&css_class=foo&count%3Along=5'
+    
+    >>> persistentTile.id = None
+    >>> absoluteURL(persistentTile, request)
+    'http://example.com/context/@@sample.persistenttile'
+
 Add view traverser
 ------------------
 
