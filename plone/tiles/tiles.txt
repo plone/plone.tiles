@@ -413,7 +413,7 @@ For persistent tiles, the are no data parameters:
     ...  {'url': 'http://example.com/context/@@sample.persistenttile?id=layout1-tile2', 'name': 'sample.persistenttile'})
     True
 
-If the tile doesn't have an id, we don't get the URL:
+If the tile doesn't have an id, we don't get an `id` parameter:
 
     >>> transientTile.id = None
     >>> absoluteURL(transientTile, request)
@@ -422,94 +422,3 @@ If the tile doesn't have an id, we don't get the URL:
     >>> persistentTile.id = None
     >>> absoluteURL(persistentTile, request)
     'http://example.com/context/@@sample.persistenttile'
-
-Add view traverser
-------------------
-
-As mentioned, this package does not provide UI support for tiles, but it does
-provide a traverser which can be used to write edit views.
-
-A tile edit view requires three pieces of information: the context and
-request, as usual, and the tile type. The add view traverser thus allows the
-add view to be registered as a multi-adapter on these three discriminators.
-
-To illustrate this, let's register a generic add view, which can operate on
-any tile type.
-
-    >>> from zope.interface import Interface, implements
-    >>> from zope.component import adapts
-    >>> from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-
-    >>> from plone.tiles.interfaces import ITileAddView, ITileType
-
-    >>> class DefaultAddView(object):
-    ...     implements(ITileAddView)
-    ...     adapts(Interface, IDefaultBrowserLayer, ITileType)
-    ...     
-    ...     def __init__(self, context, request, tileType):
-    ...         self.context = context
-    ...         self.request = request
-    ...         self.tileType = tileType
-    ...     
-    ...     def __call__(self):
-    ...         return "Adding %s" % self.tileType
-
-    >>> from zope.component import provideAdapter
-    >>> provideAdapter(DefaultAddView)
-
-The tile add view traverser is called `++addtile++`, and can normally be
-invoked with a URL like::
-
-    http://example.com/site/obj/++addtile++my.tile
-
-Here, my.tile is the name of the tile type. We will simulate this now, using
-our sample tile from above.
-
-    >>> context = Context()
-    >>> request = TestRequest()
-    
-    >>> from zope.traversing.interfaces import ITraversable
-    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"addtile")
-    >>> addview = traversable.traverse(u'sample.tile', [])
-
-The add view returned should be an instance of our generic add view, which
-was registered as an unnamed adapter providing `ITileAddView`:
-
-    >>> isinstance(addview, DefaultAddView)
-    True
-    >>> addview.tileType is sample_tile_type
-    True
-    >>> addview.__name__
-    u'sample.tile'
-    >>> addview.__parent__ is context
-    True
-
-This works well for a default add view, but sometimes we will want a more
-specific add view for a particular type of tile. One way to do that would
-be to have a more-specific interface than the generic `ITileType` for this
-type of tile. However, that would be cumbersome, especially since tiles are
-normally registered with a ZCML directive that configures the tile type object
-automatically. Instead, we can register a *named* multi-adapter, where the
-name matches the tile name:
-
-    >>> class SpecificAddView(object):
-    ...     implements(ITileAddView)
-    ...     adapts(Interface, IDefaultBrowserLayer, ITileType)
-    ...     
-    ...     def __init__(self, context, request, tileType):
-    ...         self.context = context
-    ...         self.request = request
-    ...         self.tileType = tileType
-    ...     
-    ...     def __call__(self):
-    ...         return "Adding specific %s" % self.tileType
-
-    >>> provideAdapter(SpecificAddView, name=u"sample.tile")
-
-We can now try traversal again:
-
-    >>> traversable = getMultiAdapter((context, request), ITraversable, name=u"addtile")
-    >>> addview = traversable.traverse(u'sample.tile', [])
-
-    >>> isinstance(addview, SpecificAddView)
-    True

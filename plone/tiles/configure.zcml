@@ -2,9 +2,6 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="plone.tiles">
 
-    <!-- Traverser -->
-    <adapter factory=".traversal.TileAddViewTraverser" name="addtile" />
-    
     <!-- Data manager -->
     <adapter factory=".data.TransientTileDataManager" />
     <adapter factory=".data.PersistentTileDataManager" />
