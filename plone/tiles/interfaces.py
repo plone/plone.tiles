@@ -94,11 +94,3 @@ class ITileDataManager(Interface):
     def delete():
         """Delete the data record for this tile.
         """
-
-class ITileAddView(IBrowserView):
-    """A tile add view as found by the ++addtile++ traverser.
-    
-    The default add view is an adapter from (context, request, tile_info) to
-    this interface. Per-tile type overrides can be created by registering
-    named adapters matching the tile name.
-    """
