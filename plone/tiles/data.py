@@ -124,7 +124,7 @@ type_to_converter = {
     
 }
 
-def encode(data, schema, ignore=('id',)):
+def encode(data, schema, ignore=()):
     """Given a data dictionary with key/value pairs and schema, return an
     encoded query string. This is similar to urllib.urlencode(), but field
     names will include the appropriate field type converters, e.g. an int

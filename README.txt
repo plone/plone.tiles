@@ -13,13 +13,16 @@ render a form to configure the tile upon insertion.
 
 A tile is inserted into a layout as a link::
 
-    <a rel="tile" href="./@@sample.tile?id=layout1-tile1&option1=value1" />
+    <link rel="tile" target="placeholder" href="./@@sample.tile/tile1?option1=value1" />
 
-The `id` parameter lets the tile instance know its id (`layout1-tile1` in this
-example). This will be set as the `id` attribute on the instantiated tile when
-it is rendered. `sample.tile` is the name of the browser view that implements
-the tile. This is made available as the `__name__` attribute. Other parameters
-may be turned into tile data, available under the `data` attribute, a dict.
+The sub-path (`tile1`` in this case) is used to set the tile `id` attribute.
+This allows the tile to know its unique id, and, in the case of persistent
+tiles, look up its data. `sample.tile` is the name of the browser view that
+implements the tile. This is made available as the `__name__` attribute. Other
+parameters may be turned into tile data, available under the `data` attribute,
+a dict, for regular tiles. For persistent tiles (those deriving from the
+`PersistentTile` base class), the data is fetched from annotations instead,
+based on the tile id.
 
 There are three interfaces describing tiles in this package:
 
@@ -29,7 +32,10 @@ There are three interfaces describing tiles in this package:
   * `ITile` describes a tile that can be configured with some data. The data
     is accessible via a dict called `data`. The default implementation of this
     interface, `plone.tiles.Tile`, will use the schema of the tile type and
-    the query string (`self.request.form`) to construct that dictionary.
+    the query string (`self.request.form`) to construct that dictionary. This
+    interface also describes an attribute `url`, which gives the canonical
+    tile URL, including the id sub-path and any query string parameters. (Note
+    that tiles also correctly implement `IAbsoluteURL`.)
   * `IPersistentTile` describes a tile that stores its configuration in
     object annotations, and is needed when configuration values cannot be
     encoded into a query string. The default implementation is in
@@ -62,7 +68,7 @@ The most basic tile looks like this::
     class MyTile(Tile):
         
         def __call__(self):
-            return u"Hello world"
+            return u"<html><body><p>Hello world</p></body></html>"
 
 If you require a persistent tile, subclass `plone.tiles.PersistentTile`
 instead. You may also need a schema interface if you want a configurable

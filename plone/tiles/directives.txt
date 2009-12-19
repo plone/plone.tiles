@@ -2,20 +2,21 @@
 ZCML directive
 ==============
 
-A tile is really just a browser view providing `IBasicTile` (or, more
-commonly, `ITile` or `IPersistentTile`) coupled with a named utility providing
-`ITileType`. The names of the browser view and the tile should match.
+A tile is really just a browser view providing ``IBasicTile`` (or, more
+commonly, ``ITile`` or ``IPersistentTile``) coupled with a named utility
+providing ``ITileType``. The names of the browser view and the tile should
+match.
 
 To make it easier to register these components, this package provides a
-`<plone:tile />` directive that sets up both. It supports several use cases:
+``<plone:tile />`` directive that sets up both. It supports several use cases:
 
   * Registering a new tile from a class
   * Registering a new tile from a template only
   * Registering a new tile form a class and a template
   * Registering a new tile for an existing tile type (e.g. for a new layer)
 
-To test this, we have created a dummy schema and a dummy tile in tests.py,
-and a dummy template in test.pt.
+To test this, we have created a dummy schema and a dummy tile in ``tests.py``,
+and a dummy template in ``test.pt``.
 
 Let's show how these may be used by registering several tiles:
 

@@ -34,13 +34,14 @@ class IBasicTile(IBrowserView):
     
     It will normally be traversed to like this::
     
-        http://localhost:8080/plone-site/object/@@my.tile?id=tile1
+        http://localhost:8080/plone-site/object/@@my.tile/tile1
     
     In this case:
     
     * The tile context is the content object at /plone-site/object.
-    * The `__name__` is 'my.tile'
-    * The `id` is `tile1`
+    * The ``__name__`` of the tile instance is 'my.tile'
+    * The ``id`` of the tile instance is 'tile1'
+    * The ``url`` of the tile instance is the URL as above
     """
     
     __name__ = zope.schema.DottedName(
@@ -51,11 +52,11 @@ class IBasicTile(IBrowserView):
     
     id = zope.schema.DottedName(
             title=u"Tile instance id",
-            description=u"The id is normally set using a query string"
-                          "parameter `id`. A given tile type may be used "
-                          "multiple times on the same page, each with a "
-                          "unique id. The id must be unique even across "
-                          "multiple layouts for the same context. "
+            description=u"The id is normally set using sub-path traversal"
+                          "A given tile type may be used multiple times on "
+                          "the same page, each with a unique id. The id must "
+                          "be unique even across multiple layouts for the "
+                          "same context."
         )
     
 class ITile(IBasicTile):
@@ -70,6 +71,15 @@ class ITile(IBasicTile):
             required=True,
             readonly=True,
             default={},
+        )
+
+    url = zope.schema.URI(
+            title=u"Tile URL",
+            description=u"This is the canonical URL for the tile. In the "
+                         "case of transient tiles with data, this may "
+                         "include a query string with parameters. Provided "
+                         "that the `id` attribute is set, it will also "
+                         "include a sub-path with this in it.",
         )
 
 class IPersistentTile(ITile):

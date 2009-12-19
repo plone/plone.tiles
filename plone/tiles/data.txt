@@ -2,7 +2,8 @@
 Data encoding/decoding
 ======================
 
-This test exercises the encode() and decode() methods in plone.tiles.data.
+This test exercises the ``encode()`` and ``decode()`` methods in
+``plone.tiles.data``.
 
     >>> from zope.interface import Interface
     >>> from zope import schema
@@ -65,7 +66,7 @@ Lists and tuples may also be encoded. The value type will be encoded as well.
     'list%3Alist=a&list%3Alist=b&tuple%3Along%3Atuple=1&tuple%3Along%3Atuple=2&tuple%3Along%3Atuple=3'
 
 Unsupported fields will raise a KeyError. This also applies to the value_type
-of a list or tupel:
+of a list or tuple:
 
     >>> class IUnsupported(Interface):
     ...     decimal     = schema.Decimal(title=u"Decimal")
@@ -92,7 +93,7 @@ Decoding
 
 The decoder exists because the Zope form marshalers are not perfect: for
 instance, they cannot adequately deal with the differences between unicode
-and ascii. zope.schema is picky about that sort of thing.
+and ASCII. ``zope.schema`` is picky about that sort of thing.
 
 Let's use a data dictionary that may have come back from a query string like
 the first example above.
@@ -102,13 +103,13 @@ the first example above.
     [('ascii', 'E\nF'), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('text', u'C\nD'), ('text_line', u'A')]
 
 If any values are missing from the input dictionary, they will default to
-missing_value.
+``missing_value``.
 
     >>> data = dict(text_line=u'A', ascii_line=u'B', int=3, float=1.2, bool=False)
     >>> sorted(decode(data, ISimple).items())
     [('ascii', None), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('text', u'Missing'), ('text_line', u'A')]
 
-If you pass missing=False, the values are ignored instead.
+If you pass ``missing=False``, the values are ignored instead.
 
     >>> data = dict(text_line=u'A', ascii_line=u'B', int=3, float=1.2, bool=False)
     >>> sorted(decode(data, ISimple, missing=False).items())
