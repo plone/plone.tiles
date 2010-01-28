@@ -86,6 +86,21 @@ class IPersistentTile(ITile):
     """A tile with full-blown persistent data (stored in annotations).
     """
 
+class IESIRendered(Interface):
+    """Marker interface for tiles which are to be rendered via ESI.
+    
+    Two corresponding views, @@esi-body and @@esi-head, will be made available
+    on the tile itself. This will return the children of the <head /> or
+    <body /> of the tile, respectively.
+    
+    Thus, a tile marked with this interface may be replaced with an ESI
+    instruction like::
+        
+        <esi:include src="./@@my.tile/tile-id/@@esi-body" />
+    
+    When fetched, this placeholder will be replaced by the body of the tile.
+    """
+
 class ITileDataManager(Interface):
     """Support for getting and setting tile data dicts.
     

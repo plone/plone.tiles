@@ -37,7 +37,6 @@ setup(name='plone.tiles',
           'ZODB3',
           'zope.app.publisher',
           'zope.testing',
-          'zope.app.testing',
       ],
       entry_points="""
       """,

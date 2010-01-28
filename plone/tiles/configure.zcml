@@ -1,7 +1,8 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="plone.tiles">
-
+    
     <!-- Data manager -->
     <adapter factory=".data.TransientTileDataManager" />
     <adapter factory=".data.PersistentTileDataManager" />
@@ -40,5 +41,20 @@
         permission="zope.Public"
         provides="zope.traversing.browser.interfaces.IAbsoluteURL"
         />
-
+    
+    <!-- ESI -->
+    <browser:page
+        name="esi-head"
+        for=".interfaces.IESIRendered"
+        class=".esi.ESIHead"
+        permission="zope.Public"
+        />
+    
+    <browser:page
+        name="esi-body"
+        for=".interfaces.IESIRendered"
+        class=".esi.ESIBody"
+        permission="zope.Public"
+        />
+        
 </configure>

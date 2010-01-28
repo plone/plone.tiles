@@ -27,6 +27,7 @@ Let's show how these may be used by registering several tiles:
     ...     
     ...     <include package="zope.component" file="meta.zcml" />
     ...     <include package="zope.security" file="meta.zcml" />
+    ...     <include package="zope.app.publisher" file="meta.zcml" />
     ...     
     ...     <include package="plone.tiles" file="meta.zcml" />
     ...     <include package="plone.tiles" />
