@@ -1,6 +1,5 @@
-==============
-Creating tiles
-==============
+Tiles in detail
+===============
 
 Tiles are a form of view component used to compose pages. Think of a tile as
 a view describing one part of a page, that can be configured with some data

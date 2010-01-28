@@ -4,6 +4,8 @@ Introduction
 plone.tiles implements low-level, non-Plone/Zope2-specific support for
 creating "tiles" in the Deco layout system.
 
+.. contents:: Table of contents
+
 For the purposes of this package, a tile is a browser view and an associated
 utility providing some metadata about that view. The metadata includes a title
 and description, an 'add' permission and optionally a schema interface
@@ -59,7 +61,7 @@ query string and turn a `request.form` dict into a data dict that complies
 with a tile's schema interface.
 
 Creating a simple tile
-----------------------
+======================
 
 The most basic tile looks like this::
 
@@ -69,6 +71,17 @@ The most basic tile looks like this::
         
         def __call__(self):
             return u"<html><body><p>Hello world</p></body></html>"
+
+Note that the tile is expected to return a complete HTML document. This will
+be interpolated into the page output according to the following rules:
+
+* The contents of the tile's ``<head />`` section is appended to the output
+  document's ``<head />`` section.
+* The contents of the tile's ``<body />`` section will replace the tile
+  placeholder as indicated by the tile link.
+  
+Note that this package does *not* provide these interpolations. For a Plone
+implementation of the interpolation algorithm, see `plone.app.blocks`_
 
 If you require a persistent tile, subclass `plone.tiles.PersistentTile`
 instead. You may also need a schema interface if you want a configurable
@@ -126,3 +139,5 @@ specific context, you can omit the tile metadata::
             />
 
 See `tiles.txt` and `directives.txt` for more details.
+
+.. _plone.app.blocks: http://pypi.python.org/pypi/plone.app.blocks
