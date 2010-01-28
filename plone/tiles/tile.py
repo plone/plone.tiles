@@ -60,6 +60,17 @@ class Tile(BrowserView):
         
         raise KeyError(name)
     
+    def browserDefault(self, request):
+        """By default, tiles render themselves with no browser-default view
+        """
+        return self, ()
+    
+    def publishTraverse(self, request, name):
+        """Ensure that publish-traversal uses the same semantics as
+        __getitem__.
+        """
+        return self[name]
+    
     def __call__(self, *args, **kwargs):
         if not hasattr(self, 'index'):
             raise NotImplemented(u"Override __call__ or set a class variable 'index' to point to a view page template file")

@@ -52,7 +52,7 @@ way to do this is to subclass the ``Tile`` class.
     ...     __name__ = 'sample.tile' # would normally be set by ZCML handler
     ...
     ...     def __call__(self):
-    ...         return "<b>My tile</b>"
+    ...         return "<html><body><b>My tile</b></body></html>"
 
 The tile is a browser view:
 
@@ -190,6 +190,21 @@ If there is no view and we have an id already, we will get a ``KeyError``:
     Traceback (most recent call last):
     ...
     KeyError: 'not-known'
+
+To ensure consistency with Zope's various tangles publication machines, it
+is also possible to traverse using the ``publishTraverse`` method::
+
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> tile = tile.publishTraverse(request, 'tile1') # simulates sub-path traversal
+
+    >>> isinstance(tile, SampleTile)
+    True
+    >>> tile.__parent__ is context
+    True
+    >>> tile.id
+    'tile1'
+    >>> tile.__name__
+    'sample.tile'
 
 Transient tile data 
 -------------------

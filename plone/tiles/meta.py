@@ -79,7 +79,7 @@ class ITileDirective(Interface):
             description=u"Name of the permission required to view this item",
             required=False,
         )
-    
+
 def tile(_context, name,
             title=None, description=None, add_permission=None, schema=None,
             for_=None, layer=None, class_=None, template=None, permission=None):
