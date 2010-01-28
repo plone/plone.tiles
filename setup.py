@@ -9,6 +9,7 @@ setup(name='plone.tiles',
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("plone", "tiles", "tiles.txt")).read() + "\n" +
                        open(os.path.join("plone", "tiles", "directives.txt")).read() + "\n" +
+                       open(os.path.join("plone", "tiles", "esi.txt")).read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
