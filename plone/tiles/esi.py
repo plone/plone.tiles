@@ -44,7 +44,7 @@ class ESIHead(object):
             match = HEAD_CHILDREN.search(document)
             if not match:
                 return document
-            return match.group(1)
+            return match.group(1).strip()
         finally:
             HEAD_RE_LOCK.release()
 
@@ -65,7 +65,7 @@ class ESIBody(object):
             match = BODY_CHILDREN.search(document)
             if not match:
                 return document
-            return match.group(1)
+            return match.group(1).strip()
         finally:
             BODY_RE_LOCK.release()
 
