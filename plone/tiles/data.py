@@ -1,8 +1,8 @@
 import logging
 import urllib
 
-from zope.interface import implements
-from zope.component import adapts, queryUtility
+from zope.interface import implements, implementer, Interface
+from zope.component import adapts, adapter, queryUtility, getMultiAdapter
 
 from zope.schema import getFieldsInOrder, getFields
 from zope.schema.interfaces import ISequence
@@ -15,6 +15,7 @@ from plone.tiles.interfaces import ITileType
 from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITileDataManager
+from plone.tiles.interfaces import ITileDataContext
 
 from persistent.dict import PersistentDict
 
@@ -63,7 +64,10 @@ class PersistentTileDataManager(object):
     def __init__(self, tile):
         self.tile = tile
         self.tileType = queryUtility(ITileType, name=tile.__name__)
-        self.annotations = IAnnotations(self.tile.context)
+        
+        self.context = getMultiAdapter((tile.context, tile.request, tile), ITileDataContext)
+        self.annotations = IAnnotations(self.context)
+        
         self.key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.id,)
         
     def get(self):
@@ -80,6 +84,11 @@ class PersistentTileDataManager(object):
     def delete(self):
         if self.key in self.annotations:
             del self.annotations[self.key]
+
+@implementer(ITileDataContext)
+@adapter(Interface, Interface, ITile)
+def defaultTileDataContext(context, request, tile):
+    return tile.context
 
 # Encoding
 

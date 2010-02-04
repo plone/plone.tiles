@@ -119,3 +119,16 @@ class ITileDataManager(Interface):
     def delete():
         """Delete the data record for this tile.
         """
+
+class ITileDataContext(Interface):
+    """Indirection to help determine where persistent tiles store their data.
+    
+    This is a multi-adapter on ``(context, request, tile)``. The context and
+    request are the same as ``tile.context`` and ``tile.request``, but these
+    discriminators allow the data context to be customised depending on
+    the context or request.
+    
+    The default implementation simply returns ``tile.context``. That must
+    be annotatable for the default persistent tile ``ITileDataManager``
+    to work.
+    """

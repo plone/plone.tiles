@@ -6,6 +6,7 @@
     <!-- Data manager -->
     <adapter factory=".data.TransientTileDataManager" />
     <adapter factory=".data.PersistentTileDataManager" />
+    <adapter factory=".data.defaultTileDataContext" />
     
     <!-- Absolute URL -->
     <view
