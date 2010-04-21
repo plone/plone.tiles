@@ -128,7 +128,7 @@ only, you can do e.g.::
             />
 
 If you want to override an existing tile, e.g. with a new layer or more
-specific context, you can omit the tile metadata::
+specific context, you *must* omit the tile metadata::
 
         <plone:tile
             name="sample.persistenttile"
