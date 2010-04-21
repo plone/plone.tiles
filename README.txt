@@ -128,7 +128,10 @@ only, you can do e.g.::
             />
 
 If you want to override an existing tile, e.g. with a new layer or more
-specific context, you *must* omit the tile metadata::
+specific context, you *must* omit the tile metadata (title, description, add
+permission or schema). If you include any metadata you will get a conflict
+error on Zope startup. This example shows how to use a different template
+for our tile::
 
         <plone:tile
             name="sample.persistenttile"
