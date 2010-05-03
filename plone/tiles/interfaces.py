@@ -104,7 +104,7 @@ class IESIRendered(Interface):
 class ITileDataManager(Interface):
     """Support for getting and setting tile data dicts.
     
-    This is an adapter on (context, tile). The tile's id must be set.
+    This is an adapter on a tile. The tile's id must be set.
     """
     
     def get():
