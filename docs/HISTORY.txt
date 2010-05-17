@@ -1,8 +1,14 @@
 Changelog
 =========
 
-1.0a1 - Unreleased
+1.0a2 (unreleased)
 ------------------
 
-* Initial release
+* ...
+
+
+1.0a1 (2010-05-17)
+------------------
+
+* Initial release.
 
