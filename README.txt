@@ -28,22 +28,22 @@ based on the tile id.
 
 There are three interfaces describing tiles in this package:
 
-  * `IBasicTile` is the low-level interface for tiles. It extends
-    `IBrowserView` to describe the semantics of the `__name__` and  `id`
-    attributes.
-  * `ITile` describes a tile that can be configured with some data. The data
-    is accessible via a dict called `data`. The default implementation of this
-    interface, `plone.tiles.Tile`, will use the schema of the tile type and
-    the query string (`self.request.form`) to construct that dictionary. This
-    interface also describes an attribute `url`, which gives the canonical
-    tile URL, including the id sub-path and any query string parameters. (Note
-    that tiles also correctly implement `IAbsoluteURL`.)
-  * `IPersistentTile` describes a tile that stores its configuration in
-    object annotations, and is needed when configuration values cannot be
-    encoded into a query string. The default implementation is in
-    `plone.tiles.PersistentTile`. To make it possible to have several tiles
-    of a given type on the same layout, the annotations are keyed by the
-    tile `__name__`.
+* `IBasicTile` is the low-level interface for tiles. It extends
+  `IBrowserView` to describe the semantics of the `__name__` and  `id`
+  attributes.
+* `ITile` describes a tile that can be configured with some data. The data
+  is accessible via a dict called `data`. The default implementation of this
+  interface, `plone.tiles.Tile`, will use the schema of the tile type and
+  the query string (`self.request.form`) to construct that dictionary. This
+  interface also describes an attribute `url`, which gives the canonical
+  tile URL, including the id sub-path and any query string parameters. (Note
+  that tiles also correctly implement `IAbsoluteURL`.)
+* `IPersistentTile` describes a tile that stores its configuration in
+  object annotations, and is needed when configuration values cannot be
+  encoded into a query string. The default implementation is in
+  `plone.tiles.PersistentTile`. To make it possible to have several tiles
+  of a given type on the same layout, the annotations are keyed by the
+  tile `__name__`.
 
 In addition, tiles are described by `ITileType`, which contains attributes
 for the tile name, title, description, add permission and schema (if 
@@ -144,3 +144,4 @@ for our tile::
 See `tiles.txt` and `directives.txt` for more details.
 
 .. _plone.app.blocks: http://pypi.python.org/pypi/plone.app.blocks
+
