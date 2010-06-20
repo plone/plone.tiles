@@ -15,6 +15,8 @@ Encoding
 
 First, we'll create a simple schema that exercises several field types:
 
+    >>> weekdays = [u'Monday', u'Tuesday', u'Wednesday', u'Thursday',
+    ...             u'Friday', u'Saturday', u'Sunday']
     >>> class ISimple(Interface):
     ...     text_line   = schema.TextLine(title=u"Text")
     ...     ascii_line  = schema.ASCIILine(title=u"ASCII")
@@ -23,25 +25,26 @@ First, we'll create a simple schema that exercises several field types:
     ...     int         = schema.Int(title=u"Int")
     ...     float       = schema.Float(title=u"Float")
     ...     bool        = schema.Bool(title=u"Bool")
+    ...     weekday     = schema.Choice(title=u"Weekday", values=weekdays)
 
 A simple encode produces a query string:
 
-    >>> data = dict(text_line=u'A', ascii_line='B', text=u'C\nD', ascii='E\nF', int=3, float=1.2, bool=False)
+    >>> data = dict(text_line=u'A', ascii_line='B', text=u'C\nD', ascii='E\nF', int=3, float=1.2, bool=False, weekday=u'Saturday')
     >>> encode(data, ISimple)
-    'text_line=A&ascii_line=B&text%3Atext=C%0AD&ascii%3Atext=E%0AF&int%3Along=3&float%3Afloat=1.2&bool%3Aboolean='
+    'text_line=A&ascii_line=B&text%3Atext=C%0AD&ascii%3Atext=E%0AF&int%3Along=3&float%3Afloat=1.2&bool%3Aboolean=&weekday=Saturday'
 
 Notice how a boolean is encoded as an empty value. If it were true, it'd be
 encoded as 1:
 
-    >>> data = dict(text_line=u'A', ascii_line='B', text=u'C\nD', ascii='E\nF', int=3, float=1.2, bool=True)
+    >>> data = dict(text_line=u'A', ascii_line='B', text=u'C\nD', ascii='E\nF', int=3, float=1.2, bool=True, weekday=u'Saturday')
     >>> encode(data, ISimple)
-    'text_line=A&ascii_line=B&text%3Atext=C%0AD&ascii%3Atext=E%0AF&int%3Along=3&float%3Afloat=1.2&bool%3Aboolean=1'
+    'text_line=A&ascii_line=B&text%3Atext=C%0AD&ascii%3Atext=E%0AF&int%3Along=3&float%3Afloat=1.2&bool%3Aboolean=1&weekday=Saturday'
 
 If the data dictionary has values not in the interface, they are ignored:
 
-    >>> data = dict(text_line=u'A', ascii_line='B', text=u'C\nD', ascii='E\nF', int=3, float=1.2, bool=True, foo=123)
+    >>> data = dict(text_line=u'A', ascii_line='B', text=u'C\nD', ascii='E\nF', int=3, float=1.2, bool=True, weekday=u'Saturday', foo=123)
     >>> encode(data, ISimple)
-    'text_line=A&ascii_line=B&text%3Atext=C%0AD&ascii%3Atext=E%0AF&int%3Along=3&float%3Afloat=1.2&bool%3Aboolean=1'
+    'text_line=A&ascii_line=B&text%3Atext=C%0AD&ascii%3Atext=E%0AF&int%3Along=3&float%3Afloat=1.2&bool%3Aboolean=1&weekday=Saturday'
 
 If the data dictionary omits some fields, they are ignored.
 
@@ -98,16 +101,16 @@ and ASCII. ``zope.schema`` is picky about that sort of thing.
 Let's use a data dictionary that may have come back from a query string like
 the first example above.
 
-    >>> data = dict(text_line=u'A', ascii_line=u'B', text=u'C\nD', ascii=u'E\nF', int=3, float=1.2, bool=False)
+    >>> data = dict(text_line=u'A', ascii_line=u'B', text=u'C\nD', ascii=u'E\nF', int=3, float=1.2, bool=False, weekday=u'Saturday')
     >>> sorted(decode(data, ISimple).items())
-    [('ascii', 'E\nF'), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('text', u'C\nD'), ('text_line', u'A')]
+    [('ascii', 'E\nF'), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('text', u'C\nD'), ('text_line', u'A'), ('weekday', u'Saturday')]
 
 If any values are missing from the input dictionary, they will default to
 ``missing_value``.
 
-    >>> data = dict(text_line=u'A', ascii_line=u'B', int=3, float=1.2, bool=False)
+    >>> data = dict(text_line=u'A', ascii_line=u'B', int=3, float=1.2, bool=False, weekday=u'Saturday')
     >>> sorted(decode(data, ISimple).items())
-    [('ascii', None), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('text', u'Missing'), ('text_line', u'A')]
+    [('ascii', None), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('text', u'Missing'), ('text_line', u'A'), ('weekday', u'Saturday')]
 
 If you pass ``missing=False``, the values are ignored instead.
 

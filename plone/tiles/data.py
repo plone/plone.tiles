@@ -232,7 +232,7 @@ def decode(data, schema, missing=True):
             
             value = converted
         
-        if not isinstance(value, field._type):
+        if field._type is not None and not isinstance(value, field._type):
             value = field_type(value)
 
         decoded[name] = value
