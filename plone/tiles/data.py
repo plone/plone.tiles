@@ -8,6 +8,7 @@ from zope.schema import getFieldsInOrder, getFields
 from zope.schema.interfaces import ISequence
 
 from zope import schema
+from z3c.relationfield import RelationChoice
 
 from zope.annotation.interfaces import IAnnotations
 
@@ -110,6 +111,7 @@ type_to_converter = {
     # Choice - assumes the value of the vocabulary is a string!
     
     schema.Choice           : '',
+    RelationChoice          : '',
     
     # Text types - may allow newlines
     
