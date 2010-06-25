@@ -38,7 +38,6 @@ setup(name='plone.tiles',
           'ZODB3',
           'zope.app.publisher',
           'zope.testing',
-          'z3c.relationfield',
       ],
       entry_points="""
       """,

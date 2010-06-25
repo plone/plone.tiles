@@ -8,7 +8,11 @@ from zope.schema import getFieldsInOrder, getFields
 from zope.schema.interfaces import ISequence
 
 from zope import schema
-from z3c.relationfield import RelationChoice
+
+try:
+    from z3c.relationfield import RelationChoice
+except ImportError:
+    RelationChoice = None
 
 from zope.annotation.interfaces import IAnnotations
 
@@ -111,7 +115,6 @@ type_to_converter = {
     # Choice - assumes the value of the vocabulary is a string!
     
     schema.Choice           : '',
-    RelationChoice          : '',
     
     # Text types - may allow newlines
     
@@ -134,6 +137,8 @@ type_to_converter = {
     schema.List             : 'list',
     
 }
+if RelationChoice is not None:
+    type_to_converter.update({RelationChoice: ''})
 
 def encode(data, schema, ignore=()):
     """Given a data dictionary with key/value pairs and schema, return an
