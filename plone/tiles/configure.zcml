@@ -57,5 +57,66 @@
         class=".esi.ESIBody"
         permission="zope.Public"
         />
-        
+    
+    <!-- Field Type converters -->
+    <adapter for="zope.schema.interfaces.IBytesLine"
+             factory="plone.tiles.fieldtypeconverters.NoConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IASCIILine"
+             factory="plone.tiles.fieldtypeconverters.NoConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.ITextLine"
+             factory="plone.tiles.fieldtypeconverters.NoConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IURI"
+             factory="plone.tiles.fieldtypeconverters.NoConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IId"
+             factory="plone.tiles.fieldtypeconverters.NoConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IDottedName"
+             factory="plone.tiles.fieldtypeconverters.NoConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IChoice"
+             factory="plone.tiles.fieldtypeconverters.NoConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IBytes"
+             factory="plone.tiles.fieldtypeconverters.TextConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IText"
+             factory="plone.tiles.fieldtypeconverters.TextConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IASCII"
+             factory="plone.tiles.fieldtypeconverters.TextConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IInt"
+             factory="plone.tiles.fieldtypeconverters.LongConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IFloat"
+             factory="plone.tiles.fieldtypeconverters.FloatConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IBool"
+             factory="plone.tiles.fieldtypeconverters.BoolConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.ITuple"
+             factory="plone.tiles.fieldtypeconverters.TupleConverter"
+             />
+
+    <adapter for="zope.schema.interfaces.IList"
+             factory="plone.tiles.fieldtypeconverters.ListConverter"
+             />
+    
 </configure>

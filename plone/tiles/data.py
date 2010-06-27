@@ -3,16 +3,10 @@ import urllib
 
 from zope.interface import implements, implementer, Interface
 from zope.component import adapts, adapter, queryUtility, getMultiAdapter
+from zope.component.interfaces import ComponentLookupError
 
 from zope.schema import getFieldsInOrder, getFields
 from zope.schema.interfaces import ISequence
-
-from zope import schema
-
-try:
-    from z3c.relationfield import RelationChoice
-except ImportError:
-    RelationChoice = None
 
 from zope.annotation.interfaces import IAnnotations
 
@@ -21,6 +15,7 @@ from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITileDataManager
 from plone.tiles.interfaces import ITileDataContext
+from plone.tiles.interfaces import IFieldTypeConverter
 
 from persistent.dict import PersistentDict
 
@@ -97,49 +92,6 @@ def defaultTileDataContext(context, request, tile):
 
 # Encoding
 
-# Types not in this dict or explicitly set to None are not supported and will
-# result in a ValueError.
-
-type_to_converter = {
-    
-    # Strings - not type converted
-
-    schema.BytesLine        : '',
-    schema.ASCIILine        : '',
-    schema.TextLine         : '',
-    
-    schema.URI              : '',
-    schema.Id               : '',
-    schema.DottedName       : '',
-    
-    # Choice - assumes the value of the vocabulary is a string!
-    
-    schema.Choice           : '',
-    
-    # Text types - may allow newlines
-    
-    schema.Bytes            : 'text',
-    schema.Text             : 'text',
-    schema.ASCII            : 'text',
-
-    # Numeric types
-
-    schema.Int              : 'long',
-    schema.Float            : 'float',
-
-    # Bools - note that False is encoded as ''
-    
-    schema.Bool             : 'boolean',
-
-    # Sequence types
-    
-    schema.Tuple            : 'tuple',
-    schema.List             : 'list',
-    
-}
-if RelationChoice is not None:
-    type_to_converter.update({RelationChoice: ''})
-
 def encode(data, schema, ignore=()):
     """Given a data dictionary with key/value pairs and schema, return an
     encoded query string. This is similar to urllib.urlencode(), but field
@@ -147,7 +99,8 @@ def encode(data, schema, ignore=()):
     field will be encoded as fieldname:int=123. Fields not found in the data
     dict will be ignored, and items in the dict not in the schema will also
     be ignored. Additional fields to ignore can be passed with the 'ignore'
-    parameter. If any fields cannot be converted, a KeyError will be raised.
+    parameter. If any fields cannot be converted, a ComponentLookupError
+    will be raised.
     """
     
     encode = []
@@ -156,26 +109,27 @@ def encode(data, schema, ignore=()):
         if name in ignore or name not in data:
             continue
         
-        converter = type_to_converter.get(field.__class__, None)
-        if converter is None:
-            raise KeyError(u"Cannot URL encode %s of type %s" % (name, field.__class__,))
+        try:
+            converter = IFieldTypeConverter(field)
+        except ComponentLookupError:
+            raise ComponentLookupError(u"Cannot URL encode %s of type %s" % (name, field.__class__,))
         
         encoded_name = name
-        if converter:
-            encoded_name = "%s:%s" % (name, converter,)
+        if converter.token:
+            encoded_name = "%s:%s" % (name, converter.token,)
         
         value = data[name]
         if value is None:
             continue
         
         if ISequence.providedBy(field):
-            value_type_converter = type_to_converter.get(field.value_type.__class__, None)
-            if value_type_converter is None:
-                raise KeyError(u"Cannot URL encode value type for %s of type %s : %s" % \
-                                (name, field.__class__, field.value_type.__class__,))
-            
-            if value_type_converter:
-                encoded_name = "%s:%s:%s" % (name, value_type_converter, converter,)
+            try:
+                value_type_converter = IFieldTypeConverter(field)
+            except ComponentLookupError:
+                raise ComponentLookupError(u"Cannot URL encode %s of type %s" % (name, field.value_type.__class__,))
+
+            if value_type_converter.token:
+                encoded_name = "%s:%s:%s" % (name, value_type_converter, converter.token,)
             
             for item in value:
                 
