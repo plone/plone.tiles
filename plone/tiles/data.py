@@ -122,12 +122,12 @@ def encode(data, schema, ignore=()):
             continue
         
         if ISequence.providedBy(field):
-            value_type_converter = IFieldTypeConverter(field, None)
+            value_type_converter = IFieldTypeConverter(field.value_type, None)
             if value_type_converter is None:
                 raise ComponentLookupError(u"Cannot URL encode %s of type %s" % (name, field.value_type.__class__,))
 
             if value_type_converter.token:
-                encoded_name = "%s:%s:%s" % (name, value_type_converter, converter.token,)
+                encoded_name = "%s:%s:%s" % (name, value_type_converter.token, converter.token,)
             
             for item in value:
                 
