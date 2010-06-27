@@ -1,7 +1,9 @@
-import unittest
+import unittest2 as unittest
+import doctest
+from plone.testing import Layer, layered
+from plone.testing import zca, z2
 
-import zope.testing.doctest
-import zope.component.testing
+from zope.configuration import xmlconfig
 
 # For directive tests
 
@@ -26,19 +28,19 @@ class DummyTile(Tile):
 class DummyTileWithTemplate(PersistentTile):
     pass
 
+class PloneTiles(Layer):
+    defaultBases = (z2.INTEGRATION_TESTING,)
+
+    def setUp(self):
+        import plone.tiles
+        self['configurationContext'] = context = zca.stackConfigurationContext(self.get('configurationContext'))
+        xmlconfig.file('configure.zcml', plone.tiles, context=context)
+
+PLONE_TILES = PloneTiles()
+
 def test_suite():
-    return unittest.TestSuite((
-        
-        zope.testing.doctest.DocFileSuite('tiles.txt',
-                     tearDown=zope.component.testing.tearDown),
-
-        zope.testing.doctest.DocFileSuite('directives.txt',
-                     tearDown=zope.component.testing.tearDown),
-
-        zope.testing.doctest.DocFileSuite('data.txt',
-                     tearDown=zope.component.testing.tearDown),
-        
-        zope.testing.doctest.DocFileSuite('esi.txt',
-                     tearDown=zope.component.testing.tearDown),
-
+    return unittest.TestSuite((        
+        layered(doctest.DocFileSuite('tiles.txt', 'directives.txt',
+                                     'data.txt', 'esi.txt'),
+                layer=PLONE_TILES),
         ))
