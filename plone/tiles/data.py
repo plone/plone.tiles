@@ -109,9 +109,8 @@ def encode(data, schema, ignore=()):
         if name in ignore or name not in data:
             continue
         
-        try:
-            converter = IFieldTypeConverter(field)
-        except ComponentLookupError:
+        converter = IFieldTypeConverter(field, None)
+        if converter is None:
             raise ComponentLookupError(u"Cannot URL encode %s of type %s" % (name, field.__class__,))
         
         encoded_name = name
@@ -123,9 +122,8 @@ def encode(data, schema, ignore=()):
             continue
         
         if ISequence.providedBy(field):
-            try:
-                value_type_converter = IFieldTypeConverter(field)
-            except ComponentLookupError:
+            value_type_converter = IFieldTypeConverter(field, None)
+            if value_type_converter is None:
                 raise ComponentLookupError(u"Cannot URL encode %s of type %s" % (name, field.value_type.__class__,))
 
             if value_type_converter.token:
