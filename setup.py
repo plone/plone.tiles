@@ -37,8 +37,12 @@ setup(name='plone.tiles',
           'zope.configuration',
           'ZODB3',
           'zope.app.publisher',
-          'zope.testing',
       ],
+      extras_require = {
+          'test' : [
+              'plone.testing [zca, z2]',
+              ]
+          },
       entry_points="""
       """,
       )

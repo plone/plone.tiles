@@ -132,3 +132,12 @@ class ITileDataContext(Interface):
     be annotatable for the default persistent tile ``ITileDataManager``
     to work.
     """
+
+class IFieldTypeConverter(Interface):
+    """Field type converter for querystring parameters for Zope."""
+
+    token = zope.schema.TextLine(title=u"Token",
+                                 description=u"""
+                                 String parameter appended to the field id
+                                 for the Zope Publisher to cast it.
+                                 """)

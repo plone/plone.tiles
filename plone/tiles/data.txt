@@ -68,8 +68,8 @@ Lists and tuples may also be encoded. The value type will be encoded as well.
     >>> encode(data, ISequences)
     'list%3Alist=a&list%3Alist=b&tuple%3Along%3Atuple=1&tuple%3Along%3Atuple=2&tuple%3Along%3Atuple=3'
 
-Unsupported fields will raise a KeyError. This also applies to the value_type
-of a list or tuple:
+Unsupported fields will raise a ComponentLookupError. This also
+applies to the value_type of a list or tuple:
 
     >>> class IUnsupported(Interface):
     ...     decimal     = schema.Decimal(title=u"Decimal")
@@ -81,12 +81,12 @@ of a list or tuple:
     >>> encode(data, IUnsupported) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    KeyError: u"Cannot URL encode decimal of type <class 'zope.schema._field.Decimal'>"
+    ComponentLookupError: Cannot URL encode decimal of type <class 'zope.schema._field.Decimal'>
     
     >>> encode(data, IUnsupported, ignore=('decimal',)) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    KeyError: u"Cannot URL encode value type for list of type <class 'zope.schema._field.List'> : <class 'zope.schema._field.Decimal'>"
+    ComponentLookupError: Cannot URL encode value type for list of type <class 'zope.schema._field.List'> : <class 'zope.schema._field.Decimal'>
     
     >>> encode(data, IUnsupported, ignore=('decimal', 'list',))
     'bytes_line=abc'
