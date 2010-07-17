@@ -29,7 +29,7 @@ class DummyTileWithTemplate(PersistentTile):
     pass
 
 class PloneTiles(Layer):
-    defaultBases = (z2.INTEGRATION_TESTING,)
+    defaultBases = (z2.STARTUP,)
 
     def setUp(self):
         import plone.tiles
@@ -39,11 +39,13 @@ class PloneTiles(Layer):
     def tearDown(self):
         del self['configurationContext']
 
-PLONE_TILES = PloneTiles()
+PLONE_TILES_FIXTURE = PloneTiles()
+
+PLONE_TILES_INTEGRATION_TESTING = z2.IntegrationTesting(bases=(PLONE_TILES_FIXTURE,), name="PloneTiles:Functional")
 
 def test_suite():
     return unittest.TestSuite((        
         layered(doctest.DocFileSuite('tiles.txt', 'directives.txt',
                                      'data.txt', 'esi.txt'),
-                layer=PLONE_TILES),
+                layer=PLONE_TILES_INTEGRATION_TESTING),
         ))
