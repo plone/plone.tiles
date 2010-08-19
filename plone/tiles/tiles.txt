@@ -277,6 +277,28 @@ the tile instance:
 
 Notice also how the data has been properly decoded according to the schema.
 
+Transient tiles will get their data directly from the request
+parameters but, if a `_tiledata` JSON-encoded parameter is present in
+the request, this one will be used instead::
+
+    >>> try:
+    ...     import json
+    ... except ImportError:
+    ...     import simplejson as json
+
+    >>> request = TestRequest(form={
+    ...     'title': u'My title', 'count': 5, 'cssClass': u'foo',
+    ...     '_tiledata': json.dumps({'title': u'Your title', 'count': 6, 'cssClass': u'bar'})
+    ...     })
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> tile = tile['tile1']
+
+    >>> sorted(tile.data.items())
+    [('count', 6), ('cssClass', 'bar'), ('title', u'Your title')]
+
+This way we can use transient tiles safely in contexts where the tile
+data can be confused with raw data coming from a form, e.g. in an edit form.
+
 The tile data manager
 ---------------------
 
@@ -305,10 +327,11 @@ The data can also be deleted:
     >>> sorted(dataManager.get().items())
     [('count', None), ('cssClass', None), ('title', None)]
 
-Note that in the case of a transient, all we are doing is modifying the
-``form`` dictionary of the request. The data needs to be encoded into the
-query string, either using the ``encode()`` method or via the tile's
-``IAbsoluteURL`` adapter (see below for details).
+Note that in the case of a transient tile, all we are doing is
+modifying the ``form`` dictionary of the request (or the `_tiledata`
+parameter of this dictionary, if present). The data needs to be
+encoded into the query string, either using the ``encode()`` method or
+via the tile's ``IAbsoluteURL`` adapter (see below for details).
 
 For persistent tiles, the data manager is a bit more interesting.
 
@@ -471,6 +494,17 @@ For convenience, the tile URL is also available under the ``url`` property:
 
     >>> transientTile.url
     'http://example.com/context/@@sample.tile/tile1?title=My+title&cssClass=foo&count%3Along=5'
+
+The tile absolute URL structure remains unaltered if the data is
+coming from a `_tiledata` JSON-encoded parameter instead of from the request
+parameters directly::
+
+    >>> request = TestRequest(form={'_tiledata': json.dumps({'title': u'Your title', 'count': 6, 'cssClass': u'bar'})})
+    >>> transientTile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> transientTile = transientTile['tile1']
+    
+    >>> absoluteURL(transientTile, request)
+    'http://example.com/context/@@sample.tile/tile1?title=Your+title&cssClass=bar&count%3Along=6'
 
 For persistent tiles, the are no data parameters:
 

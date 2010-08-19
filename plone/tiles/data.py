@@ -19,6 +19,12 @@ from plone.tiles.interfaces import IFieldTypeConverter
 
 from persistent.dict import PersistentDict
 
+try:
+    import json
+except:
+    import simplejson as json
+
+
 ANNOTATIONS_KEY_PREFIX = u'plone.tiles.data'
 LOGGER = logging.getLogger('plone.tiles')
 
@@ -33,25 +39,34 @@ class TransientTileDataManager(object):
     def __init__(self, tile):
         self.tile = tile
         self.tileType = queryUtility(ITileType, name=tile.__name__)
-    
+
+        # try to use a '_tiledata' parameter in the request, falling
+        # back to the request.form object itself if not found
+        request = self.tile.request
+
+        if '_tiledata' in request.form:
+            self.data = json.loads(request.form['_tiledata'])
+        else:    
+            self.data = request.form
+
     def get(self):
         # If we don't have a schema, just take the request
         if self.tileType is None or self.tileType.schema is None:
-            return self.tile.request.form.copy()
+            return self.data.copy()
     
         # Try to decode the form data properly if we can
         try:
-            return decode(self.tile.request.form, self.tileType.schema, missing=True)
+            return decode(self.data, self.tileType.schema, missing=True)
         except (ValueError, UnicodeDecodeError,):
             LOGGER.exception(u"Could not convert form data to schema")
-            return self.tile.request.form.copy()
+            return self.data.copy()
     
     def set(self, data):
-        self.tile.request.form.clear()
-        self.tile.request.form.update(data)
+        self.data.clear()
+        self.data.update(data)
     
     def delete(self):
-        self.tile.request.form.clear()
+        self.data.clear()
 
 class PersistentTileDataManager(object):
     """A data reader for persistent tiles operating on annotatable contexts.
