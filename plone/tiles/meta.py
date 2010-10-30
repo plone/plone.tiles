@@ -1,7 +1,8 @@
 from zope.interface import Interface
 
 from zope import schema
-from zope.configuration.fields import GlobalObject, GlobalInterface, Path
+from zope.configuration.fields import (
+    GlobalObject, GlobalInterface, MessageID, Path)
 from zope.security.zcml import Permission
 
 from zope.configuration.exceptions import ConfigurationError
@@ -28,13 +29,13 @@ class ITileDirective(Interface):
             description=u"A unique, dotted name for the tile",
         )
     
-    title = schema.TextLine(
+    title = MessageID(
             title=u"Title",
             description=u"A user friendly title, used when configuring the tile",
             required=False
         )
 
-    description = schema.Text(
+    description = MessageID(
             title=u"Description",
             description=u"A longer summary of the tile's purpose and function",
             required=False
