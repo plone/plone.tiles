@@ -4,11 +4,11 @@ Changelog
 1.0a2 (unreleased)
 ------------------
 
-* ...
+- Internationalized title and description of the tile directive.
+  [vincentfretin]
 
 
 1.0a1 (2010-05-17)
 ------------------
 
-* Initial release.
-
+- Initial release.
