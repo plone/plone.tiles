@@ -4,6 +4,9 @@ import zope.schema
 from zope.interface.interfaces import IInterface
 from zope.publisher.interfaces.browser import IBrowserView
 
+ESI_HEADER = 'X-ESI-Enabled'
+ESI_HEADER_KEY = 'HTTP_' + ESI_HEADER.replace('-', '_').upper()
+
 class ITileType(Interface):
     """A utility that describes a type of tile 
     """
