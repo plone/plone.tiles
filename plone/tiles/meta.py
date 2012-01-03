@@ -58,6 +58,18 @@ class ITileDirective(Interface):
         required=False,
     )
 
+    edit_permission = Permission(
+        title=u"Edit permission",
+        description=u"Name of the permission required to edit this tile",
+        required=False,
+    )
+
+    delete_permission = Permission(
+        title=u"Delete permission",
+        description=u"Name of the permission required to delete this tile",
+        required=False,
+    )
+
     schema = GlobalInterface(
         title=u"Configuration schema for the tile",
         description=u"This is used to create standard add/edit forms",
@@ -94,8 +106,9 @@ class ITileDirective(Interface):
 
 
 def tile(_context, name, title=None, description=None, icon=None,
-         add_permission=None, schema=None, for_=None, layer=None, class_=None,
-         template=None, permission=None):
+         add_permission=None, edit_permission=None, delete_permission=None,
+         schema=None, for_=None, layer=None, class_=None, template=None,
+         permission=None):
     """Implements the <plone:tile /> directive
     """
 
@@ -106,8 +119,14 @@ def tile(_context, name, title=None, description=None, icon=None,
                 u"When configuring a new type of tile, 'title' and "
                 u"'add_permission' are required")
 
-        type_ = TileType(name, title, add_permission, description,
-                         icon, schema)
+        if delete_permission is None:
+            delete_permission = add_permission
+
+        if edit_permission is None:
+            edit_permission = 'cmf.ModifyPortalContent'
+
+        type_ = TileType(name, title, add_permission, edit_permission,
+                         delete_permission, icon, description, schema)
 
         utility(_context, provides=ITileType, component=type_, name=name)
 
