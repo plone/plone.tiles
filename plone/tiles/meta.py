@@ -123,7 +123,7 @@ def tile(_context, name, title=None, description=None, icon=None,
             delete_permission = add_permission
 
         if edit_permission is None:
-            edit_permission = 'cmf.ModifyPortalContent'
+            edit_permission = add_permission
 
         type_ = TileType(name, title, add_permission, edit_permission,
                          delete_permission, icon, description, schema)
