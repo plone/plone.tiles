@@ -12,6 +12,9 @@ Changelog
 - Internationalized title and description of the tile directive.
   [vincentfretin]
 
+- Use a  json-encoded parameter in transient tiles as first option.
+  [dukebody]
+
 - Use adapters for the Zope Publisher type casting
   [dukebody]
 
