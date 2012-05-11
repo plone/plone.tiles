@@ -46,7 +46,7 @@ There are three interfaces describing tiles in this package:
   tile `__name__`.
 
 In addition, tiles are described by `ITileType`, which contains attributes
-for the tile name, title, description, add permission and schema (if 
+for the tile name, title, description, add permission and schema (if
 required).
 
 A properly configured tile, then, consists of a browser view providing
@@ -66,9 +66,9 @@ Creating a simple tile
 The most basic tile looks like this::
 
     from plone.tiles import Tile
-    
+
     class MyTile(Tile):
-        
+
         def __call__(self):
             return u"<html><body><p>Hello world</p></body></html>"
 
@@ -79,7 +79,7 @@ be interpolated into the page output according to the following rules:
   document's ``<head />`` section.
 * The contents of the tile's ``<body />`` section will replace the tile
   placeholder as indicated by the tile link.
-  
+
 Note that this package does *not* provide these interpolations. For a Plone
 implementation of the interpolation algorithm, see `plone.app.blocks`_
 
@@ -90,23 +90,23 @@ transient or persistent tile.
 To register the tile, use ZCML like this::
 
     <configure xmlns:plone="http://namespaces.plone.org/plone">
-    
+
         <plone:tile
             name="sample.tile"
-            
+
             title="A title for the tile"
             description="My tile's description"
             add_permission="my.add.Permission"
-            schema=".interfaces.IMyTileSchema" 
-            
+            schema=".interfaces.IMyTileSchema"
+
             class=".mytile.MyTile"
             permission="zope.Public"
             for="*"
             layer="*"
             />
-    
+
     </configure>
-    
+
 The first five attributes describe the tile by configuring an appropriate
 `ITileType` directive. The rest mimics the `<browser:page />` directive,
 so you can specify a `template` file and omit the `class`, or use both a
@@ -120,7 +120,7 @@ only, you can do e.g.::
             title="A title for the tile"
             description="My tile's description"
             add_permission="my.add.Permission"
-            schema=".interfaces.IMyTileSchema" 
+            schema=".interfaces.IMyTileSchema"
             class="plone.tiles.PersistentTile"
             template="mytile.pt"
             permission="zope.Public"
@@ -141,7 +141,7 @@ for our tile::
             layer=".interfaces.IMyLayer"
             />
 
-See `tiles.txt` and `directives.txt` for more details.
+See `tiles.rst` and `directives.rst` for more details.
 
 .. _plone.app.blocks: http://pypi.python.org/pypi/plone.app.blocks
 
