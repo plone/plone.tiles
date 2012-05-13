@@ -174,7 +174,7 @@ def decode(data, schema, missing=True):
     are not sufficiently detailed to always return the exact type expected
     by a field, e.g. resulting in ascii/unicode discrepancies.
     
-    If missing is True, fields that are in the schema but not the field will
+    If missing is True, fields that are in the schema but not in the data will
     be set to field.missing_value. Otherwise, they are ignored.
     """
     
