@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.0 (unreleased)
-------------------
+1.0 (2012-05-14)
+----------------
 
 - Refactor ESI support. To use the ``ESITile`` and ``ESIPersistentTile``
   base classes, you should either use a template assigned via ZCML or
