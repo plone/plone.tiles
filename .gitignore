@@ -4,3 +4,4 @@
 
 plone.tiles.egg-info/
 build/
+dist/
