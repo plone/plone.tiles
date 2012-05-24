@@ -5,7 +5,7 @@ Tiles are a form of view component used to compose pages. Think of a tile as
 a view describing one part of a page, that can be configured with some data
 described by a schema and inserted into a layout via a dedicated GUI.
 
-Like a browser view, a tile can be traversed to a published on its own. The
+Like a browser view, a tile can be traversed to and published on its own. The
 tile should then return a full HTML page, including a <head /> with any
 required resources, and a <body /> with the visible part of the tile. This
 will then be merged into the page, using a system such as
@@ -16,7 +16,7 @@ to a schema with data either passed on the query string (transient tiles) or
 retrieved from annotations (persistent tiles).
 
 Note that there is no direct UI support in this package, so the forms that
-allow users to construct and edit tiles must lives elsewhere. You may be
+allow users to construct and edit tiles must live elsewhere. You may be
 interested in ``plone.app.tiles`` and ``plone.app.deco`` for that purpose.
 
 To use the package, you should first load its ZCML configuration.
