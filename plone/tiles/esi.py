@@ -19,6 +19,7 @@ ESI_TEMPLATE = u"""\
 </html>
 """
 
+
 def substituteESILinks(rendered):
     """Turn ESI links like <a class="_esi_placeholder" rel="esi" href="..." />
     into <esi:include /> links.
@@ -35,10 +36,10 @@ def substituteESILinks(rendered):
 
 class ConditionalESIRendering(object):
     head = False
-    
+
     def render(self):
         raise NotImplemented(u"Override render() or set a class variable 'index' to point to a view page template file")
-    
+
     def __call__(self, *args, **kwargs):
         if self.request.getHeader(ESI_HEADER, 'false').lower() == 'true':
             mode = 'esi-body'
@@ -51,72 +52,76 @@ class ConditionalESIRendering(object):
                 }
         if hasattr(self, 'index'):
             return self.index(*args, **kwargs)
-        
+
         return self.render()
+
 
 # Convenience base classes
 
 class ESITile(ConditionalESIRendering, Tile):
     """Convenience class for tiles using ESI rendering.
-    
+
     Set ``head`` to True if this tile renders <head /> content. The
     default is to render <body /> content.
     """
-    
+
     implements(IESIRendered)
     head = False
 
+
 class ESIPersistentTile(ConditionalESIRendering, PersistentTile):
     """Convenience class for tiles using ESI rendering.
-    
+
     Set ``head`` to True if this tile renders <head /> content. The
     default is to render <body /> content.
     """
-    
+
     implements(IESIRendered)
     head = False
+
 
 # ESI views
 
 class ESIHead(object):
     """Render the head portion of a tile independently.
     """
-    
+
     def __init__(self, context, request):
         self.tile = context
         self.request = request
-    
+
     def __call__(self):
         """Return the children of the <head> tag as a fragment.
         """
-        
+
         if self.request.getHeader(ESI_HEADER):
             del self.request.environ[ESI_HEADER_KEY]
-        
-        document = self.tile() # render the tile
-        
+
+        document = self.tile()  # render the tile
+
         match = HEAD_CHILDREN.search(document)
         if not match:
             return document
         return match.group(1).strip()
 
+
 class ESIBody(object):
     """Render the head portion of a tile independently.
     """
-    
+
     def __init__(self, context, request):
         self.tile = context
         self.request = request
-    
+
     def __call__(self):
         """Return the children of the <head> tag as a fragment.
         """
-        
+
         if self.request.getHeader(ESI_HEADER):
             del self.request.environ[ESI_HEADER_KEY]
-        
-        document = self.tile() # render the tile
-        
+
+        document = self.tile()  # render the tile
+
         match = BODY_CHILDREN.search(document)
         if not match:
             return document

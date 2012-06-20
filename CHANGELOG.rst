@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.1 (unreleased)
+----------------
+
+- PEP 8/Pyflakes (ignoring E121, E123, E126, E127 and E501).
+  [hvelarde]
+
 1.0 (2012-05-14)
 ----------------
 

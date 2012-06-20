@@ -12,21 +12,27 @@ from zope import schema
 
 from plone.tiles import Tile, PersistentTile
 
+
 class IDummySchema(Interface):
     foo = schema.TextLine(title=u"Foo")
+
 
 class IDummyContext(Interface):
     pass
 
+
 class IDummyLayer(Interface):
     pass
+
 
 class DummyTile(Tile):
     def __call__(self):
         return u"dummy"
 
+
 class DummyTileWithTemplate(PersistentTile):
     pass
+
 
 class PloneTiles(Layer):
     defaultBases = (z2.STARTUP,)
@@ -43,8 +49,9 @@ PLONE_TILES_FIXTURE = PloneTiles()
 
 PLONE_TILES_INTEGRATION_TESTING = z2.IntegrationTesting(bases=(PLONE_TILES_FIXTURE,), name="PloneTiles:Functional")
 
+
 def test_suite():
-    return unittest.TestSuite((        
+    return unittest.TestSuite((
         layered(doctest.DocFileSuite('tiles.rst', 'directives.rst',
                                      'data.rst', 'esi.rst'),
                 layer=PLONE_TILES_INTEGRATION_TESTING),
