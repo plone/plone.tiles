@@ -4,6 +4,9 @@ Changelog
 1.1 (unreleased)
 ----------------
 
+- X-Tile-Uid header is passed on tile view containing tile's id.
+  [garbas]
+
 - PEP 8/Pyflakes (ignoring E121, E123, E126, E127 and E501).
   [hvelarde]
 
