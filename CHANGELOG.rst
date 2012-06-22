@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1 (unreleased)
+1.1 (2012-06-22)
 ----------------
 
 - X-Tile-Uid header is passed on tile view containing tile's id.
