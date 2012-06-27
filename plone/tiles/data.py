@@ -190,6 +190,8 @@ def decode(data, schema, missing=True):
             continue
 
         value = data[name]
+        if value is None:
+            continue
 
         field_type = field._type
         if isinstance(field_type, (tuple, list,)):
