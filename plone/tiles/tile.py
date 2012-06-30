@@ -74,7 +74,8 @@ class Tile(BrowserView):
 
     def __call__(self, *args, **kwargs):
         if not hasattr(self, 'index'):
-            raise NotImplemented(u"Override __call__ or set a class variable 'index' to point to a view page template file")
+            raise NotImplemented(u"Override __call__ or set a class " + \
+                    "variable 'index' to point to a view page template file")
         if self.id is not None:
             self.request.response.setHeader('X-Tile-Url', self.url)
         return self.index(*args, **kwargs)
