@@ -89,7 +89,7 @@ class Tile(BrowserView):
 
     @property
     def url(self):
-        return absoluteURL(self, self.request)
+        return absoluteURL(self, self.request)[len(self.context.portal_url()):]
 
 
 class PersistentTile(Tile):
