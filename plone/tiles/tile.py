@@ -77,7 +77,8 @@ class Tile(BrowserView):
             raise NotImplemented(u"Override __call__ or set a class " + \
                     "variable 'index' to point to a view page template file")
         if self.id is not None:
-            self.request.response.setHeader('X-Tile-Url', self.url)
+            self.request.response.setHeader('X-Tile-Url',
+                    self.url[len(self.context.absolute_url()) + 1:])
         return self.index(*args, **kwargs)
 
     @property
