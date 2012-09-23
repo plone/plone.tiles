@@ -1,10 +1,9 @@
-Introduction
-============
+=====================
+Introduction to Tiles
+=====================
 
-plone.tiles implements low-level, non-Plone/Zope2-specific support for
+``plone.tiles`` implements low-level, non-Plone/Zope2-specific support for
 creating "tiles" in the Deco layout system.
-
-.. contents:: Table of contents
 
 For the purposes of this package, a tile is a browser view and an associated
 utility providing some metadata about that view. The metadata includes a title
@@ -17,7 +16,7 @@ A tile is inserted into a layout as a link::
 
     <link rel="tile" target="placeholder" href="./@@sample.tile/tile1?option1=value1" />
 
-The sub-path (`tile1`` in this case) is used to set the tile `id` attribute.
+The sub-path (`tile1` in this case) is used to set the tile `id` attribute.
 This allows the tile to know its unique id, and, in the case of persistent
 tiles, look up its data. `sample.tile` is the name of the browser view that
 implements the tile. This is made available as the `__name__` attribute. Other
@@ -60,8 +59,8 @@ methods - `encode()` and `decode()` - to help turn a data dictionary into a
 query string and turn a `request.form` dict into a data dict that complies
 with a tile's schema interface.
 
-Creating a simple tile
-======================
+Creating a Simple Tile
+----------------------
 
 The most basic tile looks like this::
 
