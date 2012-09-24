@@ -18,6 +18,8 @@ class ITileType(Interface):
 
     description = zope.schema.Text(title=u"Description", required=False)
 
+    icon = zope.schema.Text(title=u"Icon", required=False)
+
     add_permission = zope.schema.Id(title=u"Zope 3 IPermission utility name")
 
     schema = zope.schema.Object(

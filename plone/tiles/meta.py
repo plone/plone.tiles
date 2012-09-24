@@ -42,6 +42,12 @@ class ITileDirective(Interface):
             required=False
         )
 
+    icon = MessageID(
+            title=u"Icon",
+            description=u"Image that represents tile purpose and function",
+            required=False
+        )
+
     add_permission = Permission(
             title=u"Add permission",
             description=u"Name of the permission required to instantiate this tile",
@@ -84,16 +90,17 @@ class ITileDirective(Interface):
 
 
 def tile(_context, name,
-            title=None, description=None, add_permission=None, schema=None,
-            for_=None, layer=None, class_=None, template=None, permission=None):
+            title=None, description=None, icon=None, add_permission=None,
+            schema=None, for_=None, layer=None, class_=None, template=None,
+            permission=None):
     """Implements the <plone:tile /> directive
     """
 
-    if title is not None or description is not None or add_permission is not None or schema is not None:
+    if title is not None or description is not None or icon is not None or add_permission is not None or schema is not None:
         if title is None or add_permission is None:
             raise ConfigurationError(u"When configuring a new type of tile, 'title' and 'add_permission' are required")
 
-        type_ = TileType(name, title, add_permission, description, schema)
+        type_ = TileType(name, title, add_permission, description, icon, schema)
 
         utility(_context, provides=ITileType, component=type_, name=name)
 
