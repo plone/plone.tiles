@@ -8,7 +8,8 @@ class TileType(object):
 
     implements(ITileType)
 
-    def __init__(self, name, title, add_permission, description=None, icon=None, schema=None):
+    def __init__(self, name, title, add_permission, description=None,
+                 icon=None, schema=None):
         self.__name__ = name
         self.title = title
         self.add_permission = add_permission

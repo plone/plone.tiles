@@ -12,7 +12,8 @@ class ITileType(Interface):
     """A utility that describes a type of tile
     """
 
-    __name__ = zope.schema.DottedName(title=u"Tile name (same as utility name)")
+    __name__ = zope.schema.DottedName(
+        title=u"Tile name (same as utility name)")
 
     title = zope.schema.TextLine(title=u"Title")
 
@@ -23,12 +24,12 @@ class ITileType(Interface):
     add_permission = zope.schema.Id(title=u"Zope 3 IPermission utility name")
 
     schema = zope.schema.Object(
-            title=u"Tile schema",
-            description=u"Describes configurable data for this tile and "
-                         "allows a form to be rendered to edit it. Set to "
-                         "None if the tile has no configurable schema",
-            schema=IInterface,
-            required=False,
+        title=u"Tile schema",
+        description=u"Describes configurable data for this tile and allows a "
+            "form to be rendered to edit it. Set to None if the tile has no "
+            "configurable schema",
+        schema=IInterface,
+        required=False,
         )
 
 
@@ -52,18 +53,18 @@ class IBasicTile(IBrowserView):
     """
 
     __name__ = zope.schema.DottedName(
-            title=u"The name of the type of this tile",
-            description=u"This should be a dotted name prefixed with the "
-                         "package that defined the tile",
+        title=u"The name of the type of this tile",
+        description=u"This should be a dotted name prefixed with the "
+            u"package that defined the tile",
         )
 
     id = zope.schema.DottedName(
-            title=u"Tile instance id",
-            description=u"The id is normally set using sub-path traversal"
-                          "A given tile type may be used multiple times on "
-                          "the same page, each with a unique id. The id must "
-                          "be unique even across multiple layouts for the "
-                          "same context."
+        title=u"Tile instance id",
+        description=u"The id is normally set using sub-path traversal"
+                    u"A given tile type may be used multiple times on "
+                    u"the same page, each with a unique id. The id must "
+                    u"be unique even across multiple layouts for the "
+                    u"same context."
         )
 
 
@@ -72,22 +73,23 @@ class ITile(IBasicTile):
     """
 
     data = zope.schema.Dict(
-            title=u"The tile's configuration data",
-            description=u"This attribute cannot be set, but the dictionary may be updated",
-            key_type=zope.schema.Id(title=u"The data element name"),
-            value_type=zope.schema.Field(title=u"The value"),
-            required=True,
-            readonly=True,
-            default={},
+        title=u"The tile's configuration data",
+        description=u"This attribute cannot be set, but the dictionary may "
+                    u"be updated",
+        key_type=zope.schema.Id(title=u"The data element name"),
+        value_type=zope.schema.Field(title=u"The value"),
+        required=True,
+        readonly=True,
+        default={},
         )
 
     url = zope.schema.URI(
-            title=u"Tile URL",
-            description=u"This is the canonical URL for the tile. In the "
-                         "case of transient tiles with data, this may "
-                         "include a query string with parameters. Provided "
-                         "that the `id` attribute is set, it will also "
-                         "include a sub-path with this in it.",
+        title=u"Tile URL",
+        description=u"This is the canonical URL for the tile. In the "
+                    u"case of transient tiles with data, this may "
+                    u"include a query string with parameters. Provided "
+                    u"that the `id` attribute is set, it will also "
+                    u"include a sub-path with this in it.",
         )
 
 

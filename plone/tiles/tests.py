@@ -39,7 +39,8 @@ class PloneTiles(Layer):
 
     def setUp(self):
         import plone.tiles
-        self['configurationContext'] = context = zca.stackConfigurationContext(self.get('configurationContext'))
+        self['configurationContext'] = context = zca.stackConfigurationContext(
+            self.get('configurationContext'))
         xmlconfig.file('configure.zcml', plone.tiles, context=context)
 
     def tearDown(self):
@@ -47,12 +48,14 @@ class PloneTiles(Layer):
 
 PLONE_TILES_FIXTURE = PloneTiles()
 
-PLONE_TILES_INTEGRATION_TESTING = z2.IntegrationTesting(bases=(PLONE_TILES_FIXTURE,), name="PloneTiles:Functional")
+PLONE_TILES_INTEGRATION_TESTING = z2.IntegrationTesting(
+    bases=(PLONE_TILES_FIXTURE,), name="PloneTiles:Functional")
 
 
 def test_suite():
     return unittest.TestSuite((
         layered(doctest.DocFileSuite('tiles.rst', 'directives.rst',
                                      'data.rst', 'esi.rst'),
-                layer=PLONE_TILES_INTEGRATION_TESTING),
+                layer=PLONE_TILES_INTEGRATION_TESTING
+                ),
         ))

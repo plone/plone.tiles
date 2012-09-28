@@ -47,7 +47,8 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         if id:
             tileFragment += '/' + urllib.quote(id.encode('utf-8'), _safe)
 
-        base = tuple(getMultiAdapter((context, request), IAbsoluteURL).breadcrumbs())
+        base = tuple(
+            getMultiAdapter((context, request), IAbsoluteURL).breadcrumbs())
         base += ({'name': name,
                   'url': "%s/%s" % (base[-1]['url'], tileFragment,),
                   },)

@@ -21,6 +21,7 @@ from persistent.dict import PersistentDict
 
 try:
     import json
+    assert json  # silence pyflakes
 except:
     import simplejson as json
 
@@ -82,7 +83,8 @@ class PersistentTileDataManager(object):
         self.tile = tile
         self.tileType = queryUtility(ITileType, name=tile.__name__)
 
-        self.context = getMultiAdapter((tile.context, tile.request, tile), ITileDataContext)
+        self.context = getMultiAdapter(
+            (tile.context, tile.request, tile), ITileDataContext)
         self.annotations = IAnnotations(self.context)
 
         self.key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.id,)
@@ -130,7 +132,8 @@ def encode(data, schema, ignore=()):
 
         converter = IFieldTypeConverter(field, None)
         if converter is None:
-            raise ComponentLookupError(u"Cannot URL encode %s of type %s" % (name, field.__class__,))
+            raise ComponentLookupError(u"Cannot URL encode %s of type %s" % (
+                name, field.__class__,))
 
         encoded_name = name
         if converter.token:
@@ -143,10 +146,13 @@ def encode(data, schema, ignore=()):
         if ISequence.providedBy(field):
             value_type_converter = IFieldTypeConverter(field.value_type, None)
             if value_type_converter is None:
-                raise ComponentLookupError(u"Cannot URL encode value type for %s of type %s : %s" % (name, field.__class__, field.value_type.__class__,))
+                raise ComponentLookupError(u"Cannot URL encode value type "
+                    u"for %s of type %s : %s" % (
+                        name, field.__class__, field.value_type.__class__,))
 
             if value_type_converter.token:
-                encoded_name = "%s:%s:%s" % (name, value_type_converter.token, converter.token,)
+                encoded_name = "%s:%s:%s" % (
+                    name, value_type_converter.token, converter.token,)
 
             for item in value:
 

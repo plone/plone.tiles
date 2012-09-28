@@ -17,6 +17,7 @@ from zope.component.zcml import utility
 
 try:
     from Products.Five.browser.metaconfigure import page
+    assert page  # silence pyflakes
 except ImportError:
     from zope.app.publisher.browser.viewmeta import page
 
@@ -26,66 +27,67 @@ class ITileDirective(Interface):
     """
 
     name = schema.DottedName(
-            title=u"Name",
-            description=u"A unique, dotted name for the tile",
+        title=u"Name",
+        description=u"A unique, dotted name for the tile",
         )
 
     title = MessageID(
-            title=u"Title",
-            description=u"A user friendly title, used when configuring the tile",
-            required=False
+        title=u"Title",
+        description=u"A user friendly title, used when configuring the tile",
+        required=False
         )
 
     description = MessageID(
-            title=u"Description",
-            description=u"A longer summary of the tile's purpose and function",
-            required=False
+        title=u"Description",
+        description=u"A longer summary of the tile's purpose and function",
+        required=False
         )
 
     icon = MessageID(
-            title=u"Icon",
-            description=u"Image that represents tile purpose and function",
-            required=False
+        title=u"Icon",
+        description=u"Image that represents tile purpose and function",
+        required=False
         )
 
     add_permission = Permission(
-            title=u"Add permission",
-            description=u"Name of the permission required to instantiate this tile",
-            required=False,
+        title=u"Add permission",
+        description=u"Name of the permission required to instantiate "
+                    u"this tile",
+        required=False,
         )
 
     schema = GlobalInterface(
-            title=u"Configuration schema for the tile",
-            description=u"This is used to create standard add/edit forms",
-            required=False,
+        title=u"Configuration schema for the tile",
+        description=u"This is used to create standard add/edit forms",
+        required=False,
         )
 
     for_ = GlobalObject(
-            title=u"The interface or class this tile is available for",
-            required=False,
+        title=u"The interface or class this tile is available for",
+        required=False,
         )
 
     layer = GlobalInterface(
-            title=u"The layer the tile is available for",
-            required=False
+        title=u"The layer the tile is available for",
+        required=False
         )
 
     class_ = GlobalObject(
-            title=u"Class",
-            description=u"Class implementing this tile",
-            required=False
+        title=u"Class",
+        description=u"Class implementing this tile",
+        required=False
         )
 
     template = Path(
-            title=u"The name of a template that renders this tile",
-            description=u"Refers to a file containing a page template",
-            required=False,
+        title=u"The name of a template that renders this tile",
+        description=u"Refers to a file containing a page template",
+        required=False,
         )
 
     permission = Permission(
-            title=u"View permission",
-            description=u"Name of the permission required to view this item",
-            required=False,
+        title=u"View permission",
+        description=u"Name of the permission required to view this item",
+        required=False,
         )
 
 
@@ -96,19 +98,25 @@ def tile(_context, name,
     """Implements the <plone:tile /> directive
     """
 
-    if title is not None or description is not None or icon is not None or add_permission is not None or schema is not None:
+    if title is not None or description is not None or icon is not None or \
+        add_permission is not None or schema is not None:
         if title is None or add_permission is None:
-            raise ConfigurationError(u"When configuring a new type of tile, 'title' and 'add_permission' are required")
+            raise ConfigurationError(u"When configuring a new type of tile, "
+                    u"'title' and 'add_permission' are required")
 
-        type_ = TileType(name, title, add_permission, description, icon, schema)
+        type_ = TileType(name, title, add_permission, description,
+                         icon, schema)
 
         utility(_context, provides=ITileType, component=type_, name=name)
 
-    if for_ is not None or layer is not None or class_ is not None or template is not None or permission is not None:
+    if for_ is not None or layer is not None or class_ is not None or \
+       template is not None or permission is not None:
         if class_ is None and template is None:
-            raise ConfigurationError(u"When configuring a tile, 'class' or 'template' must be given.")
+            raise ConfigurationError(u"When configuring a tile, 'class' "
+                                     u"or 'template' must be given.")
         if permission is None:
-            raise ConfigurationError(u"When configuring a tile, 'permission' is required")
+            raise ConfigurationError(u"When configuring a tile, 'permission' "
+                                     u"is required")
 
         if for_ is None:
             for_ = Interface
@@ -118,5 +126,5 @@ def tile(_context, name,
         if class_ is None:
             class_ = Tile
 
-        page(_context, name=name, permission=permission, for_=for_, layer=layer,
-                template=template, class_=class_)
+        page(_context, name=name, permission=permission, for_=for_,
+                layer=layer, template=template, class_=class_)
