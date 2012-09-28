@@ -15,13 +15,13 @@ To use the package, you should first load its ZCML configuration.
     ...      xmlns="http://namespaces.zope.org/zope"
     ...      xmlns:plone="http://namespaces.plone.org/plone"
     ...      i18n_domain="plone.tiles.tests">
-    ...     
+    ...
     ...     <include package="zope.component" file="meta.zcml" />
     ...     <include package="zope.app.publisher" file="meta.zcml" />
-    ...     
+    ...
     ...     <include package="plone.tiles" file="meta.zcml" />
     ...     <include package="plone.tiles" />
-    ... 
+    ...
     ... </configure>
     ... """
 
@@ -93,14 +93,14 @@ the ESI views and rendering them.
 
     >>> class Context(object):
     ...     implements(IContext)
-    
+
     >>> from zope.publisher.browser import TestRequest
-    
+
     >>> class IntegratedTestRequest(TestRequest):
     ...     @property
     ...     def environ(self):
     ...         return self._environ
-    
+
     >>> context = Context()
     >>> request = IntegratedTestRequest()
 
@@ -122,7 +122,7 @@ At this point, we can look up the ESI views:
     >>> head = getMultiAdapter((tile, request), name="esi-head")
     >>> print head()
     <title>Title</title>
-    
+
     >>> body = getMultiAdapter((tile, request), name="esi-body")
     >>> print body()
     <b>My tile</b>
@@ -231,10 +231,10 @@ By default, the tile renders as normal:
 
     >>> print tile()
     <html><head><title>Title</title></head><body><b>My ESI tile</b></body></html>
-    
+
 However, if we opt into ESI rendering via a request header, we get a different
 view:
-    
+
     >>> from plone.tiles.interfaces import ESI_HEADER_KEY
     >>> request.environ[ESI_HEADER_KEY] = 'true'
     >>> print tile() # doctest: +NORMALIZE_WHITESPACE
@@ -247,7 +247,7 @@ view:
                href="http://127.0.0.1/@@esi-body?"></a>
         </body>
     </html>
-    
+
 This can be transformed into a proper ESI tag with ``substituteESILinks()``:
 
     >>> from plone.tiles.esi import substituteESILinks
@@ -259,7 +259,7 @@ This can be transformed into a proper ESI tag with ``substituteESILinks()``:
             <esi:include src="http://127.0.0.1/@@esi-body?" />
         </body>
     </html>
-    
+
 It is also possible to render the ESI tile for the head. This is done with
 a class variable 'head' (which would of course normally be set within the
 class):
