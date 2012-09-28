@@ -14,8 +14,8 @@ ESI_TEMPLATE = u"""\
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <body>
-        <a class="_esi_placeholder" rel="esi"
-            href="%(url)s/@@%(esiMode)s?%(queryString)s"></a>
+        <a class="_esi_placeholder" rel="esi" """ + \
+            u"""href="%(url)s/@@%(esiMode)s?%(queryString)s"></a>
     </body>
 </html>
 """
