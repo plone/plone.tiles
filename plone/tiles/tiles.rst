@@ -361,7 +361,7 @@ We also need a context that is annotatable.
 Now, let's create a persistent tile with a schema.
 
     >>> class IPersistentSampleData(Interface):
-    ...     text = zope.schema.Text(title=u"Detailed text", missing_value=u"Missing!")
+    ...     text = zope.schema.Text(title=u"Detailed text", default=u"Missing!")
 
     >>> from plone.tiles import PersistentTile
     >>> class PersistentSampleTile(PersistentTile):
