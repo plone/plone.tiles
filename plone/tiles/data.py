@@ -94,7 +94,7 @@ class PersistentTileDataManager(object):
         if self.tileType is not None and self.tileType.schema is not None:
             for name, field in getFields(self.tileType.schema).items():
                 if name not in data:
-                    data[name] = field.bind(self.tileType).default
+                    data[name] = field.missing_value
         return data
 
     def set(self, data):
