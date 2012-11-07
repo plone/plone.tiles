@@ -4,6 +4,9 @@ Introduction
 ``plone.tiles`` implements low-level, non-Plone/Zope2-specific support for
 creating "tiles" in the Deco layout system.
 
+.. image:: https://secure.travis-ci.org/plone/plone.tiles.png
+    :target: http://travis-ci.org/plone/plone.tiles
+
 .. contents::
 
 
