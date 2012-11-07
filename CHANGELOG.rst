@@ -1,6 +1,15 @@
 Changelog
 =========
 
+1.2 (2012-11-07)
+----------------
+
+- adding icon property for tiletype
+  [garbas]
+
+- url that we pass via X-Tile-Url should be relative to current context
+  [garbas]
+
 1.1 (2012-06-22)
 ----------------
 
