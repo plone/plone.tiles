@@ -1,9 +1,11 @@
-=====================
-Introduction to Tiles
-=====================
+Introduction
+============
 
 ``plone.tiles`` implements low-level, non-Plone/Zope2-specific support for
 creating "tiles" in the Deco layout system.
+
+.. contents::
+
 
 For the purposes of this package, a tile is a browser view and an associated
 utility providing some metadata about that view. The metadata includes a title
