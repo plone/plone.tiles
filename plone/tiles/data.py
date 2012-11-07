@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 import urllib
 
@@ -147,7 +149,7 @@ def encode(data, schema, ignore=()):
             value_type_converter = IFieldTypeConverter(field.value_type, None)
             if value_type_converter is None:
                 raise ComponentLookupError(u"Cannot URL encode value type "
-                    u"for %s of type %s : %s" % (
+                        u"for %s of type %s : %s" % (
                         name, field.__class__, field.value_type.__class__,))
 
             if value_type_converter.token:

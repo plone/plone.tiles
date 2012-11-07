@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import unittest2 as unittest
 import doctest
 from plone.testing import Layer, layered
