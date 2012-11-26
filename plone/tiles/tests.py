@@ -60,4 +60,4 @@ def test_suite():
                                      'data.rst', 'esi.rst'),
                 layer=PLONE_TILES_INTEGRATION_TESTING
                 ),
-        ))
+    ))

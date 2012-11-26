@@ -17,7 +17,7 @@ ESI_TEMPLATE = u"""\
 <html xmlns="http://www.w3.org/1999/xhtml">
     <body>
         <a class="_esi_placeholder" rel="esi" """ + \
-            u"""href="%(url)s/@@%(esiMode)s?%(queryString)s"></a>
+    u"""href="%(url)s/@@%(esiMode)s?%(queryString)s"></a>
     </body>
 </html>
 """
@@ -41,8 +41,9 @@ class ConditionalESIRendering(object):
     head = False
 
     def render(self):
-        raise NotImplemented(u"Override render() or set a class variable "
-            u"'index' to point to a view page template file")
+        raise NotImplemented(
+            u"Override render() or set a class variable 'index' to point to "
+            u"a view page template file")
 
     def __call__(self, *args, **kwargs):
         if self.request.getHeader(ESI_HEADER, 'false').lower() == 'true':
@@ -53,7 +54,7 @@ class ConditionalESIRendering(object):
                 'url': self.request.getURL(),
                 'queryString': self.request.get('QUERY_STRING', ''),
                 'esiMode': mode,
-                }
+            }
         if hasattr(self, 'index'):
             return self.index(*args, **kwargs)
 

@@ -28,11 +28,11 @@ class ITileType(Interface):
     schema = zope.schema.Object(
         title=u"Tile schema",
         description=u"Describes configurable data for this tile and allows a "
-            "form to be rendered to edit it. Set to None if the tile has no "
-            "configurable schema",
+                    u"form to be rendered to edit it. Set to None if the tile "
+                    u"has no configurable schema",
         schema=IInterface,
         required=False,
-        )
+    )
 
 
 class IBasicTile(IBrowserView):
@@ -57,8 +57,8 @@ class IBasicTile(IBrowserView):
     __name__ = zope.schema.DottedName(
         title=u"The name of the type of this tile",
         description=u"This should be a dotted name prefixed with the "
-            u"package that defined the tile",
-        )
+                    u"package that defined the tile",
+    )
 
     id = zope.schema.DottedName(
         title=u"Tile instance id",
@@ -67,7 +67,7 @@ class IBasicTile(IBrowserView):
                     u"the same page, each with a unique id. The id must "
                     u"be unique even across multiple layouts for the "
                     u"same context."
-        )
+    )
 
 
 class ITile(IBasicTile):
@@ -83,7 +83,7 @@ class ITile(IBasicTile):
         required=True,
         readonly=True,
         default={},
-        )
+    )
 
     url = zope.schema.URI(
         title=u"Tile URL",
@@ -92,7 +92,7 @@ class ITile(IBasicTile):
                     u"include a query string with parameters. Provided "
                     u"that the `id` attribute is set, it will also "
                     u"include a sub-path with this in it.",
-        )
+    )
 
 
 class IPersistentTile(ITile):
