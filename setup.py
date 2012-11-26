@@ -9,10 +9,10 @@ setup(
     version=version,
     description="APIs for managing tiles",
     long_description=open("README.rst").read() + "\n" +
-        open(os.path.join("plone", "tiles", "tiles.rst")).read() + "\n" +
-        open(os.path.join("plone", "tiles", "directives.rst")).read() + "\n" +
-        open(os.path.join("plone", "tiles", "esi.rst")).read() + "\n" +
-        open("CHANGELOG.rst").read(),
+    open(os.path.join("plone", "tiles", "tiles.rst")).read() + "\n" +
+    open(os.path.join("plone", "tiles", "directives.rst")).read() + "\n" +
+    open(os.path.join("plone", "tiles", "esi.rst")).read() + "\n" +
+    open("CHANGELOG.rst").read(),
     classifiers=[
         "Framework :: Plone",
         "Programming Language :: Python",
