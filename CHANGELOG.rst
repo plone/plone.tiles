@@ -10,6 +10,9 @@ Changelog
 - url that we pass via X-Tile-Url should be relative to current context
   [garbas]
 
+- Adding support for more robust permissions for edit and delete on tiles
+  [cewing calvinhp]
+
 1.1 (2012-06-22)
 ----------------
 
