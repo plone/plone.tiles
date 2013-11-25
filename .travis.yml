@@ -10,6 +10,7 @@ install:
   - bin/buildout -N -t 3 -c travis.cfg -q
 script:
   - bin/code-analysis
-  - bin/coverage run --source=plone.tiles bin/test
+  - bin/test
 after_success:
+  - bin/coverage run --source=plone.tiles bin/test
   - bin/coveralls
