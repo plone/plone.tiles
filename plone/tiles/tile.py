@@ -49,6 +49,9 @@ class Tile(BrowserView):
             if self.__doc__ is None:
                 self.__doc__ = "For Zope 2, to keep the ZPublisher happy"
 
+            self.request.response.setHeader(
+                'X-Tile-Url', self.url)
+
             return self
 
         # Also allow views on tiles even without @@.
