@@ -2,6 +2,8 @@
 *.py?
 *.sw?
 
-plone.tiles.egg-info/
-build/
-dist/
+/plone.tiles.egg-info/
+/build/
+/dist/
+/buildout-cache/
+/develop-eggs/
