@@ -4,10 +4,10 @@ Changelog
 1.2 (2012-11-07)
 ----------------
 
-- adding icon property for tiletype
+- Adding icon property for tiletype
   [garbas]
 
-- url that we pass via X-Tile-Url should be relative to current context
+- Url that we pass via X-Tile-Url should be relative to current context
   [garbas]
 
 - Adding support for more robust permissions for edit and delete on tiles
