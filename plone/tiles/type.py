@@ -10,8 +10,16 @@ class TileType(object):
 
     implements(ITileType)
 
-    def __init__(self, name, title, add_permission, edit_permission,
-                 delete_permission, description=None, icon=None, schema=None):
+    def __init__(self, name, title, add_permission, edit_permission=None,
+                 delete_permission=None, description=None, icon=None,
+                 schema=None):
+
+        if delete_permission is None:
+            delete_permission = add_permission
+
+        if edit_permission is None:
+            edit_permission = add_permission
+
         self.__name__ = name
         self.title = title
         self.add_permission = add_permission

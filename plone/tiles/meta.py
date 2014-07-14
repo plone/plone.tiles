@@ -118,15 +118,8 @@ def tile(_context, name, title=None, description=None, icon=None,
             raise ConfigurationError(
                 u"When configuring a new type of tile, 'title' and "
                 u"'add_permission' are required")
-
-        if delete_permission is None:
-            delete_permission = add_permission
-
-        if edit_permission is None:
-            edit_permission = add_permission
-
         type_ = TileType(name, title, add_permission, edit_permission,
-                         delete_permission, icon, description, schema)
+                         delete_permission, description, icon, schema)
 
         utility(_context, provides=ITileType, component=type_, name=name)
 
