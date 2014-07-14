@@ -29,13 +29,17 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         if name is None or context is None:
             raise TypeError("Insufficient context to determine URL")
 
-        url = str(getMultiAdapter((context, request), IAbsoluteURL))
-
         tileFragment = "@@" + urllib.quote(name.encode('utf-8'), _safe)
         if id:
             tileFragment += '/' + urllib.quote(id.encode('utf-8'), _safe)
 
-        return '%s/%s' % (url, tileFragment,)
+        absolute_url = getMultiAdapter((context, request), IAbsoluteURL)
+        try:
+            tileFragment = '%s/%s' % (str(absolute_url), tileFragment)
+        except TypeError:  # Not enough context to get URL information
+            pass
+
+        return tileFragment
 
     def breadcrumbs(self):
         tile = self.context
