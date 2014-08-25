@@ -2,12 +2,12 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="plone.tiles">
-    
+
     <!-- Data manager -->
     <adapter factory=".data.TransientTileDataManager" />
     <adapter factory=".data.PersistentTileDataManager" />
     <adapter factory=".data.defaultTileDataContext" />
-    
+
     <!-- Absolute URL -->
     <view
         for=".interfaces.ITile"
@@ -17,7 +17,7 @@
         permission="zope.Public"
         allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
         />
-      
+
     <view
         for=".interfaces.ITile"
         factory=".absoluteurl.TransientTileAbsoluteURL"
@@ -34,7 +34,7 @@
         permission="zope.Public"
         allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
         />
-      
+
     <view
         for=".interfaces.IPersistentTile"
         factory=".absoluteurl.PersistentTileAbsoluteURL"
@@ -42,7 +42,7 @@
         permission="zope.Public"
         provides="zope.traversing.browser.interfaces.IAbsoluteURL"
         />
-    
+
     <!-- ESI -->
     <browser:page
         name="esi-head"
@@ -50,14 +50,14 @@
         class=".esi.ESIHead"
         permission="zope.Public"
         />
-    
+
     <browser:page
         name="esi-body"
         for=".interfaces.IESIRendered"
         class=".esi.ESIBody"
         permission="zope.Public"
         />
-    
+
     <!-- Field Type converters -->
     <adapter for="zope.schema.interfaces.IBytesLine"
              factory="plone.tiles.fieldtypeconverters.NoConverter"
@@ -118,5 +118,5 @@
     <adapter for="zope.schema.interfaces.IList"
              factory="plone.tiles.fieldtypeconverters.ListConverter"
              />
-    
+
 </configure>

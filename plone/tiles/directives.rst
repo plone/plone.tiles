@@ -24,14 +24,14 @@ Let's show how these may be used by registering several tiles:
     ...      xmlns="http://namespaces.zope.org/zope"
     ...      xmlns:plone="http://namespaces.plone.org/plone"
     ...      i18n_domain="plone.tiles.tests">
-    ...     
+    ...
     ...     <include package="zope.component" file="meta.zcml" />
     ...     <include package="zope.security" file="meta.zcml" />
     ...     <include package="zope.app.publisher" file="meta.zcml" />
-    ...     
+    ...
     ...     <include package="plone.tiles" file="meta.zcml" />
     ...     <include package="plone.tiles" />
-    ...     
+    ...
     ...     <permission
     ...         id="plone.tiles.tests.DummyAdd"
     ...         title="Dummy add permission"
@@ -54,7 +54,7 @@ Let's show how these may be used by registering several tiles:
     ...         layer="plone.tiles.tests.IDummyLayer"
     ...         permission="plone.tiles.tests.DummyView"
     ...         />
-    ... 
+    ...
     ...     <!-- A class-only tile -->
     ...     <plone:tile
     ...         name="dummy2"
@@ -64,7 +64,7 @@ Let's show how these may be used by registering several tiles:
     ...         for="*"
     ...         permission="plone.tiles.tests.DummyView"
     ...         />
-    ...     
+    ...
     ...     <!-- A template-only tile -->
     ...     <plone:tile
     ...         name="dummy3"
@@ -74,7 +74,7 @@ Let's show how these may be used by registering several tiles:
     ...         for="*"
     ...         permission="plone.tiles.tests.DummyView"
     ...         />
-    ...     
+    ...
     ...     <!-- Use the PersistentTile class directly with a template-only tile -->
     ...     <plone:tile
     ...         name="dummy4"
@@ -86,7 +86,7 @@ Let's show how these may be used by registering several tiles:
     ...         for="*"
     ...         permission="plone.tiles.tests.DummyView"
     ...         />
-    ... 
+    ...
     ...     <!-- Override dummy3 for a new layer -->
     ...     <plone:tile
     ...         name="dummy3"
@@ -95,7 +95,7 @@ Let's show how these may be used by registering several tiles:
     ...         layer="plone.tiles.tests.IDummyLayer"
     ...         permission="plone.tiles.tests.DummyView"
     ...         />
-    ... 
+    ...
     ... </configure>
     ... """
 
@@ -113,10 +113,10 @@ Let's check how the tiles were registered:
     <TileType dummy1 (Dummy tile 1)>
     >>> tile1_type.description
     u'This one shows all available options'
-    
+
     >>> tile1_type.add_permission
     'plone.tiles.tests.DummyAdd'
-    
+
     >>> tile1_type.schema
     <InterfaceClass plone.tiles.tests.IDummySchema>
 
@@ -129,7 +129,7 @@ Let's check how the tiles were registered:
     'plone.tiles.tests.DummyAdd'
     >>> tile2_type.schema is None
     True
-    
+
     >>> tile3_type = getUtility(ITileType, name=u"dummy3")
     >>> tile3_type
     <TileType dummy3 (Dummy tile 3)>
@@ -139,7 +139,7 @@ Let's check how the tiles were registered:
     'plone.tiles.tests.DummyAdd'
     >>> tile3_type.schema is None
     True
-    
+
     >>> tile4_type = getUtility(ITileType, name=u"dummy4")
     >>> tile4_type
     <TileType dummy4 (Dummy tile 4)>
@@ -175,7 +175,7 @@ Finally, let's check that we can look up the tiles.
     <b>test!</b>
     >>> tile1.__name__
     'dummy1'
-    
+
     >>> tile2 = getMultiAdapter((context, request), name="dummy2")
     >>> isinstance(tile2, DummyTile)
     True
@@ -183,7 +183,7 @@ Finally, let's check that we can look up the tiles.
     dummy
     >>> tile2.__name__
     'dummy2'
-    
+
     >>> tile3 = getMultiAdapter((context, request), name="dummy3")
     >>> isinstance(tile3, Tile)
     True
@@ -199,7 +199,7 @@ Finally, let's check that we can look up the tiles.
     <b>test!</b>
     >>> tile4.__name__
     'dummy4'
-    
+
     >>> tile3_layer = getMultiAdapter((context, layer_request), name="dummy3")
     >>> isinstance(tile3_layer, DummyTile)
     True

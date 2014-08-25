@@ -82,15 +82,15 @@ applies to the value_type of a list or tuple:
     Traceback (most recent call last):
     ...
     ComponentLookupError: Cannot URL encode decimal of type <class 'zope.schema._field.Decimal'>
-    
+
     >>> encode(data, IUnsupported, ignore=('decimal',)) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
     ComponentLookupError: Cannot URL encode value type for list of type <class 'zope.schema._field.List'> : <class 'zope.schema._field.Decimal'>
-    
+
     >>> encode(data, IUnsupported, ignore=('decimal', 'list',))
     'bytes_line=abc'
-    
+
 Decoding
 --------
 

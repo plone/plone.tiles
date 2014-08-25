@@ -26,13 +26,13 @@ To use the package, you should first load its ZCML configuration.
     ...      xmlns="http://namespaces.zope.org/zope"
     ...      xmlns:plone="http://namespaces.plone.org/plone"
     ...      i18n_domain="plone.tiles.tests">
-    ...     
+    ...
     ...     <include package="zope.component" file="meta.zcml" />
     ...     <include package="zope.app.publisher" file="meta.zcml" />
-    ...     
+    ...
     ...     <include package="plone.tiles" file="meta.zcml" />
     ...     <include package="plone.tiles" />
-    ... 
+    ...
     ... </configure>
     ... """
 
@@ -59,7 +59,7 @@ The tile is a browser view:
     >>> from plone.tiles.interfaces import ITile
     >>> ITile.implementedBy(SampleTile)
     True
-    
+
     >>> from zope.publisher.interfaces.browser import IBrowserView
     >>> IBrowserView.implementedBy(SampleTile)
     True
@@ -142,9 +142,9 @@ traversal, and verify how the tile is instantiated.
 
     >>> class Context(object):
     ...     implements(IContext)
-    
+
     >>> from zope.publisher.browser import TestRequest
-    
+
     >>> context = Context()
     >>> request = TestRequest()
 
@@ -206,7 +206,7 @@ is also possible to traverse using the ``publishTraverse`` method::
     >>> tile.__name__
     'sample.tile'
 
-Transient tile data 
+Transient tile data
 -------------------
 
 Let us now consider how tiles may have data. In the simplest case, tile
@@ -314,7 +314,7 @@ above, we can get the data like so:
     >>> dataManager = ITileDataManager(tile)
     >>> dataManager.get() == tile.data
     True
-    
+
 We can also update the tile data:
 
     >>> dataManager.set({'count': 1, 'cssClass': 'bar', 'title': u'Another title'})
@@ -367,7 +367,7 @@ Now, let's create a persistent tile with a schema.
     >>> class PersistentSampleTile(PersistentTile):
     ...
     ...     __name__ = 'sample.persistenttile' # would normally be set by ZCML handler
-    ...     
+    ...
     ...     def __call__(self):
     ...         return u"<b>You said</b> %s" % self.data['text']
 
@@ -377,7 +377,7 @@ Now, let's create a persistent tile with a schema.
     ...     description=u"A tile used for testing",
     ...     add_permission="dummy.Permission",
     ...     schema=IPersistentSampleData)
-    
+
     >>> provideUtility(persistentSampleTileType, name=u'sample.persistenttile')
     >>> provideAdapter(PersistentSampleTile, (Interface, Interface), IBasicTile, name=u"sample.persistenttile")
 
@@ -458,11 +458,11 @@ for the context. We'll achieve that with a dummy adapter:
     >>> class DummyAbsoluteURL(object):
     ...     implements(IAbsoluteURL)
     ...     adapts(IContext, IHTTPRequest)
-    ...     
+    ...
     ...     def __init__(self, context, request):
     ...         self.context = context
     ...         self.request = request
-    ...     
+    ...
     ...     def __unicode__(self):
     ...         return u"http://example.com/context"
     ...     def __str__(self):
@@ -473,7 +473,7 @@ for the context. We'll achieve that with a dummy adapter:
     ...         return ({'name': u'context', 'url': 'http://example.com/context'},)
     >>> provideAdapter(DummyAbsoluteURL, name=u"absolute_url")
     >>> provideAdapter(DummyAbsoluteURL)
-    
+
     >>> from zope.traversing.browser.absoluteurl import absoluteURL
     >>> from zope.component import getMultiAdapter
 
@@ -481,10 +481,10 @@ for the context. We'll achieve that with a dummy adapter:
     >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'cssClass': u'foo'})
     >>> transientTile = getMultiAdapter((context, request), name=u"sample.tile")
     >>> transientTile = transientTile['tile1']
-    
+
     >>> absoluteURL(transientTile, request)
     'http://example.com/context/@@sample.tile/tile1?title=My+title&cssClass=foo&count%3Along=5'
-    
+
     >>> getMultiAdapter((transientTile, request), IAbsoluteURL).breadcrumbs() == \
     ... ({'url': 'http://example.com/context', 'name': u'context'},
     ...  {'url': 'http://example.com/context/@@sample.tile/tile1', 'name': 'sample.tile'})
@@ -502,7 +502,7 @@ parameters directly::
     >>> request = TestRequest(form={'_tiledata': json.dumps({'title': u'Your title', 'count': 6, 'cssClass': u'bar'})})
     >>> transientTile = getMultiAdapter((context, request), name=u"sample.tile")
     >>> transientTile = transientTile['tile1']
-    
+
     >>> absoluteURL(transientTile, request)
     'http://example.com/context/@@sample.tile/tile1?title=Your+title&cssClass=bar&count%3Along=6'
 
@@ -515,7 +515,7 @@ For persistent tiles, the are no data parameters:
 
     >>> absoluteURL(persistentTile, request)
     'http://example.com/context/@@sample.persistenttile/tile2'
-    
+
     >>> getMultiAdapter((persistentTile, request), IAbsoluteURL).breadcrumbs() == \
     ... ({'url': 'http://example.com/context', 'name': u'context'},
     ...  {'url': 'http://example.com/context/@@sample.persistenttile/tile2', 'name': 'sample.persistenttile'})
@@ -532,7 +532,7 @@ If the tile doesn't have an id, we don't get any sub-path
     >>> transientTile = getMultiAdapter((context, request), name=u"sample.tile")
     >>> absoluteURL(transientTile, request)
     'http://example.com/context/@@sample.tile?title=My+title&cssClass=foo&count%3Along=5'
-    
+
     >>> request = TestRequest()
     >>> persistentTile = getMultiAdapter((context, request), name=u"sample.persistenttile")
     >>> absoluteURL(persistentTile, request)

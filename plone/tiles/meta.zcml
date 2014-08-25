@@ -3,13 +3,13 @@
     xmlns:meta="http://namespaces.zope.org/meta">
 
     <meta:directives namespace="http://namespaces.plone.org/plone">
-        
+
         <meta:directive
             name="tile"
             schema=".meta.ITileDirective"
             handler=".meta.tile"
             />
-            
+
     </meta:directives>
-           
+
 </configure>
