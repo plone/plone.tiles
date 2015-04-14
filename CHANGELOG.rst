@@ -1,6 +1,22 @@
 Changelog
 =========
 
+1.3.0 (unreleased)
+------------------
+
+- Fix edit_permission and delete_permission to default
+  to add_permission only in TileType constructor
+  [datakurre]
+
+- Fix argument order in TileType constructor call
+  [datakurre]
+
+- Fix absolute_url-adapter to fallback to relative URL
+  [Asko Soukka]
+
+- Add response to include absolute X-Tile-Url header
+  [bloodbare]
+
 1.2 (2012-11-07)
 ----------------
 
