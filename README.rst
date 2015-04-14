@@ -4,10 +4,11 @@ plone.tiles
 ``plone.tiles`` implements low-level, non-Plone/Zope2-specific support for
 creating "tiles" in the Deco layout system.
 
+.. contents::
+
 .. image:: https://secure.travis-ci.org/plone/plone.tiles.png
    :target: http://travis-ci.org/plone/plone.tiles
 
-.. contents::
 
 Introduction
 ------------
@@ -65,6 +66,7 @@ To support creation of appropriate tile links, `plone.tiles.data` contains two
 methods - `encode()` and `decode()` - to help turn a data dictionary into a
 query string and turn a `request.form` dict into a data dict that complies
 with a tile's schema interface.
+
 
 Creating a Simple Tile
 ----------------------
