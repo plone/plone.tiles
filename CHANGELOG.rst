@@ -12,7 +12,7 @@ Changelog
   [datakurre]
 
 - Fix absolute_url-adapter to fallback to relative URL
-  [Asko Soukka]
+  [datakurre]
 
 - Add response to include absolute X-Tile-Url header
   [bloodbare]
