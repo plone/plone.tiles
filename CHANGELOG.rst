@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.3.0 (unreleased)
+1.3.0 (2015-04-21)
 ------------------
 
 - Fix edit_permission and delete_permission to default
