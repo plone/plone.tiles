@@ -144,6 +144,8 @@ def encode(data, schema, ignore=()):
         value = data[name]
         if value is None:
             continue
+        elif isinstance(value, unicode):
+            value = value.encode('utf-8')
 
         if ISequence.providedBy(field):
             value_type_converter = IFieldTypeConverter(field.value_type, None)
@@ -200,6 +202,8 @@ def decode(data, schema, missing=True):
         value = data[name]
         if value is None:
             continue
+        if isinstance(value, str):
+            value = unicode(value, 'utf-8')
 
         field_type = field._type
         if isinstance(field_type, (tuple, list,)):
