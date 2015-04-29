@@ -4,8 +4,8 @@ Changelog
 1.3.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Fix issue where non-ascii characters in tiledata raised UnicodeEncode/DecodeErrors
+  [datakurre]
 
 1.3.0 (2015-04-21)
 ------------------
