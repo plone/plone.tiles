@@ -1,9 +1,11 @@
 Changelog
 =========
 
-1.3.1 (unreleased)
+1.4.0 (unreleased)
 ------------------
 
+- Fix issue where encoding did not support dictionary fields
+  [datakurre]
 - Fix issue where non-ascii characters in tiledata raised UnicodeEncode/DecodeErrors
   [datakurre]
 
