@@ -68,6 +68,16 @@ Lists and tuples may also be encoded. The value type will be encoded as well.
     >>> encode(data, ISequences)
     'list%3Alist=a&list%3Alist=b&tuple%3Along%3Atuple=1&tuple%3Along%3Atuple=2&tuple%3Along%3Atuple=3'
 
+Even dictionaries may be encoded. And the value type will be encoded as well.
+
+    >>> class IRecords(Interface):
+    ...     record = schema.Dict(title=u"Record")
+    ...     records = schema.List(title=u"Records", value_type=schema.Dict())
+
+    >>> data = dict(record={'a': 'b', 'c': True}, records=[{'a': 'b', 'c': True}])
+    >>> encode(data, IRecords)
+    'record.a%3Arecord=b&record.c%3Aboolean%3Arecord=1&records.a%3Arecords=b&records.c%3Aboolean%3Arecords=1'
+
 Unsupported fields will raise a ComponentLookupError. This also
 applies to the value_type of a list or tuple:
 

@@ -115,6 +115,46 @@ def defaultTileDataContext(context, request, tile):
 # Encoding
 
 
+def map_to_pairs(encoded_name, value):
+    """Given an encoded basename, e.g. "foo:record" or "foo:record:list" and
+    a dictionary value, yields (encoded_name, value) pairs to be included
+    in the final encode.
+    """
+    prefix, postfix = encoded_name.split(':', 1)
+    postfix = postfix.replace('record:list', 'records')
+
+    def guess_type(v):
+        if isinstance(v, str):
+            return ''
+        if isinstance(v, bool):
+            return ':boolean'
+        if isinstance(v, int):
+            return ':int'
+        if isinstance(v, float):
+            return ':float'
+        return ''
+
+    for item_name, item_value in value.items():
+        if isinstance(item_value, unicode):
+            item_value = item_value.encode('utf-8')
+
+        if isinstance(item_value, list) or isinstance(item_value, tuple):
+            for item_subvalue in item_value:
+                marshall_type = guess_type(item_subvalue)
+                if isinstance(item_subvalue, bool):
+                    item_subvalue = item_subvalue and '1' or ''
+                encoded_name = "%s.%s%s:list:%s" % (
+                    prefix, item_name, marshall_type, postfix)
+                yield encoded_name, item_subvalue
+        else:
+            marshall_type = guess_type(item_value)
+            if isinstance(item_value, bool):
+                item_value = item_value and '1' or ''
+            encoded_name = "%s.%s%s:%s" % (
+                prefix, item_name, marshall_type, postfix)
+            yield encoded_name, item_value
+
+
 def encode(data, schema, ignore=()):
     """Given a data dictionary with key/value pairs and schema, return an
     encoded query string. This is similar to urllib.urlencode(), but field
@@ -163,7 +203,11 @@ def encode(data, schema, ignore=()):
                 if isinstance(item, bool):
                     item = item and '1' or ''
 
-                encode.append((encoded_name, item,))
+                if isinstance(item, dict):
+                    for encoded_name, item in map_to_pairs(encoded_name, item):
+                        encode.append((encoded_name, item,))
+                else:
+                    encode.append((encoded_name, item,))
 
         else:
             # The :bool converter just does bool() value, but urlencode() does
@@ -171,7 +215,11 @@ def encode(data, schema, ignore=()):
             if isinstance(value, bool):
                 value = value and '1' or ''
 
-            encode.append((encoded_name, value))
+            if isinstance(value, dict):
+                for encoded_name, value in map_to_pairs(encoded_name, value):
+                    encode.append((encoded_name, value,))
+            else:
+                encode.append((encoded_name, value))
 
     return urllib.urlencode(encode)
 

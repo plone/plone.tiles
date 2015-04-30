@@ -35,3 +35,7 @@ class TupleConverter(NoConverter):
 
 class ListConverter(NoConverter):
     token = 'list'
+
+
+class DictConverter(NoConverter):
+    token = 'record'

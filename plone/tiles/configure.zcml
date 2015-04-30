@@ -119,4 +119,8 @@
              factory="plone.tiles.fieldtypeconverters.ListConverter"
              />
 
+    <adapter for="zope.schema.interfaces.IDict"
+             factory="plone.tiles.fieldtypeconverters.DictConverter"
+             />
+
 </configure>
