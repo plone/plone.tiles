@@ -204,8 +204,7 @@ def encode(data, schema, ignore=()):
                     item = item and '1' or ''
 
                 if isinstance(item, dict):
-                    for encoded_name, item in map_to_pairs(encoded_name, item):
-                        encode.append((encoded_name, item,))
+                    encode.extend(map_to_pairs(encoded_name, item))
                 else:
                     encode.append((encoded_name, item,))
 
@@ -216,8 +215,7 @@ def encode(data, schema, ignore=()):
                 value = value and '1' or ''
 
             if isinstance(value, dict):
-                for encoded_name, value in map_to_pairs(encoded_name, value):
-                    encode.append((encoded_name, value,))
+                encode.extend(map_to_pairs(encoded_name, value))
             else:
                 encode.append((encoded_name, value))
 
