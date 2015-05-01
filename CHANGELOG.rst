@@ -4,9 +4,11 @@ Changelog
 1.4.0 (unreleased)
 ------------------
 
-- Fix issue where encoding did not support dictionary fields
+- Add support for encoding dictionary fields into tile URL
   [datakurre]
-- Fix issue where non-ascii characters in tiledata raised UnicodeEncode/DecodeErrors
+- Fix issue where saving or deleting transient tile data mutated the current request
+  [datakurre]
+- Fix issue where non-ascii characters in tile data raised UnicodeEncode/DecodeErrors
   [datakurre]
 
 1.3.0 (2015-04-21)
