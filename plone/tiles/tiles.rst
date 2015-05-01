@@ -294,7 +294,7 @@ the request, this one will be used instead::
     >>> tile = tile['tile1']
 
     >>> sorted(tile.data.items())
-    [('count', 6), ('cssClass', 'bar'), ('title', u'Your title')]
+    [(u'count', 6), (u'cssClass', u'bar'), (u'title', u'Your title')]
 
 This way we can use transient tiles safely in contexts where the tile
 data can be confused with raw data coming from a form, e.g. in an edit form.

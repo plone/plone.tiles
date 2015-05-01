@@ -43,34 +43,46 @@ class TransientTileDataManager(object):
     def __init__(self, tile):
         self.tile = tile
         self.tileType = queryUtility(ITileType, name=tile.__name__)
-
-        # try to use a '_tiledata' parameter in the request, falling
-        # back to the request.form object itself if not found
-        request = self.tile.request
-
-        if '_tiledata' in request.form:
-            self.data = json.loads(request.form['_tiledata'])
-        else:
-            self.data = request.form
+        self.annotations = IAnnotations(self.tile.request,
+                                        self.tile.request.form)
+        self.key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.id,)
 
     def get(self):
-        # If we don't have a schema, just take the request
-        if self.tileType is None or self.tileType.schema is None:
-            return self.data.copy()
+        # use explicitly set data (saved as annotation on the request)
+        if self.key in self.annotations:
+            data = dict(self.annotations[self.key])
 
-        # Try to decode the form data properly if we can
-        try:
-            return decode(self.data, self.tileType.schema, missing=True)
-        except (ValueError, UnicodeDecodeError,):
-            LOGGER.exception(u"Could not convert form data to schema")
-            return self.data.copy()
+            if self.tileType is not None and self.tileType.schema is not None:
+                for name, field in getFields(self.tileType.schema).items():
+                    if name not in data:
+                        data[name] = field.missing_value
+
+        # try to use a '_tiledata' parameter in the request
+        elif '_tiledata' in self.tile.request.form:
+            data = json.loads(self.tile.request.form['_tiledata'])
+
+        # fall back to the copy of request.form object itself
+        else:
+            # If we don't have a schema, just take the request
+            if self.tileType is None or self.tileType.schema is None:
+                data = self.tile.request.form.copy()
+            else:
+                # Try to decode the form data properly if we can
+                try:
+                    data = decode(self.tile.request.form,
+                                  self.tileType.schema, missing=True)
+                except (ValueError, UnicodeDecodeError,):
+                    LOGGER.exception(u"Could not convert form data to schema")
+                    return self.data.copy()
+
+        return data
 
     def set(self, data):
-        self.data.clear()
-        self.data.update(data)
+        self.annotations[self.key] = data
 
     def delete(self):
-        self.data.clear()
+        if self.key in self.annotations:
+            self.annotations[self.key] = {}
 
 
 class PersistentTileDataManager(object):
