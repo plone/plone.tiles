@@ -260,8 +260,6 @@ def decode(data, schema, missing=True):
         value = data[name]
         if value is None:
             continue
-        if isinstance(value, str):
-            value = unicode(value, 'utf-8')
 
         field_type = field._type
         if isinstance(field_type, (tuple, list,)):
@@ -275,11 +273,18 @@ def decode(data, schema, missing=True):
                 value_type_field_type = value_type_field_type[-1]
 
             for item in value:
+                if isinstance(item, str):
+                    value = unicode(value, 'utf-8')
                 if not isinstance(item, field.value_type._type):
                     item = value_type_field_type(item)
                 converted.append(item)
 
             value = converted
+        elif isinstance(value, (tuple, list)) and value:
+            value = value[0]
+
+        if isinstance(value, str):
+            value = unicode(value, 'utf-8')
 
         if field._type is not None and not isinstance(value, field._type):
             value = field_type(value)
