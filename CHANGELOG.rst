@@ -6,6 +6,9 @@ Changelog
 
 - Add support for encoding dictionary fields into tile URL
   [datakurre]
+- Fix issue where tile preview during drafting did not use drafting tile data
+  for the preview
+  [datakurre]
 - Fix issue where saving or deleting transient tile data mutated the current request
   [datakurre]
 - Fix issue where non-ascii characters in tile data raised UnicodeEncode/DecodeErrors
