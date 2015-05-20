@@ -7,12 +7,6 @@ from zope.interface import implements
 from zope.publisher.browser import BrowserView
 from zope.traversing.browser.absoluteurl import absoluteURL
 
-try:
-    from plone.app.drafts.interfaces import ICurrentDraftManagement
-    PLONE_APP_DRAFTS = True
-except ImportError:
-    PLONE_APP_DRAFTS = False
-
 
 class Tile(BrowserView):
     """Basic implementation of a transient tile. Subclasses should override
@@ -94,10 +88,6 @@ class Tile(BrowserView):
     @property
     def data(self):
         if self.__cachedData is None:
-            # Support drafting tile data context
-            if PLONE_APP_DRAFTS:
-                ICurrentDraftManagement(self.request).mark()
-            # Get tile data from manager
             reader = ITileDataManager(self)
             self.__cachedData = reader.get()
         return self.__cachedData
