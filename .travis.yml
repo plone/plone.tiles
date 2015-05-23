@@ -7,10 +7,12 @@ cache:
 env:
 - PLONE_VERSION=4.2
 - PLONE_VERSION=4.3
+- PLONE_VERSION=5.x
 install:
-- sed -ie "s#test-4.x.cfg#test-$PLONE_VERSION.x.cfg#" buildout.cfg
-- python bootstrap.py
-- bin/buildout -N -t 3 -q
+- sed -e "s#test-4.x.cfg#test-$PLONE_VERSION.x.cfg#" test-4.x.cfg > test-$PLONE_VERSION.cfg
+- python bootstrap.py -c test-$PLONE_VERSION.cfg
+- bin/buildout -N -t 3 -c test-$PLONE_VERSION.cfg annotate
+- bin/buildout -N -t 3 -c test-$PLONE_VERSION.cfg
 script:
 - bin/code-analysis
 - bin/test
