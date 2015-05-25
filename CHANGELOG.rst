@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.0 (unreleased)
+1.4.0 (2015-05-25)
 ------------------
 
 - Add support for encoding dictionary fields into tile URL
