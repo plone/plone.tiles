@@ -32,6 +32,23 @@ ANNOTATIONS_KEY_PREFIX = u'plone.tiles.data'
 LOGGER = logging.getLogger('plone.tiles')
 
 
+@adapter(ITile)
+@implementer(ITileDataManager)
+def transientTileDataManagerFactory(tile):
+    if tile.request.get('X-Tile-Persistent'):
+        return PersistentTileDataManager(tile)
+
+    key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.id,)
+    context = getMultiAdapter((tile.context, tile.request, tile),
+                              ITileDataContext)
+    annotations = IAnnotations(context)
+
+    if key in annotations:
+        return PersistentTileDataManager(tile)
+    else:
+        return TransientTileDataManager(tile)
+
+
 class TransientTileDataManager(object):
     """A data manager for transient tile data, which reads data from the
     request query string.
