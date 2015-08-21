@@ -35,15 +35,7 @@ LOGGER = logging.getLogger('plone.tiles')
 @adapter(ITile)
 @implementer(ITileDataManager)
 def transientTileDataManagerFactory(tile):
-    if tile.request.get('X-Tile-Persistent'):
-        return PersistentTileDataManager(tile)
-
-    key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.id,)
-    context = getMultiAdapter((tile.context, tile.request, tile),
-                              ITileDataContext)
-    annotations = IAnnotations(context)
-
-    if key in annotations:
+    if tile.request.get('X-Tile-Persistent') or tile.request.environ.get('X-Tile-Persistent'):
         return PersistentTileDataManager(tile)
     else:
         return TransientTileDataManager(tile)
@@ -120,8 +112,23 @@ class PersistentTileDataManager(object):
 
         self.key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.id,)
 
+    def _get_default_request_data(self):
+        # If we don't have a schema, just take the request
+        if self.tileType is None or self.tileType.schema is None:
+            data = self.tile.request.form.copy()
+        else:
+            # Try to decode the form data properly if we can
+            try:
+                data = decode(self.tile.request.form,
+                              self.tileType.schema, missing=True)
+            except (ValueError, UnicodeDecodeError,):
+                LOGGER.exception(u"Could not convert form data to schema")
+                return self.data.copy()
+        return data
+
     def get(self):
-        data = dict(self.annotations.get(self.key, {}))
+        data = self._get_default_request_data()
+        data.update(dict(self.annotations.get(self.key, {})))
         if self.tileType is not None and self.tileType.schema is not None:
             for name, field in getFields(self.tileType.schema).items():
                 if name not in data:
