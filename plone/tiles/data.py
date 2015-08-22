@@ -38,6 +38,8 @@ LOGGER = logging.getLogger('plone.tiles')
 def transientTileDataManagerFactory(tile):
     if IPersistentTileOverrides.providedBy(tile.request):
         return PersistentTileDataManager(tile)
+    elif tile.request.get('X-Tile-Persistent'):
+        return PersistentTileDataManager(tile)
     elif tile.request.getHeader('X-Tile-Persistent'):
         return PersistentTileDataManager(tile)
     else:

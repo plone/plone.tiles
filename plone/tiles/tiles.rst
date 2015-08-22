@@ -446,8 +446,8 @@ multiple context objects, but still allow optional customization for
 tiles, it's possible to override otherwise transient tile configuration
 with context specific persistent configuration.
 
-This is done by either by setting a client side request header
-``X-Tile-Persistent`` or tagging request server side (e.g. in a view returning
+This is done by either by setting a client side request header or query param
+``X-Tile-Persistent``, or tagging request server side (e.g. in a view returning
 the selected layout) with a special marker interface
 ``IPersistentTileOverrides``:
 
