@@ -37,8 +37,6 @@ LOGGER = logging.getLogger('plone.tiles')
 def transientTileDataManagerFactory(tile):
     if tile.request.get('X-Tile-Persistent'):
         return PersistentTileDataManager(tile)
-    elif tile.request.getHeader('X-Tile-Persistent'):
-        return PersistentTileDataManager(tile)
     else:
         return TransientTileDataManager(tile)
 

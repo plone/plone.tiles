@@ -450,8 +450,8 @@ This is done by either by setting a client side request header or query param
 ``X-Tile-Persistent``:
 
     >>> request = TestRequest(
-    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
-    ...     environ={'X_TILE_PERSISTENT': True}
+    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo',
+    ...           'X-Tile-Persistent': 'yes'}
     ... )
 
 Yet, just adding the flag, doesn't create new persistent annotations
@@ -498,8 +498,8 @@ Without the persistent flag, fixed transient data would be returned:
 Finally, the persistent override could also be deleted:
 
     >>> request = TestRequest(
-    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
-    ...     environ={'X_TILE_PERSISTENT': True}
+    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo',
+    ...           'X-Tile-Persistent': 'yes'}
     ... )
     >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
     >>> ITileDataManager(tile)
