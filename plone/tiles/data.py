@@ -1,30 +1,31 @@
 # -*- coding: utf-8 -*-
-
 import logging
 import urllib
-
-from zope.interface import implements, implementer, Interface
-from zope.component import adapts, adapter, queryUtility, getMultiAdapter
+from zope.interface import implements
+from zope.interface import implementer
+from zope.interface import Interface
+from zope.component import adapts
+from zope.component import adapter
+from zope.component import queryUtility
+from zope.component import getMultiAdapter
 from zope.component.interfaces import ComponentLookupError
-
-from zope.schema import getFieldsInOrder, getFields
+from zope.schema import getFieldsInOrder
+from zope.schema import getFields
 from zope.schema.interfaces import ISequence
-
 from zope.annotation.interfaces import IAnnotations
-
 from plone.tiles.interfaces import ITileType
 from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import IPersistentTile
+from plone.tiles.interfaces import IPersistentTileOverrides
 from plone.tiles.interfaces import ITileDataManager
 from plone.tiles.interfaces import ITileDataContext
 from plone.tiles.interfaces import IFieldTypeConverter
-
 from persistent.dict import PersistentDict
 
 try:
     import json
     assert json  # silence pyflakes
-except:
+except ImportError:
     import simplejson as json
 
 
@@ -35,7 +36,9 @@ LOGGER = logging.getLogger('plone.tiles')
 @adapter(ITile)
 @implementer(ITileDataManager)
 def transientTileDataManagerFactory(tile):
-    if tile.request.get('X-Tile-Persistent') or tile.request.environ.get('X-Tile-Persistent'):
+    if IPersistentTileOverrides.providedBy(tile.request):
+        return PersistentTileDataManager(tile)
+    elif tile.request.getHeader('X-Tile-Persistent'):
         return PersistentTileDataManager(tile)
     else:
         return TransientTileDataManager(tile)
