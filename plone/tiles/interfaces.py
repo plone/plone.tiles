@@ -100,18 +100,6 @@ class IPersistentTile(ITile):
     """
 
 
-class IPersistentTileOverrides(Interface):
-    """Marker interface for request to prefer existing persistent
-    data (stored in annotations) over transient data on GET requests
-    and store submitted data as persistent on POST request.
-
-    This is the server side alternative for setting request header:
-
-        X-Tile-Persistent
-
-    """
-
-
 class IESIRendered(Interface):
     """Marker interface for tiles which are to be rendered via ESI.
 

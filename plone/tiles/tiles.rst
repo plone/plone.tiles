@@ -447,16 +447,12 @@ tiles, it's possible to override otherwise transient tile configuration
 with context specific persistent configuration.
 
 This is done by either by setting a client side request header or query param
-``X-Tile-Persistent``, or tagging request server side (e.g. in a view returning
-the selected layout) with a special marker interface
-``IPersistentTileOverrides``:
+``X-Tile-Persistent``:
 
-    >>> from plone.tiles.interfaces import IPersistentTileOverrides
-    >>> from zope.interface import alsoProvides
-    >>> request = TestRequest(form={
-    ...     'title': u'My title', 'count': 5, 'cssClass': u'foo',
-    ... })
-    >>> alsoProvides(request, IPersistentTileOverrides)
+    >>> request = TestRequest(
+    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
+    ...     environ={'X_TILE_PERSISTENT': True}
+    ... )
 
 Yet, just adding the flag, doesn't create new persistent annotations
 on GET requests:
@@ -488,8 +484,10 @@ That's because the data is persistent only once it's set:
 
 Without the persistent flag, fixed transient data would be returned:
 
-    >>> from zope.interface import noLongerProvides
-    >>> noLongerProvides(request, IPersistentTileOverrides)
+    >>> request = TestRequest(
+    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
+    ... )
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
     >>> ITileDataManager(tile)
     <plone.tiles.data.TransientTileDataManager object at ...>
 
@@ -499,7 +497,11 @@ Without the persistent flag, fixed transient data would be returned:
 
 Finally, the persistent override could also be deleted:
 
-    >>> alsoProvides(request, IPersistentTileOverrides)
+    >>> request = TestRequest(
+    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
+    ...     environ={'X_TILE_PERSISTENT': True}
+    ... )
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
     >>> ITileDataManager(tile)
     <plone.tiles.data.PersistentTileDataManager object at ...>
 
@@ -513,7 +515,10 @@ Finally, the persistent override could also be deleted:
     >>> sorted(ITileDataManager(tile).get().items(), key=lambda x: x[0])
     [('count', 5), ('cssClass', 'foo'), ('title', u'My title')]
 
-    >>> noLongerProvides(request, IPersistentTileOverrides)
+    >>> request = TestRequest(
+    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
+    ... )
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
     >>> ITileDataManager(tile)
     <plone.tiles.data.TransientTileDataManager object at ...>
 

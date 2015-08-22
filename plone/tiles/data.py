@@ -16,7 +16,6 @@ from zope.annotation.interfaces import IAnnotations
 from plone.tiles.interfaces import ITileType
 from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import IPersistentTile
-from plone.tiles.interfaces import IPersistentTileOverrides
 from plone.tiles.interfaces import ITileDataManager
 from plone.tiles.interfaces import ITileDataContext
 from plone.tiles.interfaces import IFieldTypeConverter
@@ -36,9 +35,7 @@ LOGGER = logging.getLogger('plone.tiles')
 @adapter(ITile)
 @implementer(ITileDataManager)
 def transientTileDataManagerFactory(tile):
-    if IPersistentTileOverrides.providedBy(tile.request):
-        return PersistentTileDataManager(tile)
-    elif tile.request.get('X-Tile-Persistent'):
+    if tile.request.get('X-Tile-Persistent'):
         return PersistentTileDataManager(tile)
     elif tile.request.getHeader('X-Tile-Persistent'):
         return PersistentTileDataManager(tile)
