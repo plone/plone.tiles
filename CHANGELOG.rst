@@ -5,7 +5,7 @@ Changelog
 ------------------
 
 - Add support for overriding transient data manager with persistent by adding
-  X-Tile-Persistent -header
+  X-Tile-Persistent=1 into tile URL
   [datakurre]
 
 1.4.0 (2015-05-25)
