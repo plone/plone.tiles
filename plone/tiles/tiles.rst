@@ -437,6 +437,92 @@ We can also remove the annotation using the data manager:
     >>> sorted(dict(context.__annotations__).items()) # doctest: +ELLIPSIS
     []
 
+
+Overriding transient data with persistent
+-----------------------------------------
+
+To be able to re-use the same centrally managed tile based layouts for
+multiple context objects, but still allow optional customization for
+tiles, it's possible to override otherwise transient tile configuration
+with context specific persistent configuration.
+
+This is done by either by setting a client side request header or query param
+``X-Tile-Persistent``:
+
+    >>> request = TestRequest(
+    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo',
+    ...           'X-Tile-Persistent': 'yes'}
+    ... )
+
+Yet, just adding the flag, doesn't create new persistent annotations
+on GET requests:
+
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> ITileDataManager(tile)
+    <plone.tiles.data.PersistentTileDataManager object at ...>
+
+    >>> sorted(ITileDataManager(tile).get().items(), key=lambda x: x[0])
+    [('count', 5), ('cssClass', 'foo'), ('title', u'My title')]
+
+    >>> from zope.annotation.interfaces import IAnnotations
+    >>> list(IAnnotations(context).keys())
+    []
+
+That's because the data is persistent only once it's set:
+
+    >>> data = ITileDataManager(tile).get()
+    >>> data.update({'count': 6})
+    >>> ITileDataManager(tile).set(data)
+    >>> list(IAnnotations(context).keys())
+    [u'plone.tiles.data...']
+
+    >>> sorted(IAnnotations(context).values()[0].items(), key=lambda x: x[0])
+    [('count', 6), ('cssClass', 'foo'), ('title', u'My title')]
+
+    >>> sorted(ITileDataManager(tile).get().items(), key=lambda x: x[0])
+    [('count', 6), ('cssClass', 'foo'), ('title', u'My title')]
+
+Without the persistent flag, fixed transient data would be returned:
+
+    >>> request = TestRequest(
+    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
+    ... )
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> ITileDataManager(tile)
+    <plone.tiles.data.TransientTileDataManager object at ...>
+
+    >>> data = ITileDataManager(tile).get()
+    >>> sorted(data.items(), key=lambda x: x[0])
+    [('count', 5), ('cssClass', 'foo'), ('title', u'My title')]
+
+Finally, the persistent override could also be deleted:
+
+    >>> request = TestRequest(
+    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo',
+    ...           'X-Tile-Persistent': 'yes'}
+    ... )
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> ITileDataManager(tile)
+    <plone.tiles.data.PersistentTileDataManager object at ...>
+
+    >>> sorted(ITileDataManager(tile).get().items(), key=lambda x: x[0])
+    [('count', 6), ('cssClass', 'foo'), ('title', u'My title')]
+
+    >>> ITileDataManager(tile).delete()
+    >>> list(IAnnotations(context).keys())
+    []
+
+    >>> sorted(ITileDataManager(tile).get().items(), key=lambda x: x[0])
+    [('count', 5), ('cssClass', 'foo'), ('title', u'My title')]
+
+    >>> request = TestRequest(
+    ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
+    ... )
+    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> ITileDataManager(tile)
+    <plone.tiles.data.TransientTileDataManager object at ...>
+
+
 Tile URLs
 ---------
 

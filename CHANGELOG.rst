@@ -4,8 +4,9 @@ Changelog
 1.4.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Add support for overriding transient data manager with persistent by adding
+  X-Tile-Persistent -header
+  [datakurre]
 
 1.4.0 (2015-05-25)
 ------------------

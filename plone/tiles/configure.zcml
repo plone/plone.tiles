@@ -4,7 +4,7 @@
     i18n_domain="plone.tiles">
 
     <!-- Data manager -->
-    <adapter factory=".data.TransientTileDataManager" />
+    <adapter factory=".data.transientTileDataManagerFactory" />
     <adapter factory=".data.PersistentTileDataManager" />
     <adapter factory=".data.defaultTileDataContext" />
 

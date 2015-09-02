@@ -57,7 +57,8 @@ PLONE_TILES_INTEGRATION_TESTING = z2.IntegrationTesting(
 def test_suite():
     return unittest.TestSuite((
         layered(doctest.DocFileSuite('tiles.rst', 'directives.rst',
-                                     'data.rst', 'esi.rst'),
+                                     'data.rst', 'esi.rst',
+                                     optionflags=doctest.ELLIPSIS),
                 layer=PLONE_TILES_INTEGRATION_TESTING
                 ),
     ))
