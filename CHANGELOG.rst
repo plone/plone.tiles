@@ -1,12 +1,15 @@
 Changelog
 =========
 
-1.4.1 (unreleased)
+1.5.0 (unreleased)
 ------------------
 
-- Add support for overriding transient data manager with persistent by adding
-  X-Tile-Persistent=1 into tile URL
+- Add support for overriding transient data manager with persistent data
+  manager by adding X-Tile-Persistent=1 into tile URL
   [datakurre]
+
+- Fix persistent data manager to read its default from query string
+  [vangheem]
 
 1.4.0 (2015-05-25)
 ------------------
