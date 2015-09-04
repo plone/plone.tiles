@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.0 (unreleased)
+1.5.0 (2015-09-04)
 ------------------
 
 - Add support for overriding transient data manager with persistent data
