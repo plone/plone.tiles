@@ -4,7 +4,8 @@ Changelog
 1.5.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix decoding List type of Choice value types
+  [vangheem]
 
 
 1.5.0 (2015-09-04)

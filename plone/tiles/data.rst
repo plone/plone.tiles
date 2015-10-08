@@ -26,6 +26,8 @@ First, we'll create a simple schema that exercises several field types:
     ...     float       = schema.Float(title=u"Float")
     ...     bool        = schema.Bool(title=u"Bool")
     ...     weekday     = schema.Choice(title=u"Weekday", values=weekdays)
+    ...     list        = schema.List(value_type=schema.TextLine())
+    ...     listchoice  = schema.List(value_type=schema.Choice(vocabulary='foobar'))
 
 A simple encode produces a query string:
 
@@ -113,14 +115,14 @@ the first example above.
 
     >>> data = dict(text_line=u'A', ascii_line=u'B', text=u'C\nD', ascii=u'E\nF', int=3, float=1.2, bool=False, weekday=u'Saturday')
     >>> sorted(decode(data, ISimple).items())
-    [('ascii', 'E\nF'), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('text', u'C\nD'), ('text_line', u'A'), ('weekday', u'Saturday')]
+    [('ascii', 'E\nF'), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('list', None), ('listchoice', None), ('text', u'C\nD'), ('text_line', u'A'), ('weekday', u'Saturday')]
 
 If any values are missing from the input dictionary, they will default to
 ``missing_value``.
 
     >>> data = dict(text_line=u'A', ascii_line=u'B', int=3, float=1.2, bool=False, weekday=u'Saturday')
     >>> sorted(decode(data, ISimple).items())
-    [('ascii', None), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('text', u'Missing'), ('text_line', u'A'), ('weekday', u'Saturday')]
+    [('ascii', None), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('list', None), ('listchoice', None), ('text', u'Missing'), ('text_line', u'A'), ('weekday', u'Saturday')]
 
 If you pass ``missing=False``, the values are ignored instead.
 
@@ -133,3 +135,15 @@ Decoding also works for lists and their value types:
     >>> data = dict(list=[u'a', u'b'])
     >>> sorted(decode(data, ISequences, missing=False).items())
     [('list', ['a', 'b'])]
+
+Decoding should work with lists and the ISimple schema
+
+    >>> data = dict(list=['a', 'b'])
+    >>> sorted(decode(data, ISimple, missing=False).items())
+    [('list', [u'a', u'b'])]
+
+And list choice fields
+
+    >>> data = dict(listchoice=['a', 'b'])
+    >>> sorted(decode(data, ISimple, missing=False).items())
+    [('listchoice', ['a', 'b'])]

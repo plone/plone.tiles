@@ -298,8 +298,8 @@ def decode(data, schema, missing=True):
 
             for item in value:
                 if isinstance(item, str):
-                    value = unicode(value, 'utf-8')
-                if not isinstance(item, field.value_type._type):
+                    value = unicode(item, 'utf-8')
+                if field.value_type._type and not isinstance(item, field.value_type._type):
                     item = value_type_field_type(item)
                 converted.append(item)
 
