@@ -2,7 +2,7 @@ import os
 from setuptools import setup
 from setuptools import find_packages
 
-version = '1.5.1'
+version = '1.5.2.dev0'
 
 setup(
     name='plone.tiles',
