@@ -50,6 +50,6 @@ setup(
         'Zope2',
     ],
     extras_require={
-        'test': ['plone.testing [zca, z2]'],
+        'test': ['plone.testing [zca, z2]', 'unittest2'],
     },
 )
