@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.1 (unreleased)
+1.5.1 (2015-10-09)
 ------------------
 
 - Fix decoding List type of Choice value types
