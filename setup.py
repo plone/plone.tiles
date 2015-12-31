@@ -2,7 +2,7 @@ import os
 from setuptools import setup
 from setuptools import find_packages
 
-version = '1.4.1.dev0'
+version = '1.5.2.dev0'
 
 setup(
     name='plone.tiles',
@@ -50,6 +50,6 @@ setup(
         'Zope2',
     ],
     extras_require={
-        'test': ['plone.testing [zca, z2]'],
+        'test': ['plone.testing [zca, z2]', 'unittest2'],
     },
 )

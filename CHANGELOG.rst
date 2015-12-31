@@ -1,11 +1,28 @@
 Changelog
 =========
 
-1.4.1 (unreleased)
+1.5.2 (unreleased)
 ------------------
 
 - Nothing changed yet.
 
+
+1.5.1 (2015-10-09)
+------------------
+
+- Fix decoding List type of Choice value types
+  [vangheem]
+
+
+1.5.0 (2015-09-04)
+------------------
+
+- Add support for overriding transient data manager with persistent data
+  manager by adding X-Tile-Persistent=1 into tile URL
+  [datakurre]
+
+- Fix persistent data manager to read its default from query string
+  [vangheem]
 
 1.4.0 (2015-05-25)
 ------------------
