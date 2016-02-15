@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from plone.tiles.interfaces import ITileType
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(ITileType)
 class TileType(object):
     """A utility that describes a type of tile
     """
-
-    implements(ITileType)
 
     def __init__(self, name, title, add_permission, edit_permission=None,
                  delete_permission=None, description=None, icon=None,

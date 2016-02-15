@@ -22,7 +22,7 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         tile = self.context
         request = self.request
 
-        id = tile.id
+        tid = tile.id
         name = tile.__name__
         context = tile.__parent__
 
@@ -30,8 +30,8 @@ class BaseTileAbsoluteURL(AbsoluteURL):
             raise TypeError("Insufficient context to determine URL")
 
         tileFragment = "@@" + urllib.quote(name.encode('utf-8'), _safe)
-        if id:
-            tileFragment += '/' + urllib.quote(id.encode('utf-8'), _safe)
+        if tid:
+            tileFragment += '/' + urllib.quote(tid.encode('utf-8'), _safe)
 
         absolute_url = getMultiAdapter((context, request), IAbsoluteURL)
         try:
@@ -45,13 +45,13 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         tile = self.context
         request = self.request
 
-        id = tile.id
+        tid = tile.id
         name = tile.__name__
         context = tile.__parent__
 
         tileFragment = "@@" + urllib.quote(name.encode('utf-8'), _safe)
-        if id:
-            tileFragment += '/' + urllib.quote(id.encode('utf-8'), _safe)
+        if tid:
+            tileFragment += '/' + urllib.quote(tid.encode('utf-8'), _safe)
 
         base = tuple(
             getMultiAdapter((context, request), IAbsoluteURL).breadcrumbs())

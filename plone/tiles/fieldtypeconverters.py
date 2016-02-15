@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from plone.tiles.interfaces import IFieldTypeConverter
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(IFieldTypeConverter)
 class NoConverter(object):
-    implements(IFieldTypeConverter)
 
     def __init__(self, field):
         self.field = field
