@@ -17,8 +17,6 @@ import unittest2 as unittest
 # For directive tests
 
 
-
-
 class IDummySchema(Interface):
     foo = schema.TextLine(title=u"Foo")
 
@@ -32,6 +30,7 @@ class IDummyLayer(Interface):
 
 
 class DummyTile(Tile):
+
     def __call__(self):
         return u"dummy"
 
