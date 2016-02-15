@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
-from zope.interface import implements
 from plone.tiles.interfaces import ITileType
+from zope.interface import implements
 
 
 class TileType(object):
@@ -30,4 +29,4 @@ class TileType(object):
         self.schema = schema
 
     def __repr__(self):
-        return u"<TileType %s (%s)>" % (self.__name__, self.title,)
+        return u'<TileType {0} ({1})>'.format(self.__name__, self.title,)

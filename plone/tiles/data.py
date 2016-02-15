@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
+from persistent.dict import PersistentDict
+from plone.tiles.interfaces import IFieldTypeConverter
+from plone.tiles.interfaces import IPersistentTile
+from plone.tiles.interfaces import ITile
+from plone.tiles.interfaces import ITileDataContext
+from plone.tiles.interfaces import ITileDataManager
+from plone.tiles.interfaces import ITileType
+from zope.annotation.interfaces import IAnnotations
+from zope.component import adapter
+from zope.component import adapts
+from zope.component import getMultiAdapter
+from zope.component import queryUtility
+from zope.component.interfaces import ComponentLookupError
+from zope.interface import implementer
+from zope.interface import implements
+from zope.interface import Interface
+from zope.schema import getFields
+from zope.schema import getFieldsInOrder
+from zope.schema.interfaces import ISequence
+
 import logging
 import urllib
-from zope.interface import implements
-from zope.interface import implementer
-from zope.interface import Interface
-from zope.component import adapts
-from zope.component import adapter
-from zope.component import queryUtility
-from zope.component import getMultiAdapter
-from zope.component.interfaces import ComponentLookupError
-from zope.schema import getFieldsInOrder
-from zope.schema import getFields
-from zope.schema.interfaces import ISequence
-from zope.annotation.interfaces import IAnnotations
-from plone.tiles.interfaces import ITileType
-from plone.tiles.interfaces import ITile
-from plone.tiles.interfaces import IPersistentTile
-from plone.tiles.interfaces import ITileDataManager
-from plone.tiles.interfaces import ITileDataContext
-from plone.tiles.interfaces import IFieldTypeConverter
-from persistent.dict import PersistentDict
+
 
 try:
     import json
@@ -54,7 +56,7 @@ class TransientTileDataManager(object):
         self.tileType = queryUtility(ITileType, name=tile.__name__)
         self.annotations = IAnnotations(self.tile.request,
                                         self.tile.request.form)
-        self.key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.id,)
+        self.key = '{0}.{1}'.format(ANNOTATIONS_KEY_PREFIX, tile.id,)
 
     def get(self):
         # use explicitly set data (saved as annotation on the request)
@@ -81,7 +83,7 @@ class TransientTileDataManager(object):
                     data = decode(self.tile.request.form,
                                   self.tileType.schema, missing=True)
                 except (ValueError, UnicodeDecodeError,):
-                    LOGGER.exception(u"Could not convert form data to schema")
+                    LOGGER.exception(u'Could not convert form data to schema')
                     return self.data.copy()
 
         return data
@@ -110,7 +112,7 @@ class PersistentTileDataManager(object):
             (tile.context, tile.request, tile), ITileDataContext)
         self.annotations = IAnnotations(self.context)
 
-        self.key = "%s.%s" % (ANNOTATIONS_KEY_PREFIX, tile.id,)
+        self.key = '{0}.{1}'.format(ANNOTATIONS_KEY_PREFIX, tile.id,)
 
     def _get_default_request_data(self):
         # If we don't have a schema, just take the request
@@ -122,7 +124,7 @@ class PersistentTileDataManager(object):
                 data = decode(self.tile.request.form,
                               self.tileType.schema, missing=True)
             except (ValueError, UnicodeDecodeError,):
-                LOGGER.exception(u"Could not convert form data to schema")
+                LOGGER.exception(u'Could not convert form data to schema')
                 return self.data.copy()
         return data
 
@@ -179,14 +181,14 @@ def map_to_pairs(encoded_name, value):
                 marshall_type = guess_type(item_subvalue)
                 if isinstance(item_subvalue, bool):
                     item_subvalue = item_subvalue and '1' or ''
-                encoded_name = "%s.%s%s:list:%s" % (
+                encoded_name = '{0}.{1}{2}:list:{3}'.format(
                     prefix, item_name, marshall_type, postfix)
                 yield encoded_name, item_subvalue
         else:
             marshall_type = guess_type(item_value)
             if isinstance(item_value, bool):
                 item_value = item_value and '1' or ''
-            encoded_name = "%s.%s%s:%s" % (
+            encoded_name = '{0}.{1}{2}:{3}'.format(
                 prefix, item_name, marshall_type, postfix)
             yield encoded_name, item_value
 
@@ -210,12 +212,12 @@ def encode(data, schema, ignore=()):
 
         converter = IFieldTypeConverter(field, None)
         if converter is None:
-            raise ComponentLookupError(u"Cannot URL encode %s of type %s" % (
-                name, field.__class__,))
+            msg = u'Cannot URL encode {0} of type {1}'
+            raise ComponentLookupError(msg.format(name, field.__class__,))
 
         encoded_name = name
         if converter.token:
-            encoded_name = "%s:%s" % (name, converter.token,)
+            encoded_name = '{0}:{1}'.format(name, converter.token,)
 
         value = data[name]
         if value is None:
@@ -226,12 +228,17 @@ def encode(data, schema, ignore=()):
         if ISequence.providedBy(field):
             value_type_converter = IFieldTypeConverter(field.value_type, None)
             if value_type_converter is None:
+                msg = u'Cannot URL encode value type for {0} of type {1} : {2}'
                 raise ComponentLookupError(
-                    u"Cannot URL encode value type for %s of type %s : %s" % (
-                        name, field.__class__, field.value_type.__class__,))
+                    msg.format(
+                        name,
+                        field.__class__,
+                        field.value_type.__class__,
+                    )
+                )
 
             if value_type_converter.token:
-                encoded_name = "%s:%s:%s" % (
+                encoded_name = '{0}:{1}:{2}'.format(
                     name, value_type_converter.token, converter.token,)
 
             for item in value:
@@ -299,7 +306,8 @@ def decode(data, schema, missing=True):
             for item in value:
                 if isinstance(item, str):
                     value = unicode(item, 'utf-8')
-                if field.value_type._type and not isinstance(item, field.value_type._type):
+                if field.value_type._type and \
+                        not isinstance(item, field.value_type._type):
                     item = value_type_field_type(item)
                 converted.append(item)
 

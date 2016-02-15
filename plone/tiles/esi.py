@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+from plone.tiles.interfaces import ESI_HEADER
+from plone.tiles.interfaces import ESI_HEADER_KEY
+from plone.tiles.interfaces import IESIRendered
+from plone.tiles.tile import PersistentTile
+from plone.tiles.tile import Tile
+from zope.interface import implements
 
 import re
 
-from zope.interface import implements
-
-from plone.tiles.interfaces import IESIRendered, ESI_HEADER, ESI_HEADER_KEY
-from plone.tiles.tile import Tile, PersistentTile
 
 HEAD_CHILDREN = re.compile(r'<head[^>]*>(.*)</head>', re.I | re.S)
 BODY_CHILDREN = re.compile(r'<body[^>]*>(.*)</body>', re.I | re.S)
@@ -17,7 +19,7 @@ ESI_TEMPLATE = u"""\
 <html xmlns="http://www.w3.org/1999/xhtml">
     <body>
         <a class="_esi_placeholder" rel="esi" """ + \
-    u"""href="%(url)s/@@%(esiMode)s?%(queryString)s"></a>
+    u"""href="{url}/@@{esiMode}?{queryString}"></a>
     </body>
 </html>
 """
@@ -31,7 +33,7 @@ def substituteESILinks(rendered):
     """
 
     rendered = re.sub(r'<html',
-                      '<html xmlns:esi="%s"' % ESI_NAMESPACE_MAP['esi'],
+                      '<html xmlns:esi="{0}"'.format(ESI_NAMESPACE_MAP['esi']),
                       rendered, 1)
     return re.sub(r'<a class="_esi_placeholder" rel="esi" href="([^"]+)"></a>',
                   r'<esi:include src="\1" />', rendered)
@@ -50,11 +52,11 @@ class ConditionalESIRendering(object):
             mode = 'esi-body'
             if self.head:
                 mode = 'esi-head'
-            return ESI_TEMPLATE % {
+            return ESI_TEMPLATE.format({
                 'url': self.request.getURL(),
                 'queryString': self.request.get('QUERY_STRING', ''),
                 'esiMode': mode,
-            }
+            })
         if hasattr(self, 'index'):
             return self.index(*args, **kwargs)
 
