@@ -3,11 +3,12 @@ from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import ITileDataManager
 from zope.component import queryMultiAdapter
-from zope.interface import implements
+from zope.interface import implementer
 from zope.publisher.browser import BrowserView
 from zope.traversing.browser.absoluteurl import absoluteURL
 
 
+@implementer(ITile)
 class Tile(BrowserView):
     """Basic implementation of a transient tile. Subclasses should override
     __call__ or set an 'index' variable to point to a view page template file.
@@ -25,8 +26,6 @@ class Tile(BrowserView):
       a URL like `http://.../@@example.tile/foo` to result in a tile with id
       `foo`.
     """
-
-    implements(ITile)
 
     __cachedData = None
     __cachedURL = None
@@ -97,9 +96,8 @@ class Tile(BrowserView):
         return absoluteURL(self, self.request)
 
 
+@implementer(IPersistentTile)
 class PersistentTile(Tile):
     """Base class for persistent tiles. Identical to `Tile`, except that the
     data dict is never serialized with the URL.
     """
-
-    implements(IPersistentTile)

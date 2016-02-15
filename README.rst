@@ -13,44 +13,48 @@ creating "tiles" in the Deco layout system.
 Introduction
 ------------
 
-For the purposes of this package, a tile is a browser view and an associated
-utility providing some metadata about that view. The metadata includes a title
-and description, an 'add' permission and optionally a schema interface
-describing configurable aspects of the tile. The idea is that a UI (such as
-Deco) can present the user with a list of insertable tiles and optionally
-render a form to configure the tile upon insertion.
+For the purposes of this package,
+a tile is a browser view and an associated utility providing some metadata about that view.
+The metadata includes a title and description,
+an 'add' permission and optionally a schema interface describing configurable aspects of the tile.
+The idea is that a UI (such as Deco) can present the user with a list of insertable tiles and optionally render a form to configure the tile upon insertion.
 
-A tile is inserted into a layout as a link::
+A tile is inserted into a layout as a link:
+
+.. code_block:: xml
 
     <link rel="tile" target="placeholder" href="./@@sample.tile/tile1?option1=value1" />
 
-The sub-path (`tile1` in this case) is used to set the tile `id` attribute.
-This allows the tile to know its unique id, and, in the case of persistent
-tiles, look up its data. `sample.tile` is the name of the browser view that
-implements the tile. This is made available as the `__name__` attribute. Other
-parameters may be turned into tile data, available under the `data` attribute,
-a dict, for regular tiles. For persistent tiles (those deriving from the
-`PersistentTile` base class), the data is fetched from annotations instead,
+The sub-path (``tile1`` in this case) is used to set the tile ``id`` attribute.
+This allows the tile to know its unique id, and, in the case of persistent tiles, look up its data.
+``sample.tile`` is the name of the browser view that implements the tile.
+This is made available as the ``__name__`` attribute.
+Other parameters may be turned into tile data, available under the ``data`` attribute, a dict, for regular tiles.
+For persistent tiles
+(those deriving from the ``PersistentTile`` base class),
+the data is fetched from annotations instead,
 based on the tile id.
 
 There are three interfaces describing tiles in this package:
 
-* `IBasicTile` is the low-level interface for tiles. It extends
-  `IBrowserView` to describe the semantics of the `__name__` and  `id`
-  attributes.
-* `ITile` describes a tile that can be configured with some data. The data
-  is accessible via a dict called `data`. The default implementation of this
-  interface, `plone.tiles.Tile`, will use the schema of the tile type and
-  the query string (`self.request.form`) to construct that dictionary. This
-  interface also describes an attribute `url`, which gives the canonical
-  tile URL, including the id sub-path and any query string parameters. (Note
-  that tiles also correctly implement `IAbsoluteURL`.)
-* `IPersistentTile` describes a tile that stores its configuration in
-  object annotations, and is needed when configuration values cannot be
-  encoded into a query string. The default implementation is in
-  `plone.tiles.PersistentTile`. To make it possible to have several tiles
-  of a given type on the same layout, the annotations are keyed by the
-  tile `__name__`.
+``IBasicTile``
+    is the low-level interface for tiles.
+    It extends ``IBrowserView`` to describe the semantics of the ``__name__`` and  ``id`` attributes.
+``ITile``
+    describes a tile that can be configured with some data.
+    The data is accessible via a dict called ``data``.
+    The default implementation of this interface, ``plone.tiles.Tile``,
+    will use the schema of the tile type and the query string (``self.request.form``) to construct that dictionary.
+    This interface also describes an attribute ``url``,
+    which gives the canonical tile URL,
+    including the id sub-path and any query string parameters.
+    (Note that tiles also correctly implement ``IAbsoluteURL``.)
+```IPersistentTile``
+    describes a tile that stores its configuration in object annotations,
+    and is needed when configuration values cannot be encoded into a query string.
+    The default implementation is in ``plone.tiles.PersistentTile``.
+    To make it possible to have several tiles of a given type on the same layout,
+    the annotations are keyed by the tile ``__name__``.
 
 In addition, tiles are described by `ITileType`, which contains attributes
 for the tile name, title, description, add permission and schema (if
@@ -71,7 +75,9 @@ with a tile's schema interface.
 Creating a Simple Tile
 ----------------------
 
-The most basic tile looks like this::
+The most basic tile looks like this:
+
+.. code_block:: python
 
     from plone.tiles import Tile
 
