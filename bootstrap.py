@@ -20,8 +20,15 @@ use the -c option to specify an alternate configuration file.
 $Id$
 """
 
-import os, shutil, sys, tempfile, urllib2
 from optparse import OptionParser
+
+import os
+import shutil
+import sys
+import tempfile
+import urllib2
+import zc.buildout.buildout
+
 
 tmpeggs = tempfile.mkdtemp()
 
@@ -122,6 +129,5 @@ assert exitcode == 0
 
 ws.add_entry(tmpeggs)
 ws.require('zc.buildout' + VERSION)
-import zc.buildout.buildout
 zc.buildout.buildout.main(args)
 shutil.rmtree(tmpeggs)

@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
+from persistent.dict import PersistentDict
+from plone.tiles.interfaces import IFieldTypeConverter
+from plone.tiles.interfaces import IPersistentTile
+from plone.tiles.interfaces import ITile
+from plone.tiles.interfaces import ITileDataContext
+from plone.tiles.interfaces import ITileDataManager
+from plone.tiles.interfaces import ITileType
+from zope.annotation.interfaces import IAnnotations
+from zope.component import adapter
+from zope.component import adapts
+from zope.component import getMultiAdapter
+from zope.component import queryUtility
+from zope.component.interfaces import ComponentLookupError
+from zope.interface import implementer
+from zope.interface import implements
+from zope.interface import Interface
+from zope.schema import getFields
+from zope.schema import getFieldsInOrder
+from zope.schema.interfaces import ISequence
+
 import logging
 import urllib
-from zope.interface import implements
-from zope.interface import implementer
-from zope.interface import Interface
-from zope.component import adapts
-from zope.component import adapter
-from zope.component import queryUtility
-from zope.component import getMultiAdapter
-from zope.component.interfaces import ComponentLookupError
-from zope.schema import getFieldsInOrder
-from zope.schema import getFields
-from zope.schema.interfaces import ISequence
-from zope.annotation.interfaces import IAnnotations
-from plone.tiles.interfaces import ITileType
-from plone.tiles.interfaces import ITile
-from plone.tiles.interfaces import IPersistentTile
-from plone.tiles.interfaces import ITileDataManager
-from plone.tiles.interfaces import ITileDataContext
-from plone.tiles.interfaces import IFieldTypeConverter
-from persistent.dict import PersistentDict
+
 
 try:
     import json

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from zope.interface import implements
 from plone.tiles.interfaces import IFieldTypeConverter
+from zope.interface import implements
 
 
 class NoConverter(object):

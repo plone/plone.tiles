@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from zope.interface import Interface
-
+from plone.tiles.interfaces import ITileType
+from plone.tiles.tile import Tile
+from plone.tiles.type import TileType
 from zope import schema
-from zope.configuration.fields import (
-    GlobalObject, GlobalInterface, MessageID, Path)
+from zope.component.zcml import utility
+from zope.configuration.exceptions import ConfigurationError
+from zope.configuration.fields import GlobalInterface
+from zope.configuration.fields import GlobalObject
+from zope.configuration.fields import MessageID
+from zope.configuration.fields import Path
+from zope.interface import Interface
+from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.security.zcml import Permission
 
-from zope.configuration.exceptions import ConfigurationError
-
-from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-
-from plone.tiles.interfaces import ITileType
-from plone.tiles.type import TileType
-from plone.tiles.tile import Tile
-
-from zope.component.zcml import utility
 
 try:
     from Products.Five.browser.metaconfigure import page

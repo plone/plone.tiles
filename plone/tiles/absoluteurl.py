@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import urllib
-
+from plone.tiles.data import encode
+from plone.tiles.interfaces import ITileDataManager
+from plone.tiles.interfaces import ITileType
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
-
-from zope.traversing.browser.interfaces import IAbsoluteURL
 from zope.traversing.browser.absoluteurl import AbsoluteURL
+from zope.traversing.browser.interfaces import IAbsoluteURL
 
-from plone.tiles.interfaces import ITileType, ITileDataManager
-from plone.tiles.data import encode
+import urllib
+
 
 _safe = '@+'
 
