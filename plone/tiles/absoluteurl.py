@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import urllib
-
+from plone.tiles.data import encode
+from plone.tiles.interfaces import ITileDataManager
+from plone.tiles.interfaces import ITileType
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
-
-from zope.traversing.browser.interfaces import IAbsoluteURL
 from zope.traversing.browser.absoluteurl import AbsoluteURL
+from zope.traversing.browser.interfaces import IAbsoluteURL
 
-from plone.tiles.interfaces import ITileType, ITileDataManager
-from plone.tiles.data import encode
+import urllib
+
 
 _safe = '@+'
 
@@ -22,7 +22,7 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         tile = self.context
         request = self.request
 
-        id = tile.id
+        tid = tile.id
         name = tile.__name__
         context = tile.__parent__
 
@@ -30,8 +30,8 @@ class BaseTileAbsoluteURL(AbsoluteURL):
             raise TypeError("Insufficient context to determine URL")
 
         tileFragment = "@@" + urllib.quote(name.encode('utf-8'), _safe)
-        if id:
-            tileFragment += '/' + urllib.quote(id.encode('utf-8'), _safe)
+        if tid:
+            tileFragment += '/' + urllib.quote(tid.encode('utf-8'), _safe)
 
         absolute_url = getMultiAdapter((context, request), IAbsoluteURL)
         try:
@@ -45,13 +45,13 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         tile = self.context
         request = self.request
 
-        id = tile.id
+        tid = tile.id
         name = tile.__name__
         context = tile.__parent__
 
         tileFragment = "@@" + urllib.quote(name.encode('utf-8'), _safe)
-        if id:
-            tileFragment += '/' + urllib.quote(id.encode('utf-8'), _safe)
+        if tid:
+            tileFragment += '/' + urllib.quote(tid.encode('utf-8'), _safe)
 
         base = tuple(
             getMultiAdapter((context, request), IAbsoluteURL).breadcrumbs())

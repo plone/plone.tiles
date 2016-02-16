@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import re
-
+from plone.tiles.interfaces import ESI_HEADER
+from plone.tiles.interfaces import ESI_HEADER_KEY
+from plone.tiles.interfaces import IESIRendered
+from plone.tiles.tile import PersistentTile
+from plone.tiles.tile import Tile
 from zope.interface import implements
 
-from plone.tiles.interfaces import IESIRendered, ESI_HEADER, ESI_HEADER_KEY
-from plone.tiles.tile import Tile, PersistentTile
+import re
+
 
 HEAD_CHILDREN = re.compile(r'<head[^>]*>(.*)</head>', re.I | re.S)
 BODY_CHILDREN = re.compile(r'<body[^>]*>(.*)</body>', re.I | re.S)

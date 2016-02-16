@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import unittest2 as unittest
-import doctest
-from plone.testing import Layer, layered
-from plone.testing import zca, z2
-
+from plone.testing import Layer
+from plone.testing import layered
+from plone.testing import z2
+from plone.testing import zca
+from plone.tiles import PersistentTile
+from plone.tiles import Tile
+from zope import schema
 from zope.configuration import xmlconfig
+from zope.interface import Interface
+
+import doctest
+import unittest2 as unittest
+
 
 # For directive tests
-
-from zope.interface import Interface
-from zope import schema
-
-from plone.tiles import Tile, PersistentTile
 
 
 class IDummySchema(Interface):
@@ -28,6 +30,7 @@ class IDummyLayer(Interface):
 
 
 class DummyTile(Tile):
+
     def __call__(self):
         return u"dummy"
 
