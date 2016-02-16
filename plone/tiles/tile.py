@@ -47,7 +47,9 @@ class Tile(BrowserView):
                 self.__doc__ = "For Zope 2, to keep the ZPublisher happy"
 
             self.request.response.setHeader(
-                'X-Tile-Url', self.url)
+                'X-Tile-Url',
+                self.url
+            )
 
             return self
 
@@ -75,13 +77,16 @@ class Tile(BrowserView):
         return self[name]
 
     def __call__(self, *args, **kwargs):
-        if not hasattr(self, 'index'):
+        if getattr(self, 'index', None) is None:
             raise NotImplemented(
-                u"Override __call__ or set a class variable 'index' to point "
-                u"to a view page template file")
+                u'Override __call__ or set a class variable "index" to point '
+                u'to a view page template file'
+            )
         if self.id is not None:
             self.request.response.setHeader(
-                'X-Tile-Url', self.url[len(self.context.absolute_url()) + 1:])
+                'X-Tile-Url',
+                self.url[len(self.context.absolute_url()) + 1:]
+            )
         return self.index(*args, **kwargs)
 
     @property

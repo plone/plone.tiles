@@ -49,7 +49,7 @@ class TransientTileDataManager(object):
             self.tile.request,
             self.tile.request.form
         )
-        self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, tile.id])
+        self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
 
     def get(self):
         # use explicitly set data (saved as annotation on the request)
@@ -104,7 +104,7 @@ class PersistentTileDataManager(object):
             (tile.context, tile.request, tile), ITileDataContext)
         self.annotations = IAnnotations(self.context)
 
-        self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, tile.id])
+        self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
 
     def _get_default_request_data(self):
         # If we don't have a schema, just take the request
