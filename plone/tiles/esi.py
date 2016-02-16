@@ -33,11 +33,17 @@ def substituteESILinks(rendered):
     ``rendered`` should be an HTML string.
     """
 
-    rendered = re.sub(r'<html',
-                      '<html xmlns:esi="%s"' % ESI_NAMESPACE_MAP['esi'],
-                      rendered, 1)
-    return re.sub(r'<a class="_esi_placeholder" rel="esi" href="([^"]+)"></a>',
-                  r'<esi:include src="\1" />', rendered)
+    rendered = re.sub(
+        r'<html',
+        '<html xmlns:esi="{0}"'.format(ESI_NAMESPACE_MAP['esi']),
+        rendered,
+        1
+    )
+    return re.sub(
+        r'<a class="_esi_placeholder" rel="esi" href="([^"]+)"></a>',
+        r'<esi:include src="\1" />',
+        rendered
+    )
 
 
 class ConditionalESIRendering(object):
@@ -53,7 +59,7 @@ class ConditionalESIRendering(object):
             mode = 'esi-body'
             if self.head:
                 mode = 'esi-head'
-            return ESI_TEMPLATE.fomat(
+            return ESI_TEMPLATE.format(
                 url=self.request.getURL(),
                 queryString=self.request.get('QUERY_STRING', ''),
                 esiMode=mode
