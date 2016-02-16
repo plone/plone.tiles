@@ -14,7 +14,7 @@ HEAD_CHILDREN = re.compile(r'<head[^>]*>(.*)</head>', re.I | re.S)
 BODY_CHILDREN = re.compile(r'<body[^>]*>(.*)</body>', re.I | re.S)
 
 ESI_NAMESPACE_MAP = {'esi': 'http://www.edge-delivery.org/esi/1.0'}
-_ESI_HREF = u'href="{url}s/@@{esiMode}?{queryString}"'
+_ESI_HREF = u'href="{url}/@@{esiMode}?{queryString}"'
 ESI_TEMPLATE = u'''\
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
