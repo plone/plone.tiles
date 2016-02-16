@@ -7,3 +7,7 @@
 /dist/
 /buildout-cache/
 /develop-eggs/
+/lib/
+/local/
+/include/
+/bin/

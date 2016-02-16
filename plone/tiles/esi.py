@@ -14,7 +14,7 @@ HEAD_CHILDREN = re.compile(r'<head[^>]*>(.*)</head>', re.I | re.S)
 BODY_CHILDREN = re.compile(r'<body[^>]*>(.*)</body>', re.I | re.S)
 
 ESI_NAMESPACE_MAP = {'esi': 'http://www.edge-delivery.org/esi/1.0'}
-_ESI_HREF = u'href="%(url)s/@@%(esiMode)s?%(queryString)s"'
+_ESI_HREF = u'href="{url}s/@@{esiMode}?{queryString}"'
 ESI_TEMPLATE = u'''\
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -53,11 +53,11 @@ class ConditionalESIRendering(object):
             mode = 'esi-body'
             if self.head:
                 mode = 'esi-head'
-            return ESI_TEMPLATE % {
-                'url': self.request.getURL(),
-                'queryString': self.request.get('QUERY_STRING', ''),
-                'esiMode': mode,
-            }
+            return ESI_TEMPLATE.fomat(
+                url=self.request.getURL(),
+                queryString=self.request.get('QUERY_STRING', ''),
+                esiMode=mode
+            )
         try:
             return self.index(*args, **kwargs)
         except AttributeError:

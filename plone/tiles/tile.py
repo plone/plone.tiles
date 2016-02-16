@@ -44,7 +44,7 @@ class Tile(BrowserView):
             # __getitem__.
 
             if self.__doc__ is None:
-                self.__doc__ = "For Zope 2, to keep the ZPublisher happy"
+                self.__doc__ = 'For Zope 2, to keep the ZPublisher happy'
 
             self.request.response.setHeader(
                 'X-Tile-Url',

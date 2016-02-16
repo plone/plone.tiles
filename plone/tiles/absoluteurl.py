@@ -27,7 +27,7 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         context = tile.__parent__
 
         if name is None or context is None:
-            raise TypeError("Insufficient context to determine URL")
+            raise TypeError('Insufficient context to determine URL')
 
         tileFragment = '@@' + urllib.quote(name.encode('utf-8'), _safe)
         if tid:
