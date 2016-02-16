@@ -18,7 +18,7 @@ import unittest2 as unittest
 
 
 class IDummySchema(Interface):
-    foo = schema.TextLine(title=u"Foo")
+    foo = schema.TextLine(title=u'Foo')
 
 
 class IDummyContext(Interface):
@@ -32,7 +32,7 @@ class IDummyLayer(Interface):
 class DummyTile(Tile):
 
     def __call__(self):
-        return u"dummy"
+        return u'dummy'
 
 
 class DummyTileWithTemplate(PersistentTile):
@@ -54,14 +54,21 @@ class PloneTiles(Layer):
 PLONE_TILES_FIXTURE = PloneTiles()
 
 PLONE_TILES_INTEGRATION_TESTING = z2.IntegrationTesting(
-    bases=(PLONE_TILES_FIXTURE,), name="PloneTiles:Functional")
+    bases=(PLONE_TILES_FIXTURE,),
+    name='PloneTiles:Functional'
+)
 
 
 def test_suite():
     return unittest.TestSuite((
-        layered(doctest.DocFileSuite('tiles.rst', 'directives.rst',
-                                     'data.rst', 'esi.rst',
-                                     optionflags=doctest.ELLIPSIS),
-                layer=PLONE_TILES_INTEGRATION_TESTING
-                ),
+        layered(
+            doctest.DocFileSuite(
+                'tiles.rst',
+                'directives.rst',
+                'data.rst',
+                'esi.rst',
+                optionflags=doctest.ELLIPSIS
+            ),
+            layer=PLONE_TILES_INTEGRATION_TESTING
+        ),
     ))

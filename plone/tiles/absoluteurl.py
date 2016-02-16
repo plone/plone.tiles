@@ -29,13 +29,13 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         if name is None or context is None:
             raise TypeError("Insufficient context to determine URL")
 
-        tileFragment = "@@" + urllib.quote(name.encode('utf-8'), _safe)
+        tileFragment = '@@' + urllib.quote(name.encode('utf-8'), _safe)
         if tid:
             tileFragment += '/' + urllib.quote(tid.encode('utf-8'), _safe)
 
         absolute_url = getMultiAdapter((context, request), IAbsoluteURL)
         try:
-            tileFragment = '%s/%s' % (str(absolute_url), tileFragment)
+            tileFragment = '/'.join([str(absolute_url), tileFragment])
         except TypeError:  # Not enough context to get URL information
             pass
 
@@ -49,15 +49,18 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         name = tile.__name__
         context = tile.__parent__
 
-        tileFragment = "@@" + urllib.quote(name.encode('utf-8'), _safe)
+        tileFragment = '@@' + urllib.quote(name.encode('utf-8'), _safe)
         if tid:
             tileFragment += '/' + urllib.quote(tid.encode('utf-8'), _safe)
 
         base = tuple(
             getMultiAdapter((context, request), IAbsoluteURL).breadcrumbs())
-        base += ({'name': name,
-                  'url': "%s/%s" % (base[-1]['url'], tileFragment,),
-                  },)
+        base += (
+            {
+                'name': name,
+                'url': '/'.join([base[-1]['url'], tileFragment]),
+            },
+        )
 
         return base
 

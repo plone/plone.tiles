@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from plone.tiles.tile import PersistentTile
+from plone.tiles.tile import Tile
 # Convenience imports
-from plone.tiles.tile import Tile, PersistentTile
+
 assert Tile, PersistentTile  # silence pyflakes

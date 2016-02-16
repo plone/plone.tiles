@@ -5,7 +5,7 @@ from plone.tiles.interfaces import ESI_HEADER_KEY
 from plone.tiles.interfaces import IESIRendered
 from plone.tiles.tile import PersistentTile
 from plone.tiles.tile import Tile
-from zope.interface import implements
+from zope.interface import implementer
 
 import re
 
@@ -14,16 +14,17 @@ HEAD_CHILDREN = re.compile(r'<head[^>]*>(.*)</head>', re.I | re.S)
 BODY_CHILDREN = re.compile(r'<body[^>]*>(.*)</body>', re.I | re.S)
 
 ESI_NAMESPACE_MAP = {'esi': 'http://www.edge-delivery.org/esi/1.0'}
-ESI_TEMPLATE = u"""\
+ESI_TEMPLATE = u'''\
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <body>
-        <a class="_esi_placeholder" rel="esi" """ + \
-    u"""href="%(url)s/@@%(esiMode)s?%(queryString)s"></a>
+        <a class="_esi_placeholder"
+           rel="esi"
+           href="%(url)s/@@%(esiMode)s?%(queryString)s"></a>
     </body>
 </html>
-"""
+'''
 
 
 def substituteESILinks(rendered):
@@ -58,14 +59,15 @@ class ConditionalESIRendering(object):
                 'queryString': self.request.get('QUERY_STRING', ''),
                 'esiMode': mode,
             }
-        if hasattr(self, 'index'):
+        try:
             return self.index(*args, **kwargs)
-
-        return self.render()
+        except AttributeError:
+            return self.render()
 
 
 # Convenience base classes
 
+@implementer(IESIRendered)
 class ESITile(ConditionalESIRendering, Tile):
     """Convenience class for tiles using ESI rendering.
 
@@ -73,10 +75,10 @@ class ESITile(ConditionalESIRendering, Tile):
     default is to render <body /> content.
     """
 
-    implements(IESIRendered)
     head = False
 
 
+@implementer(IESIRendered)
 class ESIPersistentTile(ConditionalESIRendering, PersistentTile):
     """Convenience class for tiles using ESI rendering.
 
@@ -84,7 +86,6 @@ class ESIPersistentTile(ConditionalESIRendering, PersistentTile):
     default is to render <body /> content.
     """
 
-    implements(IESIRendered)
     head = False
 
 
