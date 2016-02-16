@@ -1,27 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from zope.interface import Interface
-
-from zope import schema
-from zope.configuration.fields import (
-    GlobalObject, GlobalInterface, MessageID, Path)
-from zope.security.zcml import Permission
-
-from zope.configuration.exceptions import ConfigurationError
-
-from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-
 from plone.tiles.interfaces import ITileType
-from plone.tiles.type import TileType
 from plone.tiles.tile import Tile
-
+from plone.tiles.type import TileType
+from Products.Five.browser.metaconfigure import page
+from zope import schema
 from zope.component.zcml import utility
-
-try:
-    from Products.Five.browser.metaconfigure import page
-    assert page  # silence pyflakes
-except ImportError:
-    from zope.app.publisher.browser.viewmeta import page
+from zope.configuration.exceptions import ConfigurationError
+from zope.configuration.fields import GlobalInterface
+from zope.configuration.fields import GlobalObject
+from zope.configuration.fields import MessageID
+from zope.configuration.fields import Path
+from zope.interface import Interface
+from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+from zope.security.zcml import Permission
 
 
 class ITileDirective(Interface):
@@ -112,8 +104,13 @@ def tile(_context, name, title=None, description=None, icon=None,
     """Implements the <plone:tile /> directive
     """
 
-    if title is not None or description is not None or icon is not None or \
-            add_permission is not None or schema is not None:
+    if (
+        title is not None or
+        description is not None or
+        icon is not None or
+        add_permission is not None or
+        schema is not None
+    ):
         if title is None or add_permission is None:
             raise ConfigurationError(
                 u"When configuring a new type of tile, 'title' and "
@@ -123,14 +120,20 @@ def tile(_context, name, title=None, description=None, icon=None,
 
         utility(_context, provides=ITileType, component=type_, name=name)
 
-    if for_ is not None or layer is not None or class_ is not None or \
-            template is not None or permission is not None:
+    if (
+        for_ is not None or
+        layer is not None or
+        class_ is not None or
+        template is not None or
+        permission is not None
+    ):
         if class_ is None and template is None:
-            raise ConfigurationError(u"When configuring a tile, 'class' "
-                                     u"or 'template' must be given.")
+            raise ConfigurationError(
+                u"'class' or 'template' must be given when configuring a tile."
+            )
         if permission is None:
-            raise ConfigurationError(u"When configuring a tile, 'permission' "
-                                     u"is required")
+            raise ConfigurationError(
+                u"When configuring a tile, 'permission' is required")
 
         if for_ is None:
             for_ = Interface

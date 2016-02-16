@@ -4,8 +4,11 @@ Changelog
 1.5.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- add section "ZCML Reference" to README.rst.
+  [jensens]
 
+- PEP8, make code-analysis happy, fix RST and docstyle.
+  [jensens]
 
 1.5.1 (2015-10-09)
 ------------------
