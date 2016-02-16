@@ -242,11 +242,11 @@ def encode(data, schema, ignore=()):
                 )
 
             if value_type_converter.token:
-                encoded_name = ':'.join(
+                encoded_name = ':'.join([
                     name,
                     value_type_converter.token,
                     converter.token
-                )
+                ])
 
             for item in value:
 
