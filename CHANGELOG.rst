@@ -4,6 +4,9 @@ Changelog
 1.5.2 (unreleased)
 ------------------
 
+- Fix issue where ESI href was not properly replaced.
+  [jensens]
+
 - Add section "ZCML Reference" to README.rst.
   [jensens]
 
