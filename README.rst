@@ -20,7 +20,7 @@ The idea is that a UI (such as Deco) can present the user with a list of inserta
 
 A tile is inserted into a layout as a link:
 
-.. code_block:: xml
+.. code:: xml
 
     <link rel="tile" target="placeholder" href="./@@sample.tile/tile1?option1=value1" />
 
@@ -78,7 +78,7 @@ Creating a Simple Tile
 
 The most basic tile looks like this:
 
-.. code_block:: python
+.. code:: python
 
     from plone.tiles import Tile
 
