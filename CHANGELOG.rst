@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.2 (unreleased)
+1.5.2 (2016-03-28)
 ------------------
 
 - Fix issue where ESI href was not properly replaced.
