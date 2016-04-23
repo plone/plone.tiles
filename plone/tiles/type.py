@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from plone.tiles.interfaces import ITileType
 from zope.interface import implementer
 
@@ -9,9 +8,18 @@ class TileType(object):
     """A utility that describes a type of tile
     """
 
-    def __init__(self, name, title, add_permission, edit_permission=None,
-                 delete_permission=None, description=None, icon=None,
-                 schema=None):
+    def __init__(
+        self,
+        name,
+        title,
+        add_permission,
+        view_permission,
+        edit_permission=None,
+        delete_permission=None,
+        description=None,
+        icon=None,
+        schema=None
+    ):
 
         if delete_permission is None:
             delete_permission = add_permission
@@ -23,6 +31,7 @@ class TileType(object):
         self.title = title
         self.add_permission = add_permission
         self.edit_permission = edit_permission
+        self.view_permission = view_permission
         self.delete_permission = delete_permission
         self.description = description
         self.icon = icon

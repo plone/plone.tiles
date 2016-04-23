@@ -169,11 +169,12 @@ When registering a tile, in the background two registrations are done:
 
    - ``name`` (required)
    - ``title`` (required)
-   - ``description``
+   - ``description`` (optional)
    - ``icon`` (optional)
-   - ``add_permission`` (required)
-   - ``edit_permission`` (optional)
-   - ``delete_permission`` (optional)
+   - ``permission`` (required)
+   - ``add_permission`` (required for adding capabilities)
+   - ``edit_permission`` (optional, default to add_permission)
+   - ``delete_permission`` (optional, default to add_permission)
    - ``schema`` (optional)
 
 2) How to **render** the tile (as a usal page).
@@ -185,8 +186,8 @@ When registering a tile, in the background two registrations are done:
    - ``name`` (required)
    - ``for`` (optional)
    - ``layer`` (optional)
-   - ``class`` (this or template or both is required)
-   - ``template`` (this or template or both is required)
+   - ``class`` (this or ``template`` or both is required)
+   - ``template`` (this or ``class`` or both is required)
    - ``permission`` (required)
 
 The **directives attributes** have the following meaning:

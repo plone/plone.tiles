@@ -17,7 +17,7 @@ To make it easier to register these components, this package provides a
 To test this, we have created a dummy schema and a dummy tile in ``tests.py``,
 and a dummy template in ``test.pt``.
 
-Let's show how these may be used by registering several tiles:
+Let's show how these may be used by registering several tiles::
 
     >>> configuration = """\
     ... <configure package="plone.tiles"
@@ -103,7 +103,7 @@ Let's show how these may be used by registering several tiles:
     >>> from zope.configuration import xmlconfig
     >>> xmlconfig.xmlconfig(StringIO(configuration))
 
-Let's check how the tiles were registered:
+Let's check how the tiles were registered::
 
     >>> from zope.component import getUtility
     >>> from plone.tiles.interfaces import ITileType
@@ -116,6 +116,9 @@ Let's check how the tiles were registered:
 
     >>> tile1_type.add_permission
     'plone.tiles.tests.DummyAdd'
+
+    >>> tile1_type.view_permission
+    'plone.tiles.tests.DummyView'
 
     >>> tile1_type.schema
     <InterfaceClass plone.tiles.tests.IDummySchema>
@@ -150,7 +153,7 @@ Let's check how the tiles were registered:
     >>> tile4_type.schema
     <InterfaceClass plone.tiles.tests.IDummySchema>
 
-Finally, let's check that we can look up the tiles.
+Finally, let's check that we can look up the tiles::
 
     >>> from zope.publisher.browser import TestRequest
     >>> from zope.interface import implements, alsoProvides
