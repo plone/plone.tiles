@@ -45,7 +45,8 @@ class PloneTiles(Layer):
     def setUp(self):
         import plone.tiles
         self['configurationContext'] = context = zca.stackConfigurationContext(
-            self.get('configurationContext'))
+            self.get('configurationContext')
+        )
         xmlconfig.file('configure.zcml', plone.tiles, context=context)
 
     def tearDown(self):

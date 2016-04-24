@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '1.5.3.dev0'
+version = '1.6.dev0'
 
 setup(
     name='plone.tiles',
@@ -15,7 +15,7 @@ setup(
     open(os.path.join("plone", "tiles", "tiles.rst")).read() + "\n" +
     open(os.path.join("plone", "tiles", "directives.rst")).read() + "\n" +
     open(os.path.join("plone", "tiles", "esi.rst")).read() + "\n" +
-    open("CHANGELOG.rst").read(),
+    open("CHANGES.rst").read(),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',

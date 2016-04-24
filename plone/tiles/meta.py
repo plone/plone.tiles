@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from plone.tiles.interfaces import ITileType
 from plone.tiles.tile import Tile
 from plone.tiles.type import TileType
@@ -23,6 +22,7 @@ class ITileDirective(Interface):
     name = schema.DottedName(
         title=u"Name",
         description=u"A unique, dotted name for the tile",
+        required=True,
     )
 
     title = MessageID(
@@ -93,7 +93,7 @@ class ITileDirective(Interface):
     permission = Permission(
         title=u"View permission",
         description=u"Name of the permission required to view this item",
-        required=False,
+        required=True,
     )
 
 
@@ -103,7 +103,6 @@ def tile(_context, name, title=None, description=None, icon=None,
          permission=None):
     """Implements the <plone:tile /> directive
     """
-
     if (
         title is not None or
         description is not None or
@@ -115,8 +114,17 @@ def tile(_context, name, title=None, description=None, icon=None,
             raise ConfigurationError(
                 u"When configuring a new type of tile, 'title' and "
                 u"'add_permission' are required")
-        type_ = TileType(name, title, add_permission, edit_permission,
-                         delete_permission, description, icon, schema)
+        type_ = TileType(
+            name,
+            title,
+            add_permission,
+            permission,
+            edit_permission=edit_permission,
+            delete_permission=delete_permission,
+            description=description,
+            icon=icon,
+            schema=schema
+        )
 
         utility(_context, provides=ITileType, component=type_, name=name)
 
@@ -124,16 +132,12 @@ def tile(_context, name, title=None, description=None, icon=None,
         for_ is not None or
         layer is not None or
         class_ is not None or
-        template is not None or
-        permission is not None
+        template is not None
     ):
         if class_ is None and template is None:
             raise ConfigurationError(
                 u"'class' or 'template' must be given when configuring a tile."
             )
-        if permission is None:
-            raise ConfigurationError(
-                u"When configuring a tile, 'permission' is required")
 
         if for_ is None:
             for_ = Interface

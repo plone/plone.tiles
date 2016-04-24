@@ -1,10 +1,11 @@
 Changelog
 =========
 
-1.5.3 (unreleased)
-------------------
+1.6 (unreleased)
+----------------
 
-- Nothing changed yet.
+- Let TileType instances (tile registration utility) know about the view permission too.
+  [jensens]
 
 
 1.5.2 (2016-03-28)

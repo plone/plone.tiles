@@ -76,10 +76,11 @@ using the ``<plone:tile />`` directive. Here's how to create one manually:
 
     >>> from plone.tiles.type import TileType
     >>> sampleTileType = TileType(
-    ...     name=u'sample.tile',
-    ...     title=u"Sample tile",
+    ...     u'sample.tile',
+    ...     u"Sample tile",
+    ...     "dummy.Permission",
+    ...     "dummy.Permission",
     ...     description=u"A tile used for testing",
-    ...     add_permission="dummy.Permission",
     ...     schema=None)
 
 The name should match the view name and the name the utility is registered
@@ -372,10 +373,11 @@ Now, let's create a persistent tile with a schema.
     ...         return u"<b>You said</b> %s" % self.data['text']
 
     >>> persistentSampleTileType = TileType(
-    ...     name=u'sample.persistenttile',
-    ...     title=u"Persistent sample tile",
+    ...     u'sample.persistenttile',
+    ...     u"Persistent sample tile",
+    ...     "dummy.Permission",
+    ...     "dummy.Permission",
     ...     description=u"A tile used for testing",
-    ...     add_permission="dummy.Permission",
     ...     schema=IPersistentSampleData)
 
     >>> provideUtility(persistentSampleTileType, name=u'sample.persistenttile')

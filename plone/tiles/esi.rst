@@ -60,6 +60,7 @@ registered via ZCML.
     ...     title=u"Sample tile",
     ...     description=u"A tile used for testing",
     ...     add_permission="dummy.Permission",
+    ...     view_permission="dummy.Permission",
     ...     schema=None)
 
     >>> from zope.component import provideAdapter, provideUtility
@@ -217,6 +218,7 @@ attribute to the ZCML directive will work also.
     ...     title=u"Sample ESI tile",
     ...     description=u"A tile used for testing ESI",
     ...     add_permission="dummy.Permission",
+    ...     view_permission="dummy.Permission",
     ...     schema=None)
 
     >>> provideUtility(sampleESITileType, name=u'sample.esitile')
