@@ -4,7 +4,8 @@ Changelog
 1.6 (unreleased)
 ----------------
 
-- Let TileType instances (tile registration utility) know about the view permission too.
+- Let TileType instances (tile registration utility) know about the view
+  permission too.
   [jensens]
 
 
