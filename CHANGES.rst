@@ -1,13 +1,7 @@
 Changelog
 =========
 
-1.6.1 (unreleased)
-------------------
-
-- Nothing changed yet.
-
-
-1.6 (2016-05-23)
+1.6 (unreleased)
 ----------------
 
 - Let TileType instances (tile registration utility) know about the view
