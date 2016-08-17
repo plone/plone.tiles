@@ -16,7 +16,7 @@ For the purposes of this package,
 a tile is a browser view and an associated utility providing some metadata about that view.
 The metadata includes a title and description,
 an 'add' permission and optionally a schema interface describing configurable aspects of the tile.
-The idea is that a UI (such as Deco) can present the user with a list of insertable tiles and optionally render a form to configure the tile upon insertion.
+The idea is that a UI (such as Mosaic) can present the user with a list of insertable tiles and optionally render a form to configure the tile upon insertion.
 
 A tile is inserted into a layout as a link:
 

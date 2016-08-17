@@ -17,7 +17,7 @@ retrieved from annotations (persistent tiles).
 
 Note that there is no direct UI support in this package, so the forms that
 allow users to construct and edit tiles must live elsewhere. You may be
-interested in ``plone.app.tiles`` and ``plone.app.deco`` for that purpose.
+interested in ``plone.app.tiles`` and ``plone.app.mosaic`` for that purpose.
 
 To use the package, you should first load its ZCML configuration.
 
