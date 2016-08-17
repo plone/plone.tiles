@@ -10,12 +10,12 @@ version = '1.6.1.dev0'
 setup(
     name='plone.tiles',
     version=version,
-    description="APIs for managing tiles",
-    long_description=open("README.rst").read() + "\n" +
-    open(os.path.join("plone", "tiles", "tiles.rst")).read() + "\n" +
-    open(os.path.join("plone", "tiles", "directives.rst")).read() + "\n" +
-    open(os.path.join("plone", "tiles", "esi.rst")).read() + "\n" +
-    open("CHANGES.rst").read(),
+    description='APIs for managing tiles',
+    long_description=open('README.rst').read() + '\n' +
+    open(os.path.join('plone', 'tiles', 'tiles.rst')).read() + '\n' +
+    open(os.path.join('plone', 'tiles', 'directives.rst')).read() + '\n' +
+    open(os.path.join('plone', 'tiles', 'esi.rst')).read() + '\n' +
+    open('CHANGES.rst').read(),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
@@ -54,6 +54,9 @@ setup(
         'Zope2',
     ],
     extras_require={
-        'test': ['plone.testing [zca, z2]', 'unittest2'],
+        'test': [
+            'plone.testing [zca, z2]',
+            'unittest2',
+        ],
     },
 )
