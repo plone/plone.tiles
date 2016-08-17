@@ -4,8 +4,8 @@ Changelog
 1.6.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Reformat docs.
+  [gforcada]
 
 1.6 (2016-06-27)
 ----------------
