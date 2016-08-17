@@ -1,3 +1,4 @@
+===========
 plone.tiles
 ===========
 
@@ -10,7 +11,7 @@ plone.tiles
 
 
 Introduction
-------------
+============
 
 For the purposes of this package,
 a tile is a browser view and an associated utility providing some metadata about that view.
@@ -20,7 +21,7 @@ The idea is that a UI (such as Mosaic) can present the user with a list of inser
 
 A tile is inserted into a layout as a link:
 
-.. code:: xml
+.. code-block:: xml
 
     <link rel="tile" target="placeholder" href="./@@sample.tile/tile1?option1=value1" />
 
@@ -48,7 +49,7 @@ There are three interfaces describing tiles in this package:
     which gives the canonical tile URL,
     including the id sub-path and any query string parameters.
     (Note that tiles also correctly implement ``IAbsoluteURL``.)
-```IPersistentTile``
+``IPersistentTile``
     describes a tile that stores its configuration in object annotations,
     and is needed when configuration values cannot be encoded into a query string.
     The default implementation is in ``plone.tiles.PersistentTile``.
@@ -78,14 +79,14 @@ Creating a Simple Tile
 
 The most basic tile looks like this:
 
-.. code:: python
+.. code-block:: python
 
     from plone.tiles import Tile
 
     class MyTile(Tile):
 
         def __call__(self):
-            return u"<html><body><p>Hello world</p></body></html>"
+            return u'<html><body><p>Hello world</p></body></html>'
 
 Note that the tile is expected to return a complete HTML document.
 This will be interpolated into the page output according to the following rules:
@@ -94,12 +95,14 @@ This will be interpolated into the page output according to the following rules:
 * The contents of the tile's ``<body />`` section will replace the tile placeholder as indicated by the tile link.
 
 Note that this package does *not* provide these interpolations.
-For a Plone implementation of the interpolation algorithm, see `plone.app.blocks`_
+For a Plone implementation of the interpolation algorithm, see `plone.app.blocks`_.
 
 If you require a persistent tile, subclass ``plone.tiles.PersistentTile`` instead.
 You may also need a schema interface if you want a configurable transient or persistent tile.
 
-To register the tile, use ZCML like this::
+To register the tile, use ZCML like this:
+
+.. code-block:: xml
 
     <configure xmlns:plone="http://namespaces.plone.org/plone">
 
@@ -120,48 +123,56 @@ To register the tile, use ZCML like this::
     </configure>
 
 The first five attributes describe the tile by configuring an appropriate ``ITileType`` directive.
-The rest mimics the ``<browser:page />`` directive, so you can specify a ``template`` file and omit the ``class``, or use both a ``template`` and ``class``.
+The rest mimics the ``<browser:page />`` directive,
+so you can specify a ``template`` file and omit the ``class``, or use both a ``template`` and ``class``.
 
-If you want to register a persistent tile with a custom schema, but a template only, you can do e.g.::
+If you want to register a persistent tile with a custom schema, but a template only, you can do e.g.:
 
-        <plone:tile
-            name="sample.persistenttile"
-            title="A title for the tile"
-            description="My tile's description"
-            add_permission="my.add.Permission"
-            schema=".interfaces.IMyTileSchema"
-            class="plone.tiles.PersistentTile"
-            template="mytile.pt"
-            permission="zope.Public"
-            for="*"
-            />
+.. code-block:: xml
+
+    <plone:tile
+        name="sample.persistenttile"
+        title="A title for the tile"
+        description="My tile's description"
+        add_permission="my.add.Permission"
+        schema=".interfaces.IMyTileSchema"
+        class="plone.tiles.PersistentTile"
+        template="mytile.pt"
+        permission="zope.Public"
+        for="*"
+        />
 
 If you want to override an existing tile, e.g. with a new layer or more specific context,
 you *must* omit the tile metadata (title, description, icon, add permission or schema).
-If you include any metadata you will get a conflict error on Zope startup. This example shows how to use a different template for our tile::
+If you include any metadata you will get a conflict error on Zope startup.
+This example shows how to use a different template for our tile:
 
-        <plone:tile
-            name="sample.persistenttile"
-            template="override.pt"
-            permission="zope.Public"
-            for="*"
-            layer=".interfaces.IMyLayer"
-            />
+.. code-block:: xml
+
+    <plone:tile
+        name="sample.persistenttile"
+        template="override.pt"
+        permission="zope.Public"
+        for="*"
+        layer=".interfaces.IMyLayer"
+        />
 
 ZCML Reference
 --------------
 
 The ``plone:tile`` directive uses the namespace ``xmlns:plone="http://namespaces.plone.org/plone"``.
-In order to enable it loading of its ``meta.zcml`` is needed, use::
+In order to enable it loading of its ``meta.zcml`` is needed, use:
+
+.. code-block:: xml
 
     <include package="plone.tiles" file="meta.zcml" />
 
 When registering a tile, in the background two registrations are done:
 
-1) How to **add** the tile (registered as a utility component as a instance of ``plone.tiles.type.TileType``).
+1) How to **add** the tile (registered as a utility component as an instance of ``plone.tiles.type.TileType``).
 
    It is possible to register a tile without adding capabilities.
-   However, such a tile needs to be directly called, there wont be any TTW adding possible.
+   However, such a tile needs to be directly called, there won't be any TTW adding possible.
 
    This registration can be done once only.
 
@@ -177,7 +188,7 @@ When registering a tile, in the background two registrations are done:
    - ``delete_permission`` (optional, default to add_permission)
    - ``schema`` (optional)
 
-2) How to **render** the tile (as a usal page).
+2) How to **render** the tile (as a usual page).
 
    It is possible to register different renderers for the same ``name`` but for different contexts (``for`` or ``layer``).
 
@@ -229,7 +240,7 @@ The **directives attributes** have the following meaning:
     The layer (request marker interface) the tile is available for.
 
 ``class``
-    Class implementing this tile. A browser view providing ``IBasicTile`` or one of its derivates.
+    Class implementing this tile. A browser view providing ``IBasicTile`` or one of its derivatives.
 
 ``template``
     The name of a template that renders this tile.
