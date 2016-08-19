@@ -2,8 +2,13 @@
 plone.tiles
 ===========
 
-.. image:: https://secure.travis-ci.org/plone/plone.tiles.png
-   :target: http://travis-ci.org/plone/plone.tiles
+.. image:: https://secure.travis-ci.org/plone/plone.tiles.png?branch=master
+    :alt: Travis CI badge
+    :target: http://travis-ci.org/plone/plone.tiles
+
+.. image:: https://coveralls.io/repos/plone/plone.tiles/badge.png?branch=master
+    :alt: Coveralls badge
+    :target: https://coveralls.io/r/plone/plone.tiles
 
 ``plone.tiles`` implements a low-level, non-Plone/Zope2-specific support for creating "tiles".
 
