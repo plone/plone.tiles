@@ -1,25 +1,26 @@
 Tiles in detail
 ===============
 
-Tiles are a form of view component used to compose pages. Think of a tile as
-a view describing one part of a page, that can be configured with some data
-described by a schema and inserted into a layout via a dedicated GUI.
+Tiles are a form of view component used to compose pages.
+Think of a tile as a view describing one part of a page,
+that can be configured with some data described by a schema and inserted into a layout via a dedicated GUI.
 
-Like a browser view, a tile can be traversed to and published on its own. The
-tile should then return a full HTML page, including a <head /> with any
-required resources, and a <body /> with the visible part of the tile. This
-will then be merged into the page, using a system such as
-``plone.app.blocks``.
+Like a browser view, a tile can be traversed to and published on its own.
+The tile should then return a full HTML page,
+including a <head /> with any required resources,
+and a <body /> with the visible part of the tile.
+This will then be merged into the page, using a system such as ``plone.app.blocks``.
 
-The API in this package provides support for tiles being configured according
-to a schema with data either passed on the query string (transient tiles) or
-retrieved from annotations (persistent tiles).
+The API in this package provides support for tiles being configured according to a schema,
+with data either passed on the query string (transient tiles) or retrieved from annotations (persistent tiles).
 
-Note that there is no direct UI support in this package, so the forms that
-allow users to construct and edit tiles must live elsewhere. You may be
-interested in ``plone.app.tiles`` and ``plone.app.mosaic`` for that purpose.
+Note that there is no direct UI support in this package,
+so the forms that allow users to construct and edit tiles must live elsewhere.
+You may be interested in ``plone.app.tiles`` and ``plone.app.mosaic`` for that purpose.
 
-To use the package, you should first load its ZCML configuration.
+To use the package, you should first load its ZCML configuration:
+
+.. code-block:: python
 
     >>> configuration = """\
     ... <configure
@@ -43,18 +44,22 @@ To use the package, you should first load its ZCML configuration.
 A simple transient tile
 -----------------------
 
-A basic tile is a view that implements the ``ITile`` interface. The easiest
-way to do this is to subclass the ``Tile`` class.
+A basic tile is a view that implements the ``ITile`` interface.
+The easiest way to do this is to subclass the ``Tile`` class:
+
+.. code-block:: python
 
     >>> from plone.tiles import Tile
     >>> class SampleTile(Tile):
     ...
-    ...     __name__ = 'sample.tile' # would normally be set by ZCML handler
+    ...     __name__ = 'sample.tile' # would normally be set by a ZCML handler
     ...
     ...     def __call__(self):
-    ...         return "<html><body><b>My tile</b></body></html>"
+    ...         return '<html><body><b>My tile</b></body></html>'
 
 The tile is a browser view:
+
+.. code-block:: python
 
     >>> from plone.tiles.interfaces import ITile
     >>> ITile.implementedBy(SampleTile)
@@ -64,32 +69,37 @@ The tile is a browser view:
     >>> IBrowserView.implementedBy(SampleTile)
     True
 
-The tile instance has a ``__name__`` attribute (normally set at class level
-by the ``<plone:tile />`` ZCML directive), as well as a property ``id``. The
-id may be set explicitly, either in code, or by sub-path traversal. For
-example, if the tile name is ``example.tile``, the id may be set to ``tile1``
-using a URL like ``http://example.com/foo/@@example.tile/tile1``.
+The tile instance has a ``__name__`` attribute
+(normally set at class level by the ``<plone:tile />`` ZCML directive),
+as well as a property ``id``.
+The id may be set explicitly, either in code, or by sub-path traversal.
+For example, if the tile name is ``example.tile``,
+the id may be set to ``tile1`` using an URL like ``http://example.com/foo/@@example.tile/tile1``.
 
-This tile is registered as a normal browser view, alongside a utility that
-provides some information about the tile itself. Normally, this is done
-using the ``<plone:tile />`` directive. Here's how to create one manually:
+This tile is registered as a normal browser view,
+alongside a utility that provides some information about the tile itself.
+Normally, this is done using the ``<plone:tile />`` directive.
+Here's how to create one manually:
+
+.. code-block:: python
 
     >>> from plone.tiles.type import TileType
     >>> sampleTileType = TileType(
     ...     u'sample.tile',
-    ...     u"Sample tile",
-    ...     "dummy.Permission",
-    ...     "dummy.Permission",
-    ...     description=u"A tile used for testing",
+    ...     u'Sample tile',
+    ...     'dummy.Permission',
+    ...     'dummy.Permission',
+    ...     description=u'A tile used for testing',
     ...     schema=None)
 
-The name should match the view name and the name the utility is registered
-under. The title and description may be used by the UI. The add permission
-is the name of a permission that will be required to insert the tile. The
-schema attribute may be used to indicate schema interface describing the
-tile's configurable data - more on this below.
+The name should match the view name and the name the utility is registered under.
+The title and description may be used by the UI.
+The add permission is the name of a permission that will be required to insert the tile.
+The schema attribute may be used to indicate schema interface describing the tile's configurable data - more on this below.
 
-To register a tile in ZCML, we could do::
+To register a tile in ZCML, we could do:
+
+.. code-block:: xml
 
     <plone:tile
         name="sample.tile"
@@ -101,31 +111,35 @@ To register a tile in ZCML, we could do::
         permission="zope.Public"
         />
 
-**Note:** The tile name should be a dotted name, prefixed by a namespace you
-control. It's a good idea to use a package name for this purpose.
+.. note:: The tile name should be a dotted name, prefixed by a namespace you control.
+   It's a good idea to use a package name for this purpose.
 
-It is also possible to specify a ``layer`` or ``template`` like the
-``browser:page`` directive, as well as a ``schema``, which we will describe
-below.
+It is also possible to specify a ``layer`` or ``template`` like the ``browser:page`` directive, as well as a ``schema``,
+which we will describe below.
 
 We'll register the sample tile directly here, for later testing.
+
+.. code-block:: python
 
     >>> from zope.component import provideAdapter, provideUtility
     >>> from zope.interface import Interface
     >>> from plone.tiles.interfaces import IBasicTile
 
     >>> provideUtility(sampleTileType, name=u'sample.tile')
-    >>> provideAdapter(SampleTile, (Interface, Interface), IBasicTile, name=u"sample.tile")
+    >>> provideAdapter(SampleTile, (Interface, Interface), IBasicTile, name=u'sample.tile')
 
 Tile traversal
 --------------
 
-Tiles are publishable as a normal browser view. They will normally be called
-with a sub-path that specifies a tile id. This allows tiles to be made aware
-of their instance name. The id is unique within the page layout where the tile
-is used, and may be the basis for looking up tile data.
+Tiles are publishable as a normal browser view.
+They will normally be called with a sub-path that specifies a tile id.
+This allows tiles to be made aware of their instance name.
+The id is unique within the page layout where the tile is used,
+and may be the basis for looking up tile data.
 
-For example, a tile may be saved in a layout as a link like::
+For example, a tile may be saved in a layout as a link like:
+
+.. code-block:: html
 
     <link rel="tile" target="mytile" href="./@@sample.tile/tile1" />
 
@@ -133,29 +147,33 @@ For example, a tile may be saved in a layout as a link like::
 the element with id ``mytile`` with the body of the rendered tile - see
 ``plone.app.blocks`` for details).
 
-Let's create a sample context, look up the view as it would be during
-traversal, and verify how the tile is instantiated.
+Let's create a sample context,
+look up the view as it would be during traversal,
+and verify how the tile is instantiated.
 
-    >>> from zope.interface import implements
+.. code-block:: python
+
+    >>> from zope.component import getMultiAdapter
+    >>> from zope.interface import Interface
+    >>> from zope.interface import implementer
+    >>> from zope.publisher.browser import TestRequest
 
     >>> class IContext(Interface):
     ...     pass
 
-    >>> class Context(object):
-    ...     implements(IContext)
-
-    >>> from zope.publisher.browser import TestRequest
+    >>> @implementer(IContext)
+    ... class Context(object):
+    ...     pass
 
     >>> context = Context()
     >>> request = TestRequest()
 
-    >>> from zope.interface import Interface
-    >>> from zope.component import getMultiAdapter
-
-    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> tile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> tile = tile['tile1'] # simulates sub-path traversal
 
 The tile will now be aware of its name and id:
+
+.. code-block:: python
 
     >>> isinstance(tile, SampleTile)
     True
@@ -167,18 +185,22 @@ The tile will now be aware of its name and id:
     'sample.tile'
 
 The sub-path traversal is implemented using a custom ``__getitem__()`` method.
-To look up a view on a tile, you can traverse to it *after* you've traversed
-to the id sub-path:
+To look up a view on a tile,
+you can traverse to it *after* you've traversed to the id sub-path:
 
-    >>> from zope.interface import Interface
+.. code-block:: python
+
     >>> from zope.component import adapts
+    >>> from zope.interface import Interface
     >>> from zope.publisher.browser import BrowserView
     >>> from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+
     >>> class TestView(BrowserView):
     ...     adapts(SampleTile, IDefaultBrowserLayer)
     ...     def __call__(self):
-    ...         return "Dummy view"
-    >>> provideAdapter(TestView, provides=Interface, name="test-view")
+    ...         return 'Dummy view'
+
+    >>> provideAdapter(TestView, provides=Interface, name='test-view')
 
     >>> tile.id is not None
     True
@@ -187,15 +209,19 @@ to the id sub-path:
 
 If there is no view and we have an id already, we will get a ``KeyError``:
 
+.. code-block:: python
+
     >>> tile['not-known'] # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
     KeyError: 'not-known'
 
-To ensure consistency with Zope's various tangles publication machines, it
-is also possible to traverse using the ``publishTraverse`` method::
+To ensure consistency with Zope's various tangles publication machines,
+it is also possible to traverse using the ``publishTraverse`` method:
 
-    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+.. code-block:: python
+
+    >>> tile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> tile = tile.publishTraverse(request, 'tile1') # simulates sub-path traversal
 
     >>> isinstance(tile, SampleTile)
@@ -210,32 +236,41 @@ is also possible to traverse using the ``publishTraverse`` method::
 Transient tile data
 -------------------
 
-Let us now consider how tiles may have data. In the simplest case, tile
-data is passed on the query string, and described according to a schema.
+Let us now consider how tiles may have data.
+In the simplest case, tile data is passed on the query string, and described according to a schema.
 A simple schema may look like:
 
-    >>> import zope.schema
-    >>> class ISampleTileData(Interface):
-    ...     title = zope.schema.TextLine(title=u"Tile title")
-    ...     cssClass = zope.schema.ASCIILine(title=u"CSS class to apply")
-    ...     count = zope.schema.Int(title=u"Number of things to show in the tile")
+.. code-block:: python
 
-We would normally have listed this interface when registering this tile in
-ZCML. We can simply update the utility here.
+    >>> import zope.schema
+
+    >>> class ISampleTileData(Interface):
+    ...     title = zope.schema.TextLine(title=u'Tile title')
+    ...     cssClass = zope.schema.ASCIILine(title=u'CSS class to apply')
+    ...     count = zope.schema.Int(title=u'Number of things to show in the tile')
+
+We would normally have listed this interface when registering this tile in ZCML.
+We can simply update the utility here.
+
+.. code-block:: python
 
     >>> sampleTileType.schema = ISampleTileData
 
 Tile data is represented by a simple dictionary. For example:
 
-    >>> data = {'title': u"My title", 'count': 5, 'cssClass': 'foo'}
+.. code-block:: python
 
-The idea is that a tile add form is built from the schema interface, and its
-data saved to a dictionary.
+    >>> data = {'title': u'My title', 'count': 5, 'cssClass': 'foo'}
 
-For transient tiles, this data is then encoded into the tile query string. To
-help with this, a utility function can be used to encode a dict to a query
-string, applying Zope form marshalers according to the types described in
-the schema:
+The idea is that a tile add form is built from the schema interface, and its data saved to a dictionary.
+
+For transient tiles,
+this data is then encoded into the tile query string.
+To help with this,
+a utility function can be used to encode a dict to a query string,
+applying Zope form marshalers according to the types described in the schema:
+
+.. code-block:: python
 
     >>> from plone.tiles.data import encode
     >>> encode(data, ISampleTileData)
@@ -243,34 +278,39 @@ the schema:
 
 The ``count%3Along=5`` bit is the encoded version of ``count:long=5``.
 
-Note that not all field types may be saved. In particular, object, interface,
-set or frozen set fields may not be saved, and will result in a ``KeyError``.
+Note that not all field types may be saved.
+In particular, object, interface, set or frozen set fields may not be saved, and will result in a ``KeyError``.
 Lengthy text fields or bytes fields with binary data may also be a problem.
-For these types of fields, look to use persistent tiles instead.
+For these types of fields,
+look to use persistent tiles instead.
 
-Furthermore, the conversion may not be perfect. For example, Zope's form
-marshalers cannot distinguish between unicode and ascii fields. Therefore,
-there is a corresponding ``decode()`` method that may be used to ensure that
-the values match the schema:
+Furthermore, the conversion may not be perfect.
+For example, Zope's form marshalers cannot distinguish between unicode and ascii fields.
+Therefore, there is a corresponding ``decode()`` method that may be used to ensure that the values match the schema:
 
-    >>> marshaled = {'title': u"My tile", 'count': 5, 'cssClass': u'foo'}
+.. code-block:: python
+
+    >>> marshaled = {'title': u'My tile', 'count': 5, 'cssClass': u'foo'}
 
     >>> from plone.tiles.data import decode
     >>> decode(marshaled, ISampleTileData)
     {'count': 5, 'cssClass': 'foo', 'title': u'My tile'}
 
-When saved into a layout, the tile link would now look like::
+When saved into a layout, the tile link would now look like:
+
+.. code-block:: html
 
     <link rel="tile" target="mytile"
       href="./@@sample.tile/tile1?title=My+title&count%3Along=5&cssClass=foo" />
 
-Let's simulate traversal once more and see how the data is now available to
-the tile instance:
+Let's simulate traversal once more and see how the data is now available to the tile instance:
+
+.. code-block:: python
 
     >>> context = Context()
     >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'cssClass': u'foo'})
 
-    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> tile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> tile = tile['tile1']
 
     >>> sorted(tile.data.items())
@@ -278,38 +318,39 @@ the tile instance:
 
 Notice also how the data has been properly decoded according to the schema.
 
-Transient tiles will get their data directly from the request
-parameters but, if a `_tiledata` JSON-encoded parameter is present in
-the request, this one will be used instead::
+Transient tiles will get their data directly from the request parameters but,
+if a `_tiledata` JSON-encoded parameter is present in the request,
+this one will be used instead:
 
-    >>> try:
-    ...     import json
-    ... except ImportError:
-    ...     import simplejson as json
+.. code-block:: python
+
+    >>> import json
 
     >>> request = TestRequest(form={
     ...     'title': u'My title', 'count': 5, 'cssClass': u'foo',
     ...     '_tiledata': json.dumps({'title': u'Your title', 'count': 6, 'cssClass': u'bar'})
     ...     })
-    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> tile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> tile = tile['tile1']
 
     >>> sorted(tile.data.items())
     [(u'count', 6), (u'cssClass', u'bar'), (u'title', u'Your title')]
 
-This way we can use transient tiles safely in contexts where the tile
-data can be confused with raw data coming from a form, e.g. in an edit form.
+This way we can use transient tiles safely in contexts where the tile data can be confused with raw data coming from a form, e.g. in an edit form.
 
 The tile data manager
 ---------------------
 
-The ``data`` attribute is a convenience attribute to get hold of a (cached)
-copy of the data returned by an ``ITileDataManager``. This interface provides
-three methods: ``get()``, to return the tile's data, ``set()``, to update it
-with a new dictionary of data, and ``delete()``, to delete the data.
+The ``data`` attribute is a convenience attribute to get hold of a (cached) copy of the data returned by an ``ITileDataManager``.
+This interface provides three methods:
+``get()``, to return the tile's data,
+``set()``, to update it with a new dictionary of data,
+and ``delete()``, to delete the data.
 
-This adapter is mostly useful for writing UI around tiles. Using our tile
-above, we can get the data like so:
+This adapter is mostly useful for writing UI around tiles.
+Using our tile above, we can get the data like so:
+
+.. code-block:: python
 
     >>> from plone.tiles.interfaces import ITileDataManager
     >>> dataManager = ITileDataManager(tile)
@@ -318,42 +359,50 @@ above, we can get the data like so:
 
 We can also update the tile data:
 
+.. code-block:: python
+
     >>> dataManager.set({'count': 1, 'cssClass': 'bar', 'title': u'Another title'})
     >>> sorted(dataManager.get().items())
     [('count', 1), ('cssClass', 'bar'), ('title', u'Another title')]
 
 The data can also be deleted:
 
+.. code-block:: python
+
     >>> dataManager.delete()
     >>> sorted(dataManager.get().items())
     [('count', None), ('cssClass', None), ('title', None)]
 
-Note that in the case of a transient tile, all we are doing is
-modifying the ``form`` dictionary of the request (or the `_tiledata`
-parameter of this dictionary, if present). The data needs to be
-encoded into the query string, either using the ``encode()`` method or
-via the tile's ``IAbsoluteURL`` adapter (see below for details).
+Note that in the case of a transient tile,
+all we are doing is modifying the ``form`` dictionary of the request
+(or the `_tiledata` parameter of this dictionary, if present).
+The data needs to be encoded into the query string,
+either using the ``encode()`` method or via the tile's ``IAbsoluteURL`` adapter (see below for details).
 
 For persistent tiles, the data manager is a bit more interesting.
 
 Persistent tiles
 ----------------
 
-Not all types of data can be placed in a query string. For more substantial
-storage requirements, you can use persistent tiles, which store data in
-annotations.
+Not all types of data can be placed in a query string.
+For more substantial storage requirements,
+you can use persistent tiles, which store data in annotations.
 
-*Note:* If you have more intricate requirements, you can also write your own
-``ITileDataManager`` to handle data retrieval. In this case, you probably
-still want to derive from ``PersistentTile``, to get the appropriate
-``IAbsoluteURL`` adapter, among other things.
+.. note:: If you have more intricate requirements,
+   you can also write your own ``ITileDataManager`` to handle data retrieval.
+   In this case, you probably still want to derive from ``PersistentTile``,
+   to get the appropriate ``IAbsoluteURL`` adapter, among other things.
 
 First, we need to write up annotations support.
+
+.. code-block:: python
 
     >>> from zope.annotation.attribute import AttributeAnnotations
     >>> provideAdapter(AttributeAnnotations)
 
 We also need a context that is annotatable.
+
+.. code-block:: python
 
     >>> from zope.annotation.interfaces import IAttributeAnnotatable
     >>> from zope.interface import alsoProvides
@@ -361,8 +410,10 @@ We also need a context that is annotatable.
 
 Now, let's create a persistent tile with a schema.
 
+.. code-block:: python
+
     >>> class IPersistentSampleData(Interface):
-    ...     text = zope.schema.Text(title=u"Detailed text", missing_value=u"Missing!")
+    ...     text = zope.schema.Text(title=u'Detailed text', missing_value=u'Missing!')
 
     >>> from plone.tiles import PersistentTile
     >>> class PersistentSampleTile(PersistentTile):
@@ -370,25 +421,27 @@ Now, let's create a persistent tile with a schema.
     ...     __name__ = 'sample.persistenttile' # would normally be set by ZCML handler
     ...
     ...     def __call__(self):
-    ...         return u"<b>You said</b> %s" % self.data['text']
+    ...         return u'<b>You said</b> %s' % self.data['text']
 
     >>> persistentSampleTileType = TileType(
     ...     u'sample.persistenttile',
-    ...     u"Persistent sample tile",
-    ...     "dummy.Permission",
-    ...     "dummy.Permission",
-    ...     description=u"A tile used for testing",
+    ...     u'Persistent sample tile',
+    ...     'dummy.Permission',
+    ...     'dummy.Permission',
+    ...     description=u'A tile used for testing',
     ...     schema=IPersistentSampleData)
 
     >>> provideUtility(persistentSampleTileType, name=u'sample.persistenttile')
-    >>> provideAdapter(PersistentSampleTile, (Interface, Interface), IBasicTile, name=u"sample.persistenttile")
+    >>> provideAdapter(PersistentSampleTile, (Interface, Interface), IBasicTile, name=u'sample.persistenttile')
 
-We can now traverse to the tile as before. By default, there is no data, and
-the field's missing value will be used.
+We can now traverse to the tile as before.
+By default, there is no data, and the field's missing value will be used.
+
+.. code-block:: python
 
     >>> request = TestRequest()
 
-    >>> tile = getMultiAdapter((context, request), name=u"sample.persistenttile")
+    >>> tile = getMultiAdapter((context, request), name=u'sample.persistenttile')
     >>> tile = tile['tile2']
     >>> tile.__name__
     'sample.persistenttile'
@@ -400,15 +453,21 @@ the field's missing value will be used.
 
 At this point, there is nothing in the annotations for the type either:
 
+.. code-block:: python
+
     >>> dict(getattr(context, '__annotations__', {})).keys()
     []
 
 We can write data to the context's annotations using an ``ITileDataManager``:
 
+.. code-block:: python
+
     >>> dataManager = ITileDataManager(tile)
-    >>> dataManager.set({'text': u"Hello!"})
+    >>> dataManager.set({'text': u'Hello!'})
 
 This writes data to annotations:
+
+.. code-block:: python
 
     >>> dict(context.__annotations__).keys()
     [u'plone.tiles.data.tile2']
@@ -417,15 +476,19 @@ This writes data to annotations:
 
 We can get this from the data manager too, of course:
 
+.. code-block:: python
+
     >>> dataManager.get()
     {'text': u'Hello!'}
 
-Note that as with transient tiles, the ``data`` attribute is cached and will
-only be looked up once.
+Note that as with transient tiles,
+the ``data`` attribute is cached and will only be looked up once.
 
 If we now look up the tile again, we will get the new value:
 
-    >>> tile = getMultiAdapter((context, request), name=u"sample.persistenttile")
+.. code-block:: python
+
+    >>> tile = getMultiAdapter((context, request), name=u'sample.persistenttile')
     >>> tile = tile['tile2']
     >>> tile()
     u'<b>You said</b> Hello!'
@@ -435,31 +498,33 @@ If we now look up the tile again, we will get the new value:
 
 We can also remove the annotation using the data manager:
 
+.. code-block:: python
+
     >>> dataManager.delete()
     >>> sorted(dict(context.__annotations__).items()) # doctest: +ELLIPSIS
     []
 
-
 Overriding transient data with persistent
 -----------------------------------------
 
-To be able to re-use the same centrally managed tile based layouts for
-multiple context objects, but still allow optional customization for
-tiles, it's possible to override otherwise transient tile configuration
-with context specific persistent configuration.
+To be able to re-use the same centrally managed tile based layouts for multiple context objects,
+but still allow optional customization for tiles,
+it's possible to override otherwise transient tile configuration with context specific persistent configuration.
 
-This is done by either by setting a client side request header or query param
-``X-Tile-Persistent``:
+This is done by either by setting a client side request header or query param ``X-Tile-Persistent``:
+
+.. code-block:: python
 
     >>> request = TestRequest(
     ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo',
     ...           'X-Tile-Persistent': 'yes'}
     ... )
 
-Yet, just adding the flag, doesn't create new persistent annotations
-on GET requests:
+Yet, just adding the flag, doesn't create new persistent annotations on GET requests:
 
-    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+.. code-block:: python
+
+    >>> tile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> ITileDataManager(tile)
     <plone.tiles.data.PersistentTileDataManager object at ...>
 
@@ -471,6 +536,8 @@ on GET requests:
     []
 
 That's because the data is persistent only once it's set:
+
+.. code-block:: python
 
     >>> data = ITileDataManager(tile).get()
     >>> data.update({'count': 6})
@@ -486,10 +553,12 @@ That's because the data is persistent only once it's set:
 
 Without the persistent flag, fixed transient data would be returned:
 
+.. code-block:: python
+
     >>> request = TestRequest(
     ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
     ... )
-    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> tile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> ITileDataManager(tile)
     <plone.tiles.data.TransientTileDataManager object at ...>
 
@@ -499,11 +568,13 @@ Without the persistent flag, fixed transient data would be returned:
 
 Finally, the persistent override could also be deleted:
 
+.. code-block:: python
+
     >>> request = TestRequest(
     ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo',
     ...           'X-Tile-Persistent': 'yes'}
     ... )
-    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> tile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> ITileDataManager(tile)
     <plone.tiles.data.PersistentTileDataManager object at ...>
 
@@ -520,7 +591,7 @@ Finally, the persistent override could also be deleted:
     >>> request = TestRequest(
     ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
     ... )
-    >>> tile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> tile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> ITileDataManager(tile)
     <plone.tiles.data.TransientTileDataManager object at ...>
 
@@ -528,14 +599,17 @@ Finally, the persistent override could also be deleted:
 Tile URLs
 ---------
 
-As we have seen, tiles have a canonical URL. For transient tiles, this may
-also encode some tile data.
+As we have seen, tiles have a canonical URL.
+For transient tiles, this may also encode some tile data.
 
 If you have a tile instance and you need to know the canonical tile URL,
 you can use the ``IAbsoluteURL`` API.
 
-For the purposes of testing, we need to ensure that we can get an absolute URL
-for the context. We'll achieve that with a dummy adapter:
+For the purposes of testing,
+we need to ensure that we can get an absolute URL for the context.
+We'll achieve that with a dummy adapter:
+
+.. code-block:: python
 
     >>> from zope.interface import implements
     >>> from zope.component import adapts
@@ -552,14 +626,14 @@ for the context. We'll achieve that with a dummy adapter:
     ...         self.request = request
     ...
     ...     def __unicode__(self):
-    ...         return u"http://example.com/context"
+    ...         return u'http://example.com/context'
     ...     def __str__(self):
-    ...         return u"http://example.com/context"
+    ...         return u'http://example.com/context'
     ...     def __call__(self):
     ...         return self.__str__()
     ...     def breadcrumbs(self):
     ...         return ({'name': u'context', 'url': 'http://example.com/context'},)
-    >>> provideAdapter(DummyAbsoluteURL, name=u"absolute_url")
+    >>> provideAdapter(DummyAbsoluteURL, name=u'absolute_url')
     >>> provideAdapter(DummyAbsoluteURL)
 
     >>> from zope.traversing.browser.absoluteurl import absoluteURL
@@ -567,7 +641,7 @@ for the context. We'll achieve that with a dummy adapter:
 
     >>> context = Context()
     >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'cssClass': u'foo'})
-    >>> transientTile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> transientTile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> transientTile = transientTile['tile1']
 
     >>> absoluteURL(transientTile, request)
@@ -580,15 +654,19 @@ for the context. We'll achieve that with a dummy adapter:
 
 For convenience, the tile URL is also available under the ``url`` property:
 
+.. code-block:: python
+
     >>> transientTile.url
     'http://example.com/context/@@sample.tile/tile1?title=My+title&cssClass=foo&count%3Along=5'
 
 The tile absolute URL structure remains unaltered if the data is
 coming from a `_tiledata` JSON-encoded parameter instead of from the request
-parameters directly::
+parameters directly:
+
+.. code-block:: python
 
     >>> request = TestRequest(form={'_tiledata': json.dumps({'title': u'Your title', 'count': 6, 'cssClass': u'bar'})})
-    >>> transientTile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> transientTile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> transientTile = transientTile['tile1']
 
     >>> absoluteURL(transientTile, request)
@@ -596,9 +674,11 @@ parameters directly::
 
 For persistent tiles, the are no data parameters:
 
+.. code-block:: python
+
     >>> context = Context()
     >>> request = TestRequest(form={'title': u'Ignored', 'count': 0, 'cssClass': u'ignored'})
-    >>> persistentTile = getMultiAdapter((context, request), name=u"sample.persistenttile")
+    >>> persistentTile = getMultiAdapter((context, request), name=u'sample.persistenttile')
     >>> persistentTile = persistentTile['tile2']
 
     >>> absoluteURL(persistentTile, request)
@@ -611,17 +691,21 @@ For persistent tiles, the are no data parameters:
 
 And again, for convenience:
 
+.. code-block:: python
+
     >>> persistentTile.url
     'http://example.com/context/@@sample.persistenttile/tile2'
 
-If the tile doesn't have an id, we don't get any sub-path
+If the tile doesn't have an id, we don't get any sub-path:
+
+.. code-block:: python
 
     >>> request = TestRequest(form={'title': u'My title', 'count': 5, 'cssClass': u'foo'})
-    >>> transientTile = getMultiAdapter((context, request), name=u"sample.tile")
+    >>> transientTile = getMultiAdapter((context, request), name=u'sample.tile')
     >>> absoluteURL(transientTile, request)
     'http://example.com/context/@@sample.tile?title=My+title&cssClass=foo&count%3Along=5'
 
     >>> request = TestRequest()
-    >>> persistentTile = getMultiAdapter((context, request), name=u"sample.persistenttile")
+    >>> persistentTile = getMultiAdapter((context, request), name=u'sample.persistenttile')
     >>> absoluteURL(persistentTile, request)
     'http://example.com/context/@@sample.persistenttile'

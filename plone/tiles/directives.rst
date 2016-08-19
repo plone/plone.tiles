@@ -1,23 +1,27 @@
 ZCML directive
 ==============
 
-A tile is really just a browser view providing ``IBasicTile`` (or, more
-commonly, ``ITile`` or ``IPersistentTile``) coupled with a named utility
-providing ``ITileType``. The names of the browser view and the tile should
-match.
+A tile is really just a browser view providing ``IBasicTile``
+(or, more commonly, ``ITile`` or ``IPersistentTile``)
+coupled with a named utility providing ``ITileType``.
+The names of the browser view and the tile should match.
 
-To make it easier to register these components, this package provides a
-``<plone:tile />`` directive that sets up both. It supports several use cases:
+To make it easier to register these components,
+this package provides a ``<plone:tile />`` directive that sets up both.
+It supports several use cases:
 
-  * Registering a new tile from a class
-  * Registering a new tile from a template only
-  * Registering a new tile form a class and a template
-  * Registering a new tile for an existing tile type (e.g. for a new layer)
+* Registering a new tile from a class
+* Registering a new tile from a template only
+* Registering a new tile form a class and a template
+* Registering a new tile for an existing tile type (e.g. for a new layer)
 
-To test this, we have created a dummy schema and a dummy tile in ``tests.py``,
+To test this,
+we have created a dummy schema and a dummy tile in ``tests.py``,
 and a dummy template in ``test.pt``.
 
-Let's show how these may be used by registering several tiles::
+Let's show how these may be used by registering several tiles:
+
+.. code-block:: python
 
     >>> configuration = """\
     ... <configure package="plone.tiles"
@@ -103,12 +107,14 @@ Let's show how these may be used by registering several tiles::
     >>> from zope.configuration import xmlconfig
     >>> xmlconfig.xmlconfig(StringIO(configuration))
 
-Let's check how the tiles were registered::
+Let's check how the tiles were registered:
+
+.. code-block:: python
 
     >>> from zope.component import getUtility
     >>> from plone.tiles.interfaces import ITileType
 
-    >>> tile1_type = getUtility(ITileType, name=u"dummy1")
+    >>> tile1_type = getUtility(ITileType, name=u'dummy1')
     >>> tile1_type
     <TileType dummy1 (Dummy tile 1)>
     >>> tile1_type.description
@@ -123,7 +129,7 @@ Let's check how the tiles were registered::
     >>> tile1_type.schema
     <InterfaceClass plone.tiles.tests.IDummySchema>
 
-    >>> tile2_type = getUtility(ITileType, name=u"dummy2")
+    >>> tile2_type = getUtility(ITileType, name=u'dummy2')
     >>> tile2_type
     <TileType dummy2 (Dummy tile 2)>
     >>> tile2_type.description is None
@@ -133,7 +139,7 @@ Let's check how the tiles were registered::
     >>> tile2_type.schema is None
     True
 
-    >>> tile3_type = getUtility(ITileType, name=u"dummy3")
+    >>> tile3_type = getUtility(ITileType, name=u'dummy3')
     >>> tile3_type
     <TileType dummy3 (Dummy tile 3)>
     >>> tile3_type.description is None
@@ -143,7 +149,7 @@ Let's check how the tiles were registered::
     >>> tile3_type.schema is None
     True
 
-    >>> tile4_type = getUtility(ITileType, name=u"dummy4")
+    >>> tile4_type = getUtility(ITileType, name=u'dummy4')
     >>> tile4_type
     <TileType dummy4 (Dummy tile 4)>
     >>> tile4_type.description is None
@@ -153,7 +159,9 @@ Let's check how the tiles were registered::
     >>> tile4_type.schema
     <InterfaceClass plone.tiles.tests.IDummySchema>
 
-Finally, let's check that we can look up the tiles::
+Finally, let's check that we can look up the tiles:
+
+.. code-block:: python
 
     >>> from zope.publisher.browser import TestRequest
     >>> from zope.interface import implements, alsoProvides
@@ -171,7 +179,7 @@ Finally, let's check that we can look up the tiles::
     >>> from plone.tiles import Tile, PersistentTile
     >>> from plone.tiles.tests import DummyTile, DummyTileWithTemplate
 
-    >>> tile1 = getMultiAdapter((context, layer_request), name="dummy1")
+    >>> tile1 = getMultiAdapter((context, layer_request), name='dummy1')
     >>> isinstance(tile1, DummyTileWithTemplate)
     True
     >>> print tile1()
@@ -179,7 +187,7 @@ Finally, let's check that we can look up the tiles::
     >>> tile1.__name__
     'dummy1'
 
-    >>> tile2 = getMultiAdapter((context, request), name="dummy2")
+    >>> tile2 = getMultiAdapter((context, request), name='dummy2')
     >>> isinstance(tile2, DummyTile)
     True
     >>> print tile2()
@@ -187,7 +195,7 @@ Finally, let's check that we can look up the tiles::
     >>> tile2.__name__
     'dummy2'
 
-    >>> tile3 = getMultiAdapter((context, request), name="dummy3")
+    >>> tile3 = getMultiAdapter((context, request), name='dummy3')
     >>> isinstance(tile3, Tile)
     True
     >>> print tile3()
@@ -195,7 +203,7 @@ Finally, let's check that we can look up the tiles::
     >>> tile3.__name__
     'dummy3'
 
-    >>> tile4 = getMultiAdapter((context, request), name="dummy4")
+    >>> tile4 = getMultiAdapter((context, request), name='dummy4')
     >>> isinstance(tile4, PersistentTile)
     True
     >>> print tile4()
@@ -203,7 +211,7 @@ Finally, let's check that we can look up the tiles::
     >>> tile4.__name__
     'dummy4'
 
-    >>> tile3_layer = getMultiAdapter((context, layer_request), name="dummy3")
+    >>> tile3_layer = getMultiAdapter((context, layer_request), name='dummy3')
     >>> isinstance(tile3_layer, DummyTile)
     True
     >>> print tile3_layer()
