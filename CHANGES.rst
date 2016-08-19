@@ -7,6 +7,9 @@ Changelog
 - Reformat docs.
   [gforcada]
 
+- Add coveralls shield.
+  [gforcada]
+
 1.6 (2016-06-27)
 ----------------
 
