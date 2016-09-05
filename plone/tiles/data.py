@@ -29,7 +29,8 @@ LOGGER = logging.getLogger('plone.tiles')
 @adapter(ITile)
 @implementer(ITileDataManager)
 def transientTileDataManagerFactory(tile):
-    if tile.request.get('X-Tile-Persistent'):
+    if (tile.request.get('X-Tile-Persistent') or
+            getattr(tile.request, 'tile_persistent', False)):
         return PersistentTileDataManager(tile)
     else:
         return TransientTileDataManager(tile)
@@ -62,8 +63,8 @@ class TransientTileDataManager(object):
                         data[name] = field.missing_value
 
         # try to use a '_tiledata' parameter in the request
-        elif '_tiledata' in self.tile.request.form:
-            data = json.loads(self.tile.request.form['_tiledata'])
+        elif hasattr(self.tile.request, 'tile_data'):
+            data = self.tile.request.tile_data
 
         # fall back to the copy of request.form object itself
         else:
@@ -76,9 +77,9 @@ class TransientTileDataManager(object):
                     data = decode(self.tile.request.form,
                                   self.tileType.schema, missing=True)
                 except (ValueError, UnicodeDecodeError,):
-                    LOGGER.exception(u'Could not convert form data to schema')
-                    return self.data.copy()
-
+                    LOGGER.exception(u"Could not convert form data to schema",
+                                     exc_info=True)
+                    return {}
         return data
 
     def set(self, data):
@@ -107,17 +108,21 @@ class PersistentTileDataManager(object):
         self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
 
     def _get_default_request_data(self):
-        # If we don't have a schema, just take the request
-        if self.tileType is None or self.tileType.schema is None:
-            data = self.tile.request.form.copy()
+        if hasattr(self.tile.request, 'tile_data'):
+            data = self.tile.request.tile_data
         else:
-            # Try to decode the form data properly if we can
-            try:
-                data = decode(self.tile.request.form,
-                              self.tileType.schema, missing=True)
-            except (ValueError, UnicodeDecodeError,):
-                LOGGER.exception(u'Could not convert form data to schema')
-                return self.data.copy()
+            # If we don't have a schema, just take the request
+            if self.tileType is None or self.tileType.schema is None:
+                data = self.tile.request.form.copy()
+            else:
+                # Try to decode the form data properly if we can
+                try:
+                    data = decode(self.tile.request.form,
+                                  self.tileType.schema, missing=True)
+                except (ValueError, UnicodeDecodeError):
+                    LOGGER.exception(u"Could not convert form data to schema",
+                                     exc_info=True)
+                    return {}
         return data
 
     def get(self):
