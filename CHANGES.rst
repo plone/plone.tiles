@@ -4,11 +4,14 @@ Changelog
 1.6.1 (unreleased)
 ------------------
 
+Bug fixes:
+
 - Reformat docs.
   [gforcada]
 
 - Add coveralls shield.
   [gforcada]
+
 
 1.6 (2016-06-27)
 ----------------
@@ -29,6 +32,7 @@ Changelog
 
 - PEP8, code-analysis, documentation and packaging fixes.
   [jensens, mauritsvanrees]
+
 
 1.5.1 (2015-10-09)
 ------------------
