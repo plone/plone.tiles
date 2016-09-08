@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-
 from zope.interface import Interface
+from zope.interface.common.mapping import IMapping
 from zope.interface.interfaces import IInterface
 from zope.publisher.interfaces.browser import IBrowserView
 
@@ -146,8 +146,21 @@ class ITileDataContext(Interface):
     the context or request.
 
     The default implementation simply returns ``tile.context``. That must
-    be annotatable for the default persistent tile ``ITileDataManager``
-    to work.
+    be annotatable for the default tile data storage adapter and
+    persistent tile ``ITileDataManager`` to work.
+    """
+
+
+class ITileDataStorage(IMapping):
+    """Indirection to help determine how persistent tiles store their data.
+
+    This is a multi-adapter on ``(context, request, tile)``. The context and
+    request are the same as ``tile.context`` and ``tile.request``, but these
+    discriminators allow the data context to be customised depending on
+    the context or request.
+
+    The default implementation simply returns the configured zope.annotation
+    storage for the given context.
     """
 
 

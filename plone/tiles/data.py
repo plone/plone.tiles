@@ -5,6 +5,7 @@ from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import ITileDataContext
 from plone.tiles.interfaces import ITileDataManager
+from plone.tiles.interfaces import ITileDataStorage
 from plone.tiles.interfaces import ITileType
 from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
@@ -45,16 +46,21 @@ class TransientTileDataManager(object):
     def __init__(self, tile):
         self.tile = tile
         self.tileType = queryUtility(ITileType, name=tile.__name__)
-        self.annotations = IAnnotations(
-            self.tile.request,
-            self.tile.request.form
-        )
-        self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
+
+        self.context = getMultiAdapter(
+            (tile.context, tile.request, tile), ITileDataContext)
+        self.storage = getMultiAdapter(
+            (self.context, tile.request, tile), ITileDataStorage)
+
+        if IAnnotations.providedBy(self.storage):
+            self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
+        else:
+            self.key = str(tile.id)
 
     def get(self):
         # use explicitly set data (saved as annotation on the request)
-        if self.key in self.annotations:
-            data = dict(self.annotations[self.key])
+        if self.key in self.storage:
+            data = dict(self.storage[self.key])
 
             if self.tileType is not None and self.tileType.schema is not None:
                 for name, field in getFields(self.tileType.schema).items():
@@ -82,11 +88,11 @@ class TransientTileDataManager(object):
         return data
 
     def set(self, data):
-        self.annotations[self.key] = data
+        self.storage[self.key] = data
 
     def delete(self):
-        if self.key in self.annotations:
-            self.annotations[self.key] = {}
+        if self.key in self.storage:
+            self.storage[self.key] = {}
 
 
 @adapter(IPersistentTile)
@@ -102,9 +108,13 @@ class PersistentTileDataManager(object):
 
         self.context = getMultiAdapter(
             (tile.context, tile.request, tile), ITileDataContext)
-        self.annotations = IAnnotations(self.context)
+        self.storage = getMultiAdapter(
+            (self.context, tile.request, tile), ITileDataStorage)
 
-        self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
+        if IAnnotations.providedBy(self.storage):
+            self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
+        else:
+            self.key = str(tile.id)
 
     def _get_default_request_data(self):
         # If we don't have a schema, just take the request
@@ -122,7 +132,7 @@ class PersistentTileDataManager(object):
 
     def get(self):
         data = self._get_default_request_data()
-        data.update(dict(self.annotations.get(self.key, {})))
+        data.update(dict(self.storage.get(self.key, {})))
         if self.tileType is not None and self.tileType.schema is not None:
             for name, field in getFields(self.tileType.schema).items():
                 if name not in data:
@@ -130,17 +140,33 @@ class PersistentTileDataManager(object):
         return data
 
     def set(self, data):
-        self.annotations[self.key] = PersistentDict(data)
+        self.storage[self.key] = PersistentDict(data)
 
     def delete(self):
-        if self.key in self.annotations:
-            del self.annotations[self.key]
+        if self.key in self.storage:
+            del self.storage[self.key]
 
 
 @implementer(ITileDataContext)
 @adapter(Interface, Interface, ITile)
 def defaultTileDataContext(context, request, tile):
     return tile.context
+
+
+@implementer(ITileDataStorage)
+@adapter(Interface, Interface, ITile)
+def defaultTileDataStorage(context, request, tile):
+    if tile.request.get('X-Tile-Persistent'):
+        return defaultPersistentTileDataStorage(context, request, tile)
+    else:
+        return IAnnotations(tile.request, tile.request.form)
+
+
+@implementer(ITileDataStorage)
+@adapter(Interface, Interface, IPersistentTile)
+def defaultPersistentTileDataStorage(context, request, tile):
+    return IAnnotations(context)
+
 
 # Encoding
 

@@ -7,6 +7,8 @@
     <adapter factory=".data.transientTileDataManagerFactory" />
     <adapter factory=".data.PersistentTileDataManager" />
     <adapter factory=".data.defaultTileDataContext" />
+    <adapter factory=".data.defaultTileDataStorage" />
+    <adapter factory=".data.defaultPersistentTileDataStorage" />
 
     <!-- Absolute URL -->
     <view
