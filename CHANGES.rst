@@ -4,18 +4,10 @@ Changelog
 1.7.0 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
-- Add support for custom storage layer with ITileDataStorage adapter
+- Option to customize storage layer with ITileDataStorage adapter
   [datakurre]
-
-Bug fixes:
-
-- *add item here*
 
 
 1.6.1 (2016-09-07)
