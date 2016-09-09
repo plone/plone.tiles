@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '1.7.2.dev0'
+version = '1.8.0.dev0'
 
 setup(
     name='plone.tiles',
@@ -52,6 +52,7 @@ setup(
         'zope.security',
         'zope.traversing',
         'Zope2',
+        'plone.subrequest'
     ],
     extras_require={
         'test': [

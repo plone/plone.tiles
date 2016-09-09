@@ -1,10 +1,14 @@
 Changelog
 =========
 
-1.7.2 (unreleased)
+1.8.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+New features:
+
+  - Provide ignore_querystring form directive to mark particular tiles fields
+    that are not allowed to default data from query string data
+    [vangheem]
 
 
 1.7.1 (2016-09-12)

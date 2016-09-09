@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from persistent.dict import PersistentDict
+from plone.subrequest import ISubRequest
+from plone.tiles.directives import IGNORE_QUERYSTRING_KEY
 from plone.tiles.interfaces import IFieldTypeConverter
 from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITile
@@ -36,9 +38,50 @@ def transientTileDataManagerFactory(tile):
         return TransientTileDataManager(tile)
 
 
+class BaseTileDataManager(object):
+
+    def get_default_request_data(self):
+        """
+        from request form
+        """
+        # try to use a '_tiledata' parameter in the request
+        if '_tiledata' in self.tile.request.form:
+            data = json.loads(self.tile.request.form['_tiledata'])
+        elif self.tileType is None or self.tileType.schema is None:
+            data = self.tile.request.form.copy()
+        else:
+            # Try to decode the form data properly if we can
+            try:
+                data = decode(self.tile.request.form,
+                              self.tileType.schema, missing=True)
+            except (ValueError, UnicodeDecodeError,):
+                LOGGER.exception(u'Could not convert form data to schema')
+                return self.data.copy()
+        # we're assuming this data is potentially unsafe so we need to check
+        # the ignore querystring field setting
+
+        # before we start, we allow it for sub-requests since in this case,
+        # the input is safe and we can trust it
+        if ISubRequest.providedBy(self.tile.request):
+            return data
+
+        # first off, we only care to filter if it is a GET request
+        if getattr(self.tile.request, 'REQUEST_METHOD', 'GET') != 'GET':
+            return data
+
+        # now, pay attention to schema hints for form data
+        if self.tileType is not None and self.tileType.schema is not None:
+            for name in self.tileType.schema.queryTaggedValue(
+                    IGNORE_QUERYSTRING_KEY) or []:
+                if name in data:
+                    del data[name]
+
+        return data
+
+
 @adapter(ITile)
 @implementer(ITileDataManager)
-class TransientTileDataManager(object):
+class TransientTileDataManager(BaseTileDataManager):
     """A data manager for transient tile data, which reads data from the
     request query string.
     """
@@ -70,24 +113,9 @@ class TransientTileDataManager(object):
                 for name, field in getFields(self.tileType.schema).items():
                     if name not in data:
                         data[name] = field.missing_value
-
-        # try to use a '_tiledata' parameter in the request
-        elif '_tiledata' in self.tile.request.form:
-            data = json.loads(self.tile.request.form['_tiledata'])
-
         # fall back to the copy of request.form object itself
         else:
-            # If we don't have a schema, just take the request
-            if self.tileType is None or self.tileType.schema is None:
-                data = self.tile.request.form.copy()
-            else:
-                # Try to decode the form data properly if we can
-                try:
-                    data = decode(self.tile.request.form,
-                                  self.tileType.schema, missing=True)
-                except (ValueError, UnicodeDecodeError,):
-                    LOGGER.exception(u'Could not convert form data to schema')
-                    return self.data.copy()
+            data = self.get_default_request_data()
 
         return data
 
@@ -101,7 +129,7 @@ class TransientTileDataManager(object):
 
 @adapter(IPersistentTile)
 @implementer(ITileDataManager)
-class PersistentTileDataManager(object):
+class PersistentTileDataManager(BaseTileDataManager):
     """A data reader for persistent tiles operating on annotatable contexts.
     The data is retrieved from an annotation.
     """
@@ -124,22 +152,8 @@ class PersistentTileDataManager(object):
     def annotations(self):  # BBB for < 0.7.0 support
         return self.storage
 
-    def _get_default_request_data(self):
-        # If we don't have a schema, just take the request
-        if self.tileType is None or self.tileType.schema is None:
-            data = self.tile.request.form.copy()
-        else:
-            # Try to decode the form data properly if we can
-            try:
-                data = decode(self.tile.request.form,
-                              self.tileType.schema, missing=True)
-            except (ValueError, UnicodeDecodeError,):
-                LOGGER.exception(u'Could not convert form data to schema')
-                return self.data.copy()
-        return data
-
     def get(self):
-        data = self._get_default_request_data()
+        data = self.get_default_request_data()
         data.update(dict(self.storage.get(self.key, {})))
         if self.tileType is not None and self.tileType.schema is not None:
             for name, field in getFields(self.tileType.schema).items():
