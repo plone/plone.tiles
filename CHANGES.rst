@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.7.1 (unreleased)
+1.7.1 (2016-09-12)
 ------------------
 
 - Fix issue where collective.cover was broken, because internal changes in
