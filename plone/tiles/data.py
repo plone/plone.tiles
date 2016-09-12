@@ -59,7 +59,7 @@ class TransientTileDataManager(object):
 
     @property
     def annotations(self):  # BBB for < 0.7.0 support
-        return self.stoage
+        return self.storage
 
     def get(self):
         # use explicitly set data (saved as annotation on the request)
@@ -122,7 +122,7 @@ class PersistentTileDataManager(object):
 
     @property
     def annotations(self):  # BBB for < 0.7.0 support
-        return self.stoage
+        return self.storage
 
     def _get_default_request_data(self):
         # If we don't have a schema, just take the request
