@@ -57,6 +57,10 @@ class TransientTileDataManager(object):
         else:
             self.key = str(tile.id)
 
+    @property
+    def annotations(self):  # BBB for < 0.7.0 support
+        return self.stoage
+
     def get(self):
         # use explicitly set data (saved as annotation on the request)
         if self.key in self.storage:
@@ -115,6 +119,10 @@ class PersistentTileDataManager(object):
             self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
         else:
             self.key = str(tile.id)
+
+    @property
+    def annotations(self):  # BBB for < 0.7.0 support
+        return self.stoage
 
     def _get_default_request_data(self):
         # If we don't have a schema, just take the request
