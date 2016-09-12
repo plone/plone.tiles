@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '1.7.1'
+version = '1.7.2.dev0'
 
 setup(
     name='plone.tiles',
