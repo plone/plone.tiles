@@ -4,8 +4,9 @@ Changelog
 1.7.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Fix issue where collective.cover was broken, because internal changes in
+  default data managers
+  [datakurre]
 
 1.7.0 (2016-09-08)
 ------------------
