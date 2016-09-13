@@ -161,6 +161,9 @@ class ITileDataStorage(IMapping):
 
     The default implementation simply returns the configured zope.annotation
     storage for the given context.
+
+    The adapter is expected to provide IMapping interface and be accessed
+    by tile data managers similarly to zope.annotation storage.
     """
 
 

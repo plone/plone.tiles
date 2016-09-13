@@ -78,6 +78,11 @@ To support creation of appropriate tile links, ``plone.tiles.data`` contains two
 
 to help turn a data dictionary into a query string and turn a `request.form` dict into a data dict that complies with a tile's schema interface.
 
+In addition to the default tile configuration sources
+(transient query strings for ITile and persistent annotations for IPersistentTile),
+it is possible to define custom tile configuration sources by registering dictionary like
+ITileDataStorage-adapter for your context, request and tile interface.
+Will be accessed dictionary like by tile data managers with tile id and its data dictionary.
 
 Creating a Simple Tile
 ----------------------
