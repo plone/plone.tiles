@@ -709,3 +709,72 @@ If the tile doesn't have an id, we don't get any sub-path:
     >>> persistentTile = getMultiAdapter((context, request), name=u'sample.persistenttile')
     >>> absoluteURL(persistentTile, request)
     'http://example.com/context/@@sample.persistenttile'
+
+
+We can also disallow query parameters providing data into our tiles
+
+.. code-block:: python
+
+    >>> import zope.schema
+    >>> from plone.tiles.directives import ignore_querystring
+
+    >>> class ISampleTileData(Interface):
+    ...     unfiltered = zope.schema.Text(title=u'Unfiltered data')
+    ...     ignore_querystring('unfiltered')
+    ...     filtered = zope.schema.Text(title=u'filtered data')
+
+    >>> sampleTileType.schema = ISampleTileData
+
+And create a tile with our new schema
+
+.. code-block:: python
+
+  >>> from plone.tiles import Tile
+  >>> class SampleTile(Tile):
+  ...
+  ...     __name__ = 'sample.unfilteredtile' # would normally be set by a ZCML handler
+  ...
+  ...     def __call__(self):
+  ...         return '<html><body><div>{}{}</div></body></html>'.format(
+  ...             self.data.get('unfiltered') or '',
+  ...             self.data.get('filtered') or '')
+
+We'll register the sample unfiltered tile directly here, for testing.
+
+.. code-block:: python
+
+    >>> from zope.component import provideAdapter, provideUtility
+    >>> from zope.interface import Interface
+    >>> from plone.tiles.interfaces import IBasicTile
+
+    >>> provideUtility(sampleTileType, name=u'sample.unfilteredtile')
+    >>> provideAdapter(SampleTile, (Interface, Interface), IBasicTile, name=u'sample.unfilteredtile')
+
+
+Let's simulate traversal to test if form data is used:
+
+.. code-block:: python
+
+    >>> context = Context()
+    >>> request = TestRequest(form={'unfiltered': 'foobar', 'filtered': 'safe'})
+
+    >>> tile = getMultiAdapter((context, request), name=u'sample.unfilteredtile')
+    >>> tile = tile['tile1']
+
+Data should not contain unfiltered field:
+
+.. code-block:: python
+
+    >>> sorted(tile.data.items())
+    [('filtered', u'safe')]
+
+
+Rendering the tile should not include ignored query string:
+
+.. code-block:: python
+
+    >>> 'foobar' in tile()
+    False
+
+    >>> tile()
+    '<html><body><div>safe</div></body></html>'
