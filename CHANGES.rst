@@ -4,7 +4,10 @@ Changelog
 1.8.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Bugfix:
+
+- Fix encode error in nested unicodes (like in plone.app.querystring)
+  [tomgross]
 
 
 1.8.0 (2016-09-13)
