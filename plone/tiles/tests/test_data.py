@@ -4,7 +4,6 @@ from plone.tiles.testing import PLONE_TILES_INTEGRATION_TESTING
 from zope import schema
 from zope.interface import Interface
 
-
 import unittest
 
 
@@ -28,9 +27,9 @@ class TestEncode(unittest.TestCase):
 
     def test_encode_querystring_special(self):
         data = {
-            'query': [{"i": "Subject",
-                       "o": "plone.app.querystring.operation.selection.any",
-                       "v": [u"äüö"]}],
+            'query': [{'i': 'Subject',
+                       'o': 'plone.app.querystring.operation.selection.any',
+                       'v': [u'äüö']}],
             'title': u'Hello World'
         }
         self.assertEqual(
