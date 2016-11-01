@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from plone.testing import Layer
-from plone.testing import layered
 from plone.testing import z2
 from plone.testing import zca
 from plone.tiles import PersistentTile
@@ -10,12 +9,8 @@ from zope import schema
 from zope.configuration import xmlconfig
 from zope.interface import Interface
 
-import doctest
-import unittest2 as unittest
-
 
 # For directive tests
-
 
 class IDummySchema(Interface):
     foo = schema.TextLine(title=u'Foo')
@@ -52,24 +47,11 @@ class PloneTiles(Layer):
     def tearDown(self):
         del self['configurationContext']
 
+
 PLONE_TILES_FIXTURE = PloneTiles()
+
 
 PLONE_TILES_INTEGRATION_TESTING = z2.IntegrationTesting(
     bases=(PLONE_TILES_FIXTURE,),
     name='PloneTiles:Functional'
 )
-
-
-def test_suite():
-    return unittest.TestSuite((
-        layered(
-            doctest.DocFileSuite(
-                'tiles.rst',
-                'directives.rst',
-                'data.rst',
-                'esi.rst',
-                optionflags=doctest.ELLIPSIS
-            ),
-            layer=PLONE_TILES_INTEGRATION_TESTING
-        ),
-    ))

@@ -16,7 +16,7 @@ It supports several use cases:
 * Registering a new tile for an existing tile type (e.g. for a new layer)
 
 To test this,
-we have created a dummy schema and a dummy tile in ``tests.py``,
+we have created a dummy schema and a dummy tile in ``testing.py``,
 and a dummy template in ``test.pt``.
 
 Let's show how these may be used by registering several tiles:
@@ -37,11 +37,11 @@ Let's show how these may be used by registering several tiles:
     ...     <include package="plone.tiles" />
     ...
     ...     <permission
-    ...         id="plone.tiles.tests.DummyAdd"
+    ...         id="plone.tiles.testing.DummyAdd"
     ...         title="Dummy add permission"
     ...         />
     ...     <permission
-    ...         id="plone.tiles.tests.DummyView"
+    ...         id="plone.tiles.testing.DummyView"
     ...         title="Dummy view permission"
     ...         />
     ...
@@ -50,54 +50,54 @@ Let's show how these may be used by registering several tiles:
     ...         name="dummy1"
     ...         title="Dummy tile 1"
     ...         description="This one shows all available options"
-    ...         add_permission="plone.tiles.tests.DummyAdd"
-    ...         schema="plone.tiles.tests.IDummySchema"
-    ...         class="plone.tiles.tests.DummyTileWithTemplate"
+    ...         add_permission="plone.tiles.testing.DummyAdd"
+    ...         schema="plone.tiles.testing.IDummySchema"
+    ...         class="plone.tiles.testing.DummyTileWithTemplate"
     ...         template="test.pt"
-    ...         for="plone.tiles.tests.IDummyContext"
-    ...         layer="plone.tiles.tests.IDummyLayer"
-    ...         permission="plone.tiles.tests.DummyView"
+    ...         for="plone.tiles.testing.IDummyContext"
+    ...         layer="plone.tiles.testing.IDummyLayer"
+    ...         permission="plone.tiles.testing.DummyView"
     ...         />
     ...
     ...     <!-- A class-only tile -->
     ...     <plone:tile
     ...         name="dummy2"
     ...         title="Dummy tile 2"
-    ...         add_permission="plone.tiles.tests.DummyAdd"
-    ...         class="plone.tiles.tests.DummyTile"
+    ...         add_permission="plone.tiles.testing.DummyAdd"
+    ...         class="plone.tiles.testing.DummyTile"
     ...         for="*"
-    ...         permission="plone.tiles.tests.DummyView"
+    ...         permission="plone.tiles.testing.DummyView"
     ...         />
     ...
     ...     <!-- A template-only tile -->
     ...     <plone:tile
     ...         name="dummy3"
     ...         title="Dummy tile 3"
-    ...         add_permission="plone.tiles.tests.DummyAdd"
+    ...         add_permission="plone.tiles.testing.DummyAdd"
     ...         template="test.pt"
     ...         for="*"
-    ...         permission="plone.tiles.tests.DummyView"
+    ...         permission="plone.tiles.testing.DummyView"
     ...         />
     ...
     ...     <!-- Use the PersistentTile class directly with a template-only tile -->
     ...     <plone:tile
     ...         name="dummy4"
     ...         title="Dummy tile 4"
-    ...         add_permission="plone.tiles.tests.DummyAdd"
-    ...         schema="plone.tiles.tests.IDummySchema"
+    ...         add_permission="plone.tiles.testing.DummyAdd"
+    ...         schema="plone.tiles.testing.IDummySchema"
     ...         class="plone.tiles.PersistentTile"
     ...         template="test.pt"
     ...         for="*"
-    ...         permission="plone.tiles.tests.DummyView"
+    ...         permission="plone.tiles.testing.DummyView"
     ...         />
     ...
     ...     <!-- Override dummy3 for a new layer -->
     ...     <plone:tile
     ...         name="dummy3"
-    ...         class="plone.tiles.tests.DummyTile"
+    ...         class="plone.tiles.testing.DummyTile"
     ...         for="*"
-    ...         layer="plone.tiles.tests.IDummyLayer"
-    ...         permission="plone.tiles.tests.DummyView"
+    ...         layer="plone.tiles.testing.IDummyLayer"
+    ...         permission="plone.tiles.testing.DummyView"
     ...         />
     ...
     ... </configure>
@@ -121,13 +121,13 @@ Let's check how the tiles were registered:
     u'This one shows all available options'
 
     >>> tile1_type.add_permission
-    'plone.tiles.tests.DummyAdd'
+    'plone.tiles.testing.DummyAdd'
 
     >>> tile1_type.view_permission
-    'plone.tiles.tests.DummyView'
+    'plone.tiles.testing.DummyView'
 
     >>> tile1_type.schema
-    <InterfaceClass plone.tiles.tests.IDummySchema>
+    <InterfaceClass plone.tiles.testing.IDummySchema>
 
     >>> tile2_type = getUtility(ITileType, name=u'dummy2')
     >>> tile2_type
@@ -135,7 +135,7 @@ Let's check how the tiles were registered:
     >>> tile2_type.description is None
     True
     >>> tile2_type.add_permission
-    'plone.tiles.tests.DummyAdd'
+    'plone.tiles.testing.DummyAdd'
     >>> tile2_type.schema is None
     True
 
@@ -145,7 +145,7 @@ Let's check how the tiles were registered:
     >>> tile3_type.description is None
     True
     >>> tile3_type.add_permission
-    'plone.tiles.tests.DummyAdd'
+    'plone.tiles.testing.DummyAdd'
     >>> tile3_type.schema is None
     True
 
@@ -155,9 +155,9 @@ Let's check how the tiles were registered:
     >>> tile4_type.description is None
     True
     >>> tile4_type.add_permission
-    'plone.tiles.tests.DummyAdd'
+    'plone.tiles.testing.DummyAdd'
     >>> tile4_type.schema
-    <InterfaceClass plone.tiles.tests.IDummySchema>
+    <InterfaceClass plone.tiles.testing.IDummySchema>
 
 Finally, let's check that we can look up the tiles:
 
@@ -166,7 +166,7 @@ Finally, let's check that we can look up the tiles:
     >>> from zope.publisher.browser import TestRequest
     >>> from zope.interface import implements, alsoProvides
 
-    >>> from plone.tiles.tests import IDummyContext, IDummyLayer
+    >>> from plone.tiles.testing import IDummyContext, IDummyLayer
 
     >>> class Context(object):
     ...     implements(IDummyContext)
@@ -177,7 +177,7 @@ Finally, let's check that we can look up the tiles:
 
     >>> from zope.component import getMultiAdapter
     >>> from plone.tiles import Tile, PersistentTile
-    >>> from plone.tiles.tests import DummyTile, DummyTileWithTemplate
+    >>> from plone.tiles.testing import DummyTile, DummyTileWithTemplate
 
     >>> tile1 = getMultiAdapter((context, layer_request), name='dummy1')
     >>> isinstance(tile1, DummyTileWithTemplate)
