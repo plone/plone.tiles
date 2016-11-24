@@ -11,3 +11,5 @@
 /local/
 /include/
 /bin/
+/parts
+.installed.cfg

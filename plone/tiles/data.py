@@ -221,6 +221,8 @@ def map_to_pairs(encoded_name, value):
                 marshall_type = guess_type(item_subvalue)
                 if isinstance(item_subvalue, bool):
                     item_subvalue = item_subvalue and '1' or ''
+                elif isinstance(item_subvalue, unicode):
+                    item_subvalue = item_subvalue.encode('utf-8')
                 encoded_name = '{0}.{1}{2}:list:{3}'.format(
                     prefix,
                     item_name,
@@ -232,6 +234,8 @@ def map_to_pairs(encoded_name, value):
             marshall_type = guess_type(item_value)
             if isinstance(item_value, bool):
                 item_value = item_value and '1' or ''
+            elif isinstance(item_value, unicode):
+                item_value = item_value.encode('utf-8')
             encoded_name = '{0:s}.{1:s}{2:s}:{3:s}'.format(
                 prefix,
                 item_name,
