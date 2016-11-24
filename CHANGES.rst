@@ -4,6 +4,16 @@ Changelog
 1.8.2 (unreleased)
 ------------------
 
+Breaking changes:
+
+- Nothing changed yet.
+
+New features:
+
+- Nothing changed yet.
+
+Bug fixes:
+
 - Nothing changed yet.
 
 
@@ -17,6 +27,7 @@ Bugfix:
 
 - Restructure testing
   [tomgross]
+
 
 1.8.0 (2016-09-13)
 ------------------
