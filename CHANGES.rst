@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- Nothing changed yet.
+- Remove unused unittest2 requirement
+  [tomgross]
 
 
 1.8.1 (2016-11-24)
