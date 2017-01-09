@@ -16,8 +16,24 @@ class IQuerySchema(Interface):
         required=False
     )
 
+    lines = schema.List(
+        title=u"Strings",
+        value_type=schema.TextLine(),
+        required=False
+    )
+
     title = schema.TextLine(
         title=u'Title'
+    )
+
+
+class IWords(Interface):
+
+
+    words = schema.List(
+        title=u"Words",
+        value_type=schema.TextLine(),
+        required=False
     )
 
 
@@ -37,4 +53,13 @@ class TestEncode(unittest.TestCase):
             ('query.i%3Arecords=Subject&query.o%3A'
              'records=plone.app.querystring.operation.selection.any&'
              'query.v%3Alist%3Arecords=%C3%A4%C3%BC%C3%B6&title=Hello+World')
+        )
+
+    def test_encode_unicode_lines(self):
+        data = {
+            'words': [u'ä', u'ö']
+        }
+        self.assertEqual(
+            encode(data, schema=IWords),
+            ('words%3Alist=%C3%A4&words%3Alist=%C3%B6')
         )
