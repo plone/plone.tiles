@@ -29,7 +29,6 @@ class IQuerySchema(Interface):
 
 class IWords(Interface):
 
-
     words = schema.List(
         title=u'Words',
         value_type=schema.TextLine(),
