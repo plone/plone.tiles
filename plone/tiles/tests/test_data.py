@@ -10,14 +10,14 @@ import unittest
 class IQuerySchema(Interface):
 
     query = schema.List(
-        title=u"Search terms",
+        title=u'Search terms',
         value_type=schema.Dict(value_type=schema.Field(),
                                key_type=schema.TextLine()),
         required=False
     )
 
     lines = schema.List(
-        title=u"Strings",
+        title=u'Strings',
         value_type=schema.TextLine(),
         required=False
     )
@@ -31,7 +31,7 @@ class IWords(Interface):
 
 
     words = schema.List(
-        title=u"Words",
+        title=u'Words',
         value_type=schema.TextLine(),
         required=False
     )
