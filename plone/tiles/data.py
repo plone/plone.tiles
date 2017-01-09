@@ -304,6 +304,8 @@ def encode(data, schema, ignore=()):
 
                 if isinstance(item, bool):
                     item = item and '1' or ''
+                elif isinstance(item, unicode):
+                    item = item.encode('utf-8')
 
                 if isinstance(item, dict):
                     encode.extend(map_to_pairs(encoded_name, item))
