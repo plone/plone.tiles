@@ -4,15 +4,11 @@ Changelog
 1.8.2 (unreleased)
 ------------------
 
-Breaking changes:
-
-- Nothing changed yet.
-
-New features:
-
-- Nothing changed yet.
-
 Bug fixes:
+
+- Fix issue where transient tile was unable to encode data
+  with list of unicode strings
+  [datakurre]
 
 - Remove unused unittest2 requirement
   [tomgross]
