@@ -38,7 +38,61 @@ def transientTileDataManagerFactory(tile):
         return TransientTileDataManager(tile)
 
 
-class BaseTileDataManager(object):
+@adapter(ITile)
+@implementer(ITileDataManager)
+class TransientTileDataManager(object):
+    """A data manager for transient tile data, which reads data from the
+    request query string.
+    """
+
+    def __init__(self, tile):
+        self.tile = tile
+        self.tileType = queryUtility(ITileType, name=tile.__name__)
+
+        self.context = getMultiAdapter(
+            (tile.context, tile.request, tile), ITileDataContext)
+        self.storage = getMultiAdapter(
+            (self.context, tile.request, tile), ITileDataStorage)
+
+        self.persistent_key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
+        self.persistent_storage = defaultPersistentTileDataStorage(self.context, tile.request, tile)
+        if IAnnotations.providedBy(self.storage):
+            self.key = self.persistent_key
+        else:
+            self.key = str(tile.id)
+
+    @property
+    def annotations(self):  # BBB for < 0.7.0 support
+        return self.storage
+
+    def get(self):
+        data = None
+        # first try the storage we get from the adapter in the constructor
+        if self.key in self.storage:
+            data = self.storage[self.key]
+        # if we don't find the value in the configured
+        # strorage try the persistent storage explicitly
+        elif self.persistent_key in self.persistent_storage:
+            data = self.persistent_storage[self.persistent_key]
+
+        # if we found data for the tile make sure it is complete
+        # according to the schema.
+        if data is not None:
+            if self.tileType is not None and self.tileType.schema is not None:
+                for name, field in getFields(self.tileType.schema).items():
+                    if name not in data:
+                        data[name] = field.missing_value
+        # fall back to the copy of request.form object itself
+        else:
+            data = self.get_default_request_data()
+        return data
+
+    def set(self, data):
+        self.storage[self.key] = data
+
+    def delete(self):
+        if self.key in self.storage:
+            self.storage[self.key] = {}
 
     def get_default_request_data(self):
         """
@@ -79,94 +133,15 @@ class BaseTileDataManager(object):
         return data
 
 
-@adapter(ITile)
-@implementer(ITileDataManager)
-class TransientTileDataManager(BaseTileDataManager):
-    """A data manager for transient tile data, which reads data from the
-    request query string.
-    """
-
-    def __init__(self, tile):
-        self.tile = tile
-        self.tileType = queryUtility(ITileType, name=tile.__name__)
-
-        self.context = getMultiAdapter(
-            (tile.context, tile.request, tile), ITileDataContext)
-        self.storage = getMultiAdapter(
-            (self.context, tile.request, tile), ITileDataStorage)
-
-        if IAnnotations.providedBy(self.storage):
-            self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
-        else:
-            self.key = str(tile.id)
-
-    @property
-    def annotations(self):  # BBB for < 0.7.0 support
-        return self.storage
-
-    def get(self):
-        # use explicitly set data (saved as annotation on the request)
-        if self.key in self.storage:
-            data = dict(self.storage[self.key])
-
-            if self.tileType is not None and self.tileType.schema is not None:
-                for name, field in getFields(self.tileType.schema).items():
-                    if name not in data:
-                        data[name] = field.missing_value
-        # fall back to the copy of request.form object itself
-        else:
-            data = self.get_default_request_data()
-
-        return data
-
-    def set(self, data):
-        self.storage[self.key] = data
-
-    def delete(self):
-        if self.key in self.storage:
-            self.storage[self.key] = {}
-
-
 @adapter(IPersistentTile)
 @implementer(ITileDataManager)
-class PersistentTileDataManager(BaseTileDataManager):
+class PersistentTileDataManager(TransientTileDataManager):
     """A data reader for persistent tiles operating on annotatable contexts.
     The data is retrieved from an annotation.
     """
 
-    def __init__(self, tile):
-        self.tile = tile
-        self.tileType = queryUtility(ITileType, name=tile.__name__)
-
-        self.context = getMultiAdapter(
-            (tile.context, tile.request, tile), ITileDataContext)
-        self.storage = getMultiAdapter(
-            (self.context, tile.request, tile), ITileDataStorage)
-
-        if IAnnotations.providedBy(self.storage):
-            self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
-        else:
-            self.key = str(tile.id)
-
-    @property
-    def annotations(self):  # BBB for < 0.7.0 support
-        return self.storage
-
-    def get(self):
-        data = self.get_default_request_data()
-        data.update(dict(self.storage.get(self.key, {})))
-        if self.tileType is not None and self.tileType.schema is not None:
-            for name, field in getFields(self.tileType.schema).items():
-                if name not in data:
-                    data[name] = field.missing_value
-        return data
-
     def set(self, data):
         self.storage[self.key] = PersistentDict(data)
-
-    def delete(self):
-        if self.key in self.storage:
-            del self.storage[self.key]
 
 
 @implementer(ITileDataContext)

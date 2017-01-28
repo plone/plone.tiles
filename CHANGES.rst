@@ -4,7 +4,11 @@ Changelog
 1.8.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Bug fixes:
+
+- Allow data fallback, if tile changes its storage strategy
+  from persistent to another stragey
+  [tomgross]
 
 
 1.8.2 (2017-01-10)
