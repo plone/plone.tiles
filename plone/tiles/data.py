@@ -55,7 +55,7 @@ class TransientTileDataManager(object):
             (self.context, tile.request, tile), ITileDataStorage)
 
         self.persistent_key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
-        self.persistent_storage = defaultPersistentTileDataStorage(self.context, tile.request, tile)
+        self.persistent_storage = IAnnotations(self.context, {})
         if IAnnotations.providedBy(self.storage):
             self.key = self.persistent_key
         else:
