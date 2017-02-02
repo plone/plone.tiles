@@ -1,10 +1,21 @@
 Changelog
 =========
 
-1.8.3 (unreleased)
+2.0.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Bug fixes:
+
+- Fix issue where ESI tile helper views didn't get correct
+  Cache-Control-headers, because ESI helpers views were not acquisition
+  wrapped
+  [datakurre]
+
+New features:
+
+- Added X-Frame-Options -header for ESI tile views with matching behavior
+  with plone.protect
+  [datakurre]
 
 
 1.8.2 (2017-01-10)
