@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-
 from plone.tiles.interfaces import ESI_HEADER
 from plone.tiles.interfaces import ESI_HEADER_KEY
 from plone.tiles.interfaces import IESIRendered
 from plone.tiles.tile import PersistentTile
 from plone.tiles.tile import Tile
+from Products.Five import BrowserView
 from zope.interface import implementer
 
 import re
+import os
 
+X_FRAME_OPTIONS = os.environ.get('PLONE_X_FRAME_OPTIONS', 'SAMEORIGIN')
 
 HEAD_CHILDREN = re.compile(r'<head[^>]*>(.*)</head>', re.I | re.S)
 BODY_CHILDREN = re.compile(r'<body[^>]*>(.*)</body>', re.I | re.S)
@@ -96,13 +98,9 @@ class ESIPersistentTile(ConditionalESIRendering, PersistentTile):
 
 # ESI views
 
-class ESIHead(object):
+class ESIHead(BrowserView):
     """Render the head portion of a tile independently.
     """
-
-    def __init__(self, context, request):
-        self.tile = context
-        self.request = request
 
     def __call__(self):
         """Return the children of the <head> tag as a fragment.
@@ -111,7 +109,7 @@ class ESIHead(object):
         if self.request.getHeader(ESI_HEADER):
             del self.request.environ[ESI_HEADER_KEY]
 
-        document = self.tile()  # render the tile
+        document = self.context()  # render the tile
 
         match = HEAD_CHILDREN.search(document)
         if not match:
@@ -119,13 +117,9 @@ class ESIHead(object):
         return match.group(1).strip()
 
 
-class ESIBody(object):
+class ESIBody(BrowserView):
     """Render the head portion of a tile independently.
     """
-
-    def __init__(self, context, request):
-        self.tile = context
-        self.request = request
 
     def __call__(self):
         """Return the children of the <head> tag as a fragment.
@@ -134,9 +128,39 @@ class ESIBody(object):
         if self.request.getHeader(ESI_HEADER):
             del self.request.environ[ESI_HEADER_KEY]
 
-        document = self.tile()  # render the tile
+        document = self.context()  # render the tile
 
         match = BODY_CHILDREN.search(document)
         if not match:
             return document
         return match.group(1).strip()
+
+
+class ESIProtectTransform(object):
+    """Replacement transform for plone.protect's ProtectTransform,
+    because ESI tile responses' HTML should not be transformed to
+    avoid wrapping them with <html>-tag
+    """
+
+    order = 9000
+
+    def __init__(self, published, request):
+        self.published = published
+        self.request = request
+
+    def transform(self, result, encoding):
+        # clickjacking protection from plone.protect
+        if X_FRAME_OPTIONS:
+            if not self.request.response.getHeader('X-Frame-Options'):
+                self.request.response.setHeader(
+                    'X-Frame-Options', X_FRAME_OPTIONS)
+        return None
+
+    def transformBytes(self, result, encoding):
+        return self.transform(result, encoding)
+
+    def transformUnicode(self, result, encoding):
+        return self.transform(result, encoding)
+
+    def transformIterable(self, result, encoding):
+        return self.transform(result, encoding)

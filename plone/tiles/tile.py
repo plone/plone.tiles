@@ -2,9 +2,9 @@
 from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import ITileDataManager
+from Products.Five import BrowserView
 from zope.component import queryMultiAdapter
 from zope.interface import implementer
-from zope.publisher.browser import BrowserView
 from zope.traversing.browser.absoluteurl import absoluteURL
 
 

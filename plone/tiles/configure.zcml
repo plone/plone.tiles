@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="plone.tiles">
 
     <!-- Data manager -->
@@ -58,6 +59,22 @@
         for=".interfaces.IESIRendered"
         class=".esi.ESIBody"
         permission="zope.Public"
+        />
+
+    <adapter
+        name="plone.protect.autocsrf"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".esi.ESIHead *"
+        factory=".esi.ESIProtectTransform"
+        zcml:condition="installed plone.transformchain"
+        />
+
+    <adapter
+        name="plone.protect.autocsrf"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".esi.ESIBody *"
+        factory=".esi.ESIProtectTransform"
+        zcml:condition="installed plone.transformchain"
         />
 
     <!-- Field Type converters -->
