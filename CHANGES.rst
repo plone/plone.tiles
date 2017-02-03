@@ -6,21 +6,21 @@ Changelog
 
 Breaking changes:
 
-- Tile traversal no longer adds ``X-Tile-Url``-header with absolute URL.
-  Relative ``X-Tile-Url`` is still set, but only after successful rendering
-  of tile (in default view class ``__call__``).
+- Tiles no longer add relative ``X-Tile-Url``-header in ``__call__``.
+  Tiles still add absolute ``X-Tile-Url``-header during traversal, but
+  it is removed after rendering if request is not CSRF-authorized.
   [datakurre]
 
 New features:
 
-- Added X-Frame-Options -header for ESI tile views with matching behavior
+- Added X-Frame-Options -header for ESI-tile views with matching behavior
   with plone.protect
   [datakurre]
 
 Bug fixes:
 
-- Fix issue where ESI tile helper views didn't get correct
-  Cache-Control-headers, because ESI helpers views were not acquisition
+- Fix issue where ESI-tile helper views didn't get correct
+  Cache-Control-headers, because ESI-helpers views were not acquisition
   wrapped
   [datakurre]
 

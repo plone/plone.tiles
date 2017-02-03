@@ -77,6 +77,16 @@
         zcml:condition="installed plone.transformchain"
         />
 
+    <configure zcml:condition="installed plone.protect">
+      <adapter
+        name="plone.tiles.tileurl"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".tile.Tile *"
+        factory=".tile.TileUrlTransform"
+        zcml:condition="installed plone.transformchain"
+      />
+    </configure>
+
     <!-- Field Type converters -->
     <adapter for="zope.schema.interfaces.IBytesLine"
              factory="plone.tiles.fieldtypeconverters.NoConverter"

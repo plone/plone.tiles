@@ -46,6 +46,16 @@ class Tile(BrowserView):
             if self.__doc__ is None:
                 self.__doc__ = 'For Zope 2, to keep the ZPublisher happy'
 
+            # Note: X-Tile-Url was added to make it easier for editor to know
+            # the URL of a new tile after receiving the redirected response
+            # from a tile form. That's why it's only set for customizable tiles
+            # (tiles with id).
+            if self.id is not None:
+                self.request.response.setHeader(
+                    'X-Tile-Url',
+                    self.url
+                )
+
             return self
 
         # Also allow views on tiles even without @@.
@@ -77,17 +87,7 @@ class Tile(BrowserView):
                 u'Override __call__ or set a class variable "index" to point '
                 u'to a view page template file'
             )
-
-        # Rendering tile may raise Unauthorized exception
-        output = self.index(*args, **kwargs)
-
-        # X-Tile-Url is set only after tile has been successfully rendered
-        if self.id is not None:
-            self.request.response.setHeader(
-                'X-Tile-Url',
-                self.url[len(self.context.absolute_url()) + 1:]
-            )
-        return output
+        return self.index(*args, **kwargs)
 
     @property
     def data(self):
@@ -106,3 +106,33 @@ class PersistentTile(Tile):
     """Base class for persistent tiles. Identical to `Tile`, except that the
     data dict is never serialized with the URL.
     """
+
+
+class TileUrlTransform(object):
+    """Drop X-Tile-Url when not authorized for editing"""
+    order = 9000
+
+    def __init__(self, published, request):
+        self.published = published
+        self.request = request
+
+    def transform(self, result, encoding):
+        # drop X-Tile-Url when not authorized for editing
+        if 'x-tile-url' in self.request.response.headers:
+            from plone.protect import CheckAuthenticator
+            from zExceptions import Forbidden
+            try:
+                CheckAuthenticator(self.request)
+            except Forbidden:
+                del self.request.response.headers['x-tile-url']
+
+        return None
+
+    def transformBytes(self, result, encoding):
+        return self.transform(result, encoding)
+
+    def transformUnicode(self, result, encoding):
+        return self.transform(result, encoding)
+
+    def transformIterable(self, result, encoding):
+        return self.transform(result, encoding)

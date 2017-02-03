@@ -62,7 +62,9 @@ class ConditionalESIRendering(object):
             if self.head:
                 mode = 'esi-head'
             return ESI_TEMPLATE.format(
-                url=self.request.get('PATH_INFO') or self.request.getURL(),
+                url=(self.request.get('PATH_INFO') and
+                     self.request.get('PATH_INFO').replace(' ', '%20') or
+                     self.request.getURL()),
                 queryString=self.request.get('QUERY_STRING', ''),
                 esiMode=mode
             )
@@ -111,6 +113,9 @@ class ESIHead(BrowserView):
 
         document = self.context()  # render the tile
 
+        # Disable the theme so we don't <html/>-wrapped
+        self.request.response.setHeader('X-Theme-Disabled', '1')
+
         match = HEAD_CHILDREN.search(document)
         if not match:
             return document
@@ -129,6 +134,9 @@ class ESIBody(BrowserView):
             del self.request.environ[ESI_HEADER_KEY]
 
         document = self.context()  # render the tile
+
+        # Disable the theme so we don't <html/>-wrapped
+        self.request.response.setHeader('X-Theme-Disabled', '1')
 
         match = BODY_CHILDREN.search(document)
         if not match:
@@ -154,6 +162,9 @@ class ESIProtectTransform(object):
             if not self.request.response.getHeader('X-Frame-Options'):
                 self.request.response.setHeader(
                     'X-Frame-Options', X_FRAME_OPTIONS)
+        # drop X-Tile-Url
+        if 'x-tile-url' in self.request.response.headers:
+            del self.request.response.headers['x-tile-url']
         return None
 
     def transformBytes(self, result, encoding):
