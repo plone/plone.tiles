@@ -62,7 +62,7 @@ class ConditionalESIRendering(object):
             if self.head:
                 mode = 'esi-head'
             return ESI_TEMPLATE.format(
-                url=self.request.getURL(),
+                url=self.request.get('PATH_INFO') or self.request.getURL(),
                 queryString=self.request.get('QUERY_STRING', ''),
                 esiMode=mode
             )
