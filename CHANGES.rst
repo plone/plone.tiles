@@ -4,17 +4,24 @@ Changelog
 2.0.0 (unreleased)
 ------------------
 
-Bug fixes:
+Breaking changes:
 
-- Fix issue where ESI tile helper views didn't get correct
-  Cache-Control-headers, because ESI helpers views were not acquisition
-  wrapped
+- Tile traversal no longer adds ``X-Tile-Url``-header with absolute URL.
+  Relative ``X-Tile-Url`` is still set, but only after successful rendering
+  of tile (in default view class ``__call__``).
   [datakurre]
 
 New features:
 
 - Added X-Frame-Options -header for ESI tile views with matching behavior
   with plone.protect
+  [datakurre]
+
+Bug fixes:
+
+- Fix issue where ESI tile helper views didn't get correct
+  Cache-Control-headers, because ESI helpers views were not acquisition
+  wrapped
   [datakurre]
 
 

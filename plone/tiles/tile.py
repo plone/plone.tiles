@@ -46,11 +46,6 @@ class Tile(BrowserView):
             if self.__doc__ is None:
                 self.__doc__ = 'For Zope 2, to keep the ZPublisher happy'
 
-            self.request.response.setHeader(
-                'X-Tile-Url',
-                self.url
-            )
-
             return self
 
         # Also allow views on tiles even without @@.
@@ -82,12 +77,17 @@ class Tile(BrowserView):
                 u'Override __call__ or set a class variable "index" to point '
                 u'to a view page template file'
             )
+
+        # Rendering tile may raise Unauthorized exception
+        output = self.index(*args, **kwargs)
+
+        # X-Tile-Url is set only after tile has been successfully rendered
         if self.id is not None:
             self.request.response.setHeader(
                 'X-Tile-Url',
                 self.url[len(self.context.absolute_url()) + 1:]
             )
-        return self.index(*args, **kwargs)
+        return output
 
     @property
     def data(self):
