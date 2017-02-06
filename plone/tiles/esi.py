@@ -9,7 +9,10 @@ from Products.Five import BrowserView
 from zExceptions import Unauthorized
 from zope.component import queryUtility
 from zope.interface import implementer
-from zope.security import checkPermission
+try:
+    from AccessControl.security import checkPermission
+except ImportError:
+    from zope.security import checkPermission
 
 import re
 import os

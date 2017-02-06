@@ -59,6 +59,8 @@ Ordinarily, of course, it would be registered via ZCML.
 .. code-block:: python
 
     >>> from plone.tiles.type import TileType
+    >>> from zope.security.permission import Permission
+    >>> permission = Permission('dummy.Permission')
     >>> sampleTileType = TileType(
     ...     name=u'sample.tile',
     ...     title=u'Sample tile',
@@ -71,6 +73,7 @@ Ordinarily, of course, it would be registered via ZCML.
     >>> from zope.interface import Interface
     >>> from plone.tiles.interfaces import IBasicTile
 
+    >>> provideUtility(permission, name=u'dummy.Permission')
     >>> provideUtility(sampleTileType, name=u'sample.tile')
     >>> provideAdapter(SampleTile, (Interface, Interface), IBasicTile, name=u'sample.tile')
 
@@ -139,6 +142,16 @@ At this point, we can look up the ESI views:
 .. code-block:: python
 
     >>> head = getMultiAdapter((tile, request), name='esi-head')
+    >>> head()
+    Traceback (most recent call last):
+    ...
+    Unauthorized: Unauthorized()
+
+But we can only render them when we have the required permissions:
+
+    >>> from AccessControl.SecurityManagement import newSecurityManager
+    >>> from AccessControl.User import UnrestrictedUser
+    >>> newSecurityManager(None, UnrestrictedUser('manager', '', ['Manager'], []))
     >>> print head()
     <title>Title</title>
 
