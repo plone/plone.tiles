@@ -8,11 +8,24 @@ Breaking changes:
 
 - Tiles no longer add relative ``X-Tile-Url``-header in ``__call__``.
   Tiles still add absolute ``X-Tile-Url``-header during traversal, but
-  it gest removed after rendering when request is not CSRF-authorized.
+  it gets removed after rendering when request is not CSRF-authorized.
   [datakurre]
 
-- Generic ESI helper do now check the request is authorized to render
+- Generic ESI helper check now taht the request is authorized to render
   the tile according to the registered view permission fo the tile.
+  [datakurre]
+
+- Transactions of requests to ESI helper views are automatically aborted,
+  because ESI requests should always be immutable GET requests
+  [datakurre]
+
+- plone.app.theming (transform) is now disabled with X-Theme-Disabled-header
+  for requests rendering tiles
+  [datakurre]
+
+- plone.protect's ProtectTransform is skipped for tile requests with correct
+  CSRF token prevent its side-effects on tile editors rendering tiles
+  individually
   [datakurre]
 
 New features:
