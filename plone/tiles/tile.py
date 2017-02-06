@@ -6,6 +6,7 @@ from Products.Five import BrowserView
 from zope.component import queryMultiAdapter
 from zope.interface import implementer
 from zope.traversing.browser.absoluteurl import absoluteURL
+from zExceptions import Forbidden
 
 
 @implementer(ITile)
@@ -108,24 +109,17 @@ class PersistentTile(Tile):
     """
 
 
-class TileUrlTransform(object):
-    """Drop X-Tile-Url when not authorized for editing"""
-    order = 9000
+class TileThemingTransform(object):
+    """Disable plone.app.theming for tile responses"""
+
+    order = 8800
 
     def __init__(self, published, request):
         self.published = published
         self.request = request
 
     def transform(self, result, encoding):
-        # drop X-Tile-Url when not authorized for editing
-        if 'x-tile-url' in self.request.response.headers:
-            from plone.protect import CheckAuthenticator
-            from zExceptions import Forbidden
-            try:
-                CheckAuthenticator(self.request)
-            except Forbidden:
-                del self.request.response.headers['x-tile-url']
-
+        self.request.response.setHeader('X-Theme-Disabled', '1')
         return None
 
     def transformBytes(self, result, encoding):
@@ -136,3 +130,60 @@ class TileUrlTransform(object):
 
     def transformIterable(self, result, encoding):
         return self.transform(result, encoding)
+
+
+class TileProtectTransform(object):
+    """Replacement transform for plone.protect's ProtectTransform, to drop
+    X-Tile-Url-header from unauthorized responses and disable the default
+    ProtectTransform for authorized responses (to avoid causing issues
+    like extra protect.js-injections for tile editors)
+    """
+
+    order = 9000
+
+    def __init__(self, published, request):
+        self.published = published
+        self.request = request
+        try:
+            from plone.protect.auto import ProtectTransform
+            self.protect = ProtectTransform(published, request)
+        except ImportError:
+            self.protect = None
+
+    def transform(self, result, encoding):
+        from plone.protect import CheckAuthenticator
+        CheckAuthenticator(self.request)
+        return None
+
+    def transformBytes(self, result, encoding):
+        try:
+            return self.transform(result, encoding)
+        except Forbidden:
+            if 'x-tile-url' in self.request.response.headers:
+                del self.request.response.headers['x-tile-url']
+            if self.protect is not None:
+                return self.protect.transformBytes(result, encoding)
+            else:
+                return None
+
+    def transformUnicode(self, result, encoding):
+        try:
+            return self.transform(result, encoding)
+        except Forbidden:
+            if 'x-tile-url' in self.request.response.headers:
+                del self.request.response.headers['x-tile-url']
+            if self.protect is not None:
+                return self.protect.transformUnicode(result, encoding)
+            else:
+                return None
+
+    def transformIterable(self, result, encoding):
+        try:
+            return self.transform(result, encoding)
+        except Forbidden:
+            if 'x-tile-url' in self.request.response.headers:
+                del self.request.response.headers['x-tile-url']
+            if self.protect is not None:
+                return self.protect.transformIterable(result, encoding)
+            else:
+                return None

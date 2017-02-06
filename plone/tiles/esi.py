@@ -14,8 +14,9 @@ try:
 except ImportError:
     from zope.security import checkPermission
 
-import re
 import os
+import re
+import transaction
 
 X_FRAME_OPTIONS = os.environ.get('PLONE_X_FRAME_OPTIONS', 'SAMEORIGIN')
 
@@ -190,6 +191,8 @@ class ESIProtectTransform(object):
         # drop X-Tile-Url
         if 'x-tile-url' in self.request.response.headers:
             del self.request.response.headers['x-tile-url']
+        # ESI requests are always GET request and should not mutate DB
+        transaction.abort()
         return None
 
     def transformBytes(self, result, encoding):

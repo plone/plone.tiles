@@ -77,12 +77,20 @@
         zcml:condition="installed plone.transformchain"
         />
 
-    <configure zcml:condition="installed plone.protect">
-      <adapter
-        name="plone.tiles.tileurl"
+    <adapter
+        name="plone.protect.autocsrf"
         provides="plone.transformchain.interfaces.ITransform"
         for=".tile.Tile *"
-        factory=".tile.TileUrlTransform"
+        factory=".tile.TileProtectTransform"
+        zcml:condition="installed plone.transformchain"
+        />
+
+    <configure zcml:condition="installed plone.protect">
+      <adapter
+        name="plone.tiles.tiletheming"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".tile.Tile *"
+        factory=".tile.TileThemingTransform"
         zcml:condition="installed plone.transformchain"
       />
     </configure>
