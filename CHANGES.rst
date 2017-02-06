@@ -8,7 +8,11 @@ Breaking changes:
 
 - Tiles no longer add relative ``X-Tile-Url``-header in ``__call__``.
   Tiles still add absolute ``X-Tile-Url``-header during traversal, but
-  it is removed after rendering if request is not CSRF-authorized.
+  it gest removed after rendering when request is not CSRF-authorized.
+  [datakurre]
+
+- Generic ESI helper do now check the request is authorized to render
+  the tile according to the registered view permission fo the tile.
   [datakurre]
 
 New features:
