@@ -2,10 +2,14 @@
 from plone.tiles.interfaces import ESI_HEADER
 from plone.tiles.interfaces import ESI_HEADER_KEY
 from plone.tiles.interfaces import IESIRendered
+from plone.tiles.interfaces import ITileType
 from plone.tiles.tile import PersistentTile
 from plone.tiles.tile import Tile
 from Products.Five import BrowserView
+from zExceptions import Unauthorized
+from zope.component import queryUtility
 from zope.interface import implementer
+from zope.security import checkPermission
 
 import re
 import os
@@ -107,6 +111,15 @@ class ESIHead(BrowserView):
     def __call__(self):
         """Return the children of the <head> tag as a fragment.
         """
+        # Check for the registered view permission
+        try:
+            type_ = queryUtility(ITileType, self.context.__name__)
+            permission = type_.view_permission
+        except AttributeError:
+            permission = None
+        if permission:
+            if not checkPermission(permission, self.context):
+                raise Unauthorized()
 
         if self.request.getHeader(ESI_HEADER):
             del self.request.environ[ESI_HEADER_KEY]
@@ -129,6 +142,15 @@ class ESIBody(BrowserView):
     def __call__(self):
         """Return the children of the <head> tag as a fragment.
         """
+        # Check for the registered view permission
+        try:
+            type_ = queryUtility(ITileType, self.context.__name__)
+            permission = type_.view_permission
+        except AttributeError:
+            permission = None
+        if permission:
+            if not checkPermission(permission, self.context):
+                raise Unauthorized()
 
         if self.request.getHeader(ESI_HEADER):
             del self.request.environ[ESI_HEADER_KEY]
