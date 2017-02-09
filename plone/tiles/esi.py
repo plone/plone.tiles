@@ -183,6 +183,7 @@ class ESIProtectTransform(object):
         self.request = request
 
     def transform(self, result, encoding):
+        from plone.protect.interfaces import IDisableCSRFProtection
         # clickjacking protection from plone.protect
         if X_FRAME_OPTIONS:
             if not self.request.response.getHeader('X-Frame-Options'):
@@ -192,7 +193,9 @@ class ESIProtectTransform(object):
         if 'x-tile-url' in self.request.response.headers:
             del self.request.response.headers['x-tile-url']
         # ESI requests are always GET request and should not mutate DB
-        transaction.abort()
+        # unless they provide IDisableCSRFProtection
+        if not IDisableCSRFProtection.providedBy(self.request):
+            transaction.abort()
         return None
 
     def transformBytes(self, result, encoding):
