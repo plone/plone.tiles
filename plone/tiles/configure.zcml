@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="plone.tiles">
 
     <!-- Data manager -->
@@ -59,6 +60,40 @@
         class=".esi.ESIBody"
         permission="zope.Public"
         />
+
+    <adapter
+        name="plone.protect.autocsrf"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".esi.ESIHead *"
+        factory=".esi.ESIProtectTransform"
+        zcml:condition="installed plone.transformchain"
+        />
+
+    <adapter
+        name="plone.protect.autocsrf"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".esi.ESIBody *"
+        factory=".esi.ESIProtectTransform"
+        zcml:condition="installed plone.transformchain"
+        />
+
+    <adapter
+        name="plone.protect.autocsrf"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".tile.Tile *"
+        factory=".tile.TileProtectTransform"
+        zcml:condition="installed plone.transformchain"
+        />
+
+    <configure zcml:condition="installed plone.protect">
+      <adapter
+        name="plone.tiles.tiletheming"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".tile.Tile *"
+        factory=".tile.TileThemingTransform"
+        zcml:condition="installed plone.transformchain"
+      />
+    </configure>
 
     <!-- Field Type converters -->
     <adapter for="zope.schema.interfaces.IBytesLine"

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-
 from plone.tiles.data import encode
 from plone.tiles.interfaces import ITileDataManager
 from plone.tiles.interfaces import ITileType
+from zope.annotation import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.traversing.browser.absoluteurl import AbsoluteURL
@@ -72,14 +72,30 @@ class TransientTileAbsoluteURL(BaseTileAbsoluteURL):
 
     def __str__(self):
         url = super(TransientTileAbsoluteURL, self).__str__()
-        data = ITileDataManager(self.context).get()
-        if data:
-            tileType = queryUtility(ITileType, name=self.context.__name__)
-            if tileType is not None and tileType.schema is not None:
-                if '?' in url:
-                    url += '&' + encode(data, tileType.schema)
-                else:
-                    url += '?' + encode(data, tileType.schema)
+        manager = ITileDataManager(self.context)
+
+        # Transient looking tile with id is only really transient
+        # if it caches its decoded query data in request annotations
+        transient = manager.storage == IAnnotations(self.request)
+
+        # When transient looking tile with id is not really transient,
+        # its data should not be encoded into query string
+        if self.context.id and not transient:
+            return url
+
+        # All tiles don't need / have configuration data at all.
+        data = manager.get()
+        if not data:
+            return url
+
+        # But when configuration data is really read from query string
+        # and not persisted, it should also be kept in query string
+        tileType = queryUtility(ITileType, name=self.context.__name__)
+        if tileType is not None and tileType.schema is not None:
+            if '?' in url:
+                url += '&' + encode(data, tileType.schema)
+            else:
+                url += '?' + encode(data, tileType.schema)
         return url
 
 

@@ -38,10 +38,12 @@ class PloneTiles(Layer):
     defaultBases = (z2.STARTUP,)
 
     def setUp(self):
-        import plone.tiles
         self['configurationContext'] = context = zca.stackConfigurationContext(
             self.get('configurationContext')
         )
+        import zope.annotation
+        xmlconfig.file('configure.zcml', zope.annotation, context=context)
+        import plone.tiles
         xmlconfig.file('configure.zcml', plone.tiles, context=context)
 
     def tearDown(self):

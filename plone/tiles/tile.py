@@ -2,10 +2,11 @@
 from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import ITileDataManager
+from Products.Five import BrowserView
 from zope.component import queryMultiAdapter
 from zope.interface import implementer
-from zope.publisher.browser import BrowserView
 from zope.traversing.browser.absoluteurl import absoluteURL
+from zExceptions import Forbidden
 
 
 @implementer(ITile)
@@ -46,10 +47,15 @@ class Tile(BrowserView):
             if self.__doc__ is None:
                 self.__doc__ = 'For Zope 2, to keep the ZPublisher happy'
 
-            self.request.response.setHeader(
-                'X-Tile-Url',
-                self.url
-            )
+            # Note: X-Tile-Url was added to make it easier for editor to know
+            # the URL of a new tile after receiving the redirected response
+            # from a tile form. That's why it's only set for customizable tiles
+            # (tiles with id).
+            if self.id is not None:
+                self.request.response.setHeader(
+                    'X-Tile-Url',
+                    self.url
+                )
 
             return self
 
@@ -82,11 +88,6 @@ class Tile(BrowserView):
                 u'Override __call__ or set a class variable "index" to point '
                 u'to a view page template file'
             )
-        if self.id is not None:
-            self.request.response.setHeader(
-                'X-Tile-Url',
-                self.url[len(self.context.absolute_url()) + 1:]
-            )
         return self.index(*args, **kwargs)
 
     @property
@@ -106,3 +107,83 @@ class PersistentTile(Tile):
     """Base class for persistent tiles. Identical to `Tile`, except that the
     data dict is never serialized with the URL.
     """
+
+
+class TileThemingTransform(object):
+    """Disable plone.app.theming for tile responses"""
+
+    order = 8800
+
+    def __init__(self, published, request):
+        self.published = published
+        self.request = request
+
+    def transform(self, result, encoding):
+        self.request.response.setHeader('X-Theme-Disabled', '1')
+        return None
+
+    def transformBytes(self, result, encoding):
+        return self.transform(result, encoding)
+
+    def transformUnicode(self, result, encoding):
+        return self.transform(result, encoding)
+
+    def transformIterable(self, result, encoding):
+        return self.transform(result, encoding)
+
+
+class TileProtectTransform(object):
+    """Replacement transform for plone.protect's ProtectTransform, to drop
+    X-Tile-Url-header from unauthorized responses and disable the default
+    ProtectTransform for authorized responses (to avoid causing issues
+    like extra protect.js-injections for tile editors)
+    """
+
+    order = 9000
+
+    def __init__(self, published, request):
+        self.published = published
+        self.request = request
+        try:
+            from plone.protect.auto import ProtectTransform
+            self.protect = ProtectTransform(published, request)
+        except ImportError:
+            self.protect = None
+
+    def transform(self, result, encoding):
+        from plone.protect import CheckAuthenticator
+        CheckAuthenticator(self.request)
+        return None
+
+    def transformBytes(self, result, encoding):
+        try:
+            return self.transform(result, encoding)
+        except Forbidden:
+            if 'x-tile-url' in self.request.response.headers:
+                del self.request.response.headers['x-tile-url']
+            if self.protect is not None:
+                return self.protect.transformBytes(result, encoding)
+            else:
+                return None
+
+    def transformUnicode(self, result, encoding):
+        try:
+            return self.transform(result, encoding)
+        except Forbidden:
+            if 'x-tile-url' in self.request.response.headers:
+                del self.request.response.headers['x-tile-url']
+            if self.protect is not None:
+                return self.protect.transformUnicode(result, encoding)
+            else:
+                return None
+
+    def transformIterable(self, result, encoding):
+        try:
+            return self.transform(result, encoding)
+        except Forbidden:
+            if 'x-tile-url' in self.request.response.headers:
+                del self.request.response.headers['x-tile-url']
+            if self.protect is not None:
+                return self.protect.transformIterable(result, encoding)
+            else:
+                return None

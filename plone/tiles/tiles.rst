@@ -154,9 +154,13 @@ and verify how the tile is instantiated.
 .. code-block:: python
 
     >>> from zope.component import getMultiAdapter
+    >>> from zope.interface import classImplements
     >>> from zope.interface import Interface
     >>> from zope.interface import implementer
     >>> from zope.publisher.browser import TestRequest
+    >>> from zope.annotation.interfaces import IAnnotations
+    >>> from zope.annotation.interfaces import IAttributeAnnotatable
+    >>> classImplements(TestRequest, IAttributeAnnotatable)
 
     >>> class IContext(Interface):
     ...     pass
@@ -531,7 +535,6 @@ Yet, just adding the flag, doesn't create new persistent annotations on GET requ
     >>> sorted(ITileDataManager(tile).get().items(), key=lambda x: x[0])
     [('count', 5), ('cssClass', 'foo'), ('title', u'My title')]
 
-    >>> from zope.annotation.interfaces import IAnnotations
     >>> list(IAnnotations(context).keys())
     []
 

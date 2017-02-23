@@ -1,10 +1,45 @@
 Changelog
 =========
 
-1.8.3 (unreleased)
+2.0.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Breaking changes:
+
+- Tiles no longer add relative ``X-Tile-Url``-header in ``__call__``.
+  Tiles still add absolute ``X-Tile-Url``-header during traversal, but
+  it gets removed after rendering when request is not CSRF-authorized.
+  [datakurre]
+
+- Generic ESI helper check now taht the request is authorized to render
+  the tile according to the registered view permission fo the tile.
+  [datakurre]
+
+- Transactions of requests to ESI helper views are automatically aborted,
+  because ESI requests should always be immutable GET requests
+  [datakurre]
+
+- plone.app.theming (transform) is now disabled with X-Theme-Disabled-header
+  for requests rendering tiles
+  [datakurre]
+
+- plone.protect's ProtectTransform is skipped for tile requests with correct
+  CSRF token prevent its side-effects on tile editors rendering tiles
+  individually
+  [datakurre]
+
+New features:
+
+- Added X-Frame-Options -header for ESI-tile views with matching behavior
+  with plone.protect
+  [datakurre]
+
+Bug fixes:
+
+- Fix issue where ESI-tile helper views didn't get correct
+  Cache-Control-headers, because ESI-helpers views were not acquisition
+  wrapped
+  [datakurre]
 
 
 1.8.2 (2017-01-10)
