@@ -4,7 +4,11 @@ Changelog
 2.0.0b2 (unreleased)
 --------------------
 
-- Nothing changed yet.
+Bug fixes:
+
+- Allow data fallback, if tile changes its storage strategy
+  from persistent to another stragey
+  [tomgross]
 
 
 2.0.0b1 (2017-02-24)
