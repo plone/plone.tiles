@@ -1,6 +1,15 @@
 Changelog
 =========
 
+1.8.3 (unreleased)
+------------------
+
+Bug fixes:
+
+- Do not swallow ``AttributeError`` inside ``index()`` on template rendering.
+  [hvelarde]
+
+
 1.8.2 (2017-01-10)
 ------------------
 
