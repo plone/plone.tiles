@@ -4,8 +4,8 @@ Changelog
 2.0.0b2 (unreleased)
 --------------------
 
-- Nothing changed yet.
-
+- Fix code analysis errors.
+  [gforcada]
 
 2.0.0b1 (2017-02-24)
 --------------------
