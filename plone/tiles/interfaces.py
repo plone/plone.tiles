@@ -16,21 +16,21 @@ class ITileType(Interface):
     """
 
     __name__ = zope.schema.DottedName(
-        title=u"Tile name (same as utility name)")
+        title=u'Tile name (same as utility name)')
 
-    title = zope.schema.TextLine(title=u"Title")
+    title = zope.schema.TextLine(title=u'Title')
 
-    description = zope.schema.Text(title=u"Description", required=False)
+    description = zope.schema.Text(title=u'Description', required=False)
 
-    icon = zope.schema.Text(title=u"Icon", required=False)
+    icon = zope.schema.Text(title=u'Icon', required=False)
 
-    add_permission = zope.schema.Id(title=u"Zope 3 IPermission utility name")
+    add_permission = zope.schema.Id(title=u'Zope 3 IPermission utility name')
 
     schema = zope.schema.Object(
-        title=u"Tile schema",
-        description=u"Describes configurable data for this tile and allows a "
-                    u"form to be rendered to edit it. Set to None if the tile "
-                    u"has no configurable schema",
+        title=u'Tile schema',
+        description=u'Describes configurable data for this tile and allows a '
+                    u'form to be rendered to edit it. Set to None if the tile '
+                    u'has no configurable schema',
         schema=IInterface,
         required=False,
     )
@@ -56,18 +56,18 @@ class IBasicTile(IBrowserView):
     """
 
     __name__ = zope.schema.DottedName(
-        title=u"The name of the type of this tile",
-        description=u"This should be a dotted name prefixed with the "
-                    u"package that defined the tile",
+        title=u'The name of the type of this tile',
+        description=u'This should be a dotted name prefixed with the '
+                    u'package that defined the tile',
     )
 
     id = zope.schema.DottedName(
-        title=u"Tile instance id",
-        description=u"The id is normally set using sub-path traversal"
-                    u"A given tile type may be used multiple times on "
-                    u"the same page, each with a unique id. The id must "
-                    u"be unique even across multiple layouts for the "
-                    u"same context."
+        title=u'Tile instance id',
+        description=u'The id is normally set using sub-path traversal'
+                    u'A given tile type may be used multiple times on '
+                    u'the same page, each with a unique id. The id must '
+                    u'be unique even across multiple layouts for the '
+                    u'same context.'
     )
 
 
@@ -77,22 +77,22 @@ class ITile(IBasicTile):
 
     data = zope.schema.Dict(
         title=u"The tile's configuration data",
-        description=u"This attribute cannot be set, but the dictionary may "
-                    u"be updated",
-        key_type=zope.schema.Id(title=u"The data element name"),
-        value_type=zope.schema.Field(title=u"The value"),
+        description=u'This attribute cannot be set, but the dictionary may '
+                    u'be updated',
+        key_type=zope.schema.Id(title=u'The data element name'),
+        value_type=zope.schema.Field(title=u'The value'),
         required=True,
         readonly=True,
         default={},
     )
 
     url = zope.schema.URI(
-        title=u"Tile URL",
-        description=u"This is the canonical URL for the tile. In the "
-                    u"case of transient tiles with data, this may "
-                    u"include a query string with parameters. Provided "
-                    u"that the `id` attribute is set, it will also "
-                    u"include a sub-path with this in it.",
+        title=u'Tile URL',
+        description=u'This is the canonical URL for the tile. In the '
+                    u'case of transient tiles with data, this may '
+                    u'include a query string with parameters. Provided '
+                    u'that the `id` attribute is set, it will also '
+                    u'include a sub-path with this in it.',
     )
 
 
@@ -170,7 +170,7 @@ class ITileDataStorage(IMapping):
 class IFieldTypeConverter(Interface):
     """Field type converter for querystring parameters for Zope."""
 
-    token = zope.schema.TextLine(title=u"Token",
+    token = zope.schema.TextLine(title=u'Token',
                                  description=u"""
                                  String parameter appended to the field id
                                  for the Zope Publisher to cast it.
