@@ -4,8 +4,14 @@ Changelog
 2.0.0b2 (unreleased)
 --------------------
 
+Bug fixes:
+
+- Do not swallow ``AttributeError`` inside ``index()`` on template rendering.
+  [hvelarde]
+
 - Fix code analysis errors.
   [gforcada]
+
 
 2.0.0b1 (2017-02-24)
 --------------------

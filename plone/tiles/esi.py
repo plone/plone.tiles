@@ -76,10 +76,12 @@ class ConditionalESIRendering(object):
                 queryString=self.request.get('QUERY_STRING', ''),
                 esiMode=mode
             )
+        # Do not hide AttributeError inside index()
         try:
-            return self.index(*args, **kwargs)
+            self.index
         except AttributeError:
             return self.render()
+        return self.index(*args, **kwargs)
 
 
 # Convenience base classes
