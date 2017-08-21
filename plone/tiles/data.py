@@ -22,7 +22,16 @@ from zope.schema.interfaces import ISequence
 
 import json
 import logging
+import pkg_resources
 import urllib
+
+try:
+    pkg_resources.get_distribution('plone.rfc822')
+except pkg_resources.DistributionNotFound:
+    HAS_RFC822 = False
+else:
+    from plone.rfc822.interfaces import IPrimaryField
+    HAS_RFC822 = True
 
 
 ANNOTATIONS_KEY_PREFIX = u'plone.tiles.data'
@@ -259,6 +268,9 @@ def encode(data, schema, ignore=()):
     encode = []
 
     for name, field in getFieldsInOrder(schema):
+        if HAS_RFC822 and IPrimaryField.providedBy(field):
+            continue
+
         if name in ignore or name not in data:
             continue
 
@@ -344,6 +356,9 @@ def decode(data, schema, missing=True):
     decoded = {}
 
     for name, field in getFields(schema).items():
+        if HAS_RFC822 and IPrimaryField.providedBy(field):
+            continue
+
         if name not in data:
             if missing:
                 decoded[name] = field.missing_value
