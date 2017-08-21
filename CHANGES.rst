@@ -9,14 +9,6 @@ Breaking changes:
 - Fix querystring en-/decoder to always skip primary fields
   [datakurre]
 
-New features:
-
-- *add item here*
-
-Bug fixes:
-
-- *add item here*
-
 
 2.0.0b2 (2017-03-29)
 --------------------
