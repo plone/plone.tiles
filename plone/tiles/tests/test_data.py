@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+from plone.rfc822.interfaces import IPrimaryField
+from plone.tiles.data import decode
 from plone.tiles.data import encode
 from plone.tiles.testing import PLONE_TILES_INTEGRATION_TESTING
 from zope import schema
+from zope.interface import alsoProvides
 from zope.interface import Interface
 
 import unittest
@@ -36,6 +39,17 @@ class IWords(Interface):
     )
 
 
+class IPrimary(Interface):
+
+    words = schema.List(
+        title=u'Words',
+        value_type=schema.TextLine(),
+        required=False
+    )
+
+alsoProvides(IPrimary['words'], IPrimaryField)
+
+
 class TestEncode(unittest.TestCase):
 
     layer = PLONE_TILES_INTEGRATION_TESTING
@@ -60,5 +74,39 @@ class TestEncode(unittest.TestCase):
         }
         self.assertEqual(
             encode(data, schema=IWords),
-            ('words%3Alist=%C3%A4&words%3Alist=%C3%B6')
+            'words%3Alist=%C3%A4&words%3Alist=%C3%B6'
+        )
+
+    def test_skip_encoding_primary_fields(self):
+        data = {
+            'words': [u'ä', u'ö']
+        }
+        self.assertEqual(
+            encode(data, schema=IPrimary),
+            ''
+        )
+
+
+class TestDecode(unittest.TestCase):
+
+    layer = PLONE_TILES_INTEGRATION_TESTING
+
+    def test_decode_unicode_lines(self):
+        data = {
+            'words': [u'ä', u'ö']
+        }
+        self.assertEqual(
+            decode(data, schema=IWords),
+            {
+                'words': [u'ä', u'ö']
+            }
+        )
+
+    def test_skip_decoding_primary_fields(self):
+        data = {
+            'words': [u'ä', u'ö']
+        }
+        self.assertEqual(
+            decode(data, schema=IPrimary),
+            {}
         )
