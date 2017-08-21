@@ -6,7 +6,8 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- Fix querystring en-/decoder to always skip primary fields
+  [datakurre]
 
 New features:
 
