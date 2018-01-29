@@ -35,7 +35,7 @@ setup(
     author='Martin Aspeli',
     author_email='optilude@gmail.com',
     url='https://github.com/plone/plone.tiles',
-    license='BSD',
+    license='GPL version 2',
     packages=find_packages(),
     namespace_packages=['plone'],
     include_package_data=True,
