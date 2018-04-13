@@ -1,10 +1,10 @@
 Changelog
 =========
 
-2.0.0b4 (unreleased)
---------------------
+2.0.0 (unreleased)
+------------------
 
-- Nothing changed yet.
+- Fix license classifier.
 
 
 2.0.0b3 (2017-08-22)
