@@ -25,6 +25,7 @@ import logging
 import pkg_resources
 import urllib
 
+
 try:
     pkg_resources.get_distribution('plone.rfc822')
 except pkg_resources.DistributionNotFound:

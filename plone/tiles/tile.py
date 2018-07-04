@@ -3,10 +3,10 @@ from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import ITileDataManager
 from Products.Five import BrowserView
+from zExceptions import Forbidden
 from zope.component import queryMultiAdapter
 from zope.interface import implementer
 from zope.traversing.browser.absoluteurl import absoluteURL
-from zExceptions import Forbidden
 
 
 @implementer(ITile)
