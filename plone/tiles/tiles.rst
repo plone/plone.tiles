@@ -29,7 +29,7 @@ To use the package, you should first load its ZCML configuration:
     ...      i18n_domain="plone.tiles.tests">
     ...
     ...     <include package="zope.component" file="meta.zcml" />
-    ...     <include package="zope.app.publisher" file="meta.zcml" />
+    ...     <include package="zope.browserpage" file="meta.zcml" />
     ...
     ...     <include package="plone.tiles" file="meta.zcml" />
     ...     <include package="plone.tiles" />

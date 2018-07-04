@@ -1,10 +1,13 @@
 Changelog
 =========
 
-2.0.1 (unreleased)
-------------------
+2.1 (unreleased)
+----------------
 
-- Nothing changed yet.
+- Dependency on zope.app.publisher removed,
+  needed parts were moved to zope.browserpage long time ago.
+  This probably breaks Plone 4.2 support (removed).
+  [jensens]
 
 
 2.0.0 (2018-04-13)
