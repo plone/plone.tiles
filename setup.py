@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '2.0.1.dev0'
+version = '2.1.dev0'
 
 setup(
     name='plone.tiles',
@@ -20,7 +20,6 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Plone',
-        'Framework :: Plone :: 4.2',
         'Framework :: Plone :: 4.3',
         'Framework :: Plone :: 5.0',
         'Framework :: Plone :: 5.1',
@@ -41,9 +40,10 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
+        'plone.subrequest',
         'setuptools',
-        'zope.app.publisher',
         'zope.annotation',
+        'zope.browserpage',
         'zope.component',
         'zope.configuration',
         'zope.interface',
@@ -52,12 +52,11 @@ setup(
         'zope.security',
         'zope.traversing',
         'Zope2',
-        'plone.subrequest'
     ],
     extras_require={
         'test': [
             'plone.testing [zca, z2]',
-            'plone.rfc822'
+            'plone.rfc822',
         ],
     },
 )

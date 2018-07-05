@@ -1,4 +1,4 @@
 recursive-include plone *
-include setup.py *.rst LICENSE.GPL LICENSE.txt
-exclude bootstrap.py buildout.cfg
+include setup.py setup.cfg *.rst LICENSE.GPL LICENSE.txt
+exclude requirements.txt buildout.cfg test-*.cfg
 global-exclude *.pyc

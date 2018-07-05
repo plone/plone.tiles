@@ -9,14 +9,17 @@ from Products.Five import BrowserView
 from zExceptions import Unauthorized
 from zope.component import queryUtility
 from zope.interface import implementer
+
+import os
+import re
+import transaction
+
+
 try:
     from AccessControl.security import checkPermission
 except ImportError:
     from zope.security import checkPermission
 
-import os
-import re
-import transaction
 
 X_FRAME_OPTIONS = os.environ.get('PLONE_X_FRAME_OPTIONS', 'SAMEORIGIN')
 
