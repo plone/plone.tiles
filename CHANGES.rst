@@ -4,7 +4,8 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add support for Python 3.
+  [pbauer]
 
 
 2.1 (2018-07-05)
