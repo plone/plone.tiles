@@ -8,7 +8,7 @@ from zope.component import queryUtility
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 from zope.traversing.browser.interfaces import IAbsoluteURL
 
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 
 
 _safe = '@+'
@@ -29,9 +29,9 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         if name is None or context is None:
             raise TypeError('Insufficient context to determine URL')
 
-        tileFragment = '@@' + urllib.quote(name.encode('utf-8'), _safe)
+        tileFragment = '@@' + six.moves.urllib.parse.quote(name.encode('utf-8'), _safe)
         if tid:
-            tileFragment += '/' + urllib.quote(tid.encode('utf-8'), _safe)
+            tileFragment += '/' + six.moves.urllib.parse.quote(tid.encode('utf-8'), _safe)
 
         absolute_url = getMultiAdapter((context, request), IAbsoluteURL)
         try:
@@ -49,9 +49,9 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         name = tile.__name__
         context = tile.__parent__
 
-        tileFragment = '@@' + urllib.quote(name.encode('utf-8'), _safe)
+        tileFragment = '@@' + six.moves.urllib.parse.quote(name.encode('utf-8'), _safe)
         if tid:
-            tileFragment += '/' + urllib.quote(tid.encode('utf-8'), _safe)
+            tileFragment += '/' + six.moves.urllib.parse.quote(tid.encode('utf-8'), _safe)
 
         base = tuple(
             getMultiAdapter((context, request), IAbsoluteURL).breadcrumbs())
