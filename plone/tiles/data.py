@@ -9,6 +9,7 @@ from plone.tiles.interfaces import ITileDataContext
 from plone.tiles.interfaces import ITileDataManager
 from plone.tiles.interfaces import ITileDataStorage
 from plone.tiles.interfaces import ITileType
+from six.moves.urllib import parse
 from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import getMultiAdapter
@@ -23,9 +24,6 @@ from zope.schema.interfaces import ISequence
 import json
 import logging
 import pkg_resources
-import six.moves.urllib.request
-import six.moves.urllib.parse
-import six.moves.urllib.error
 import six
 
 
@@ -339,7 +337,7 @@ def encode(data, schema, ignore=()):
             else:
                 encode.append((encoded_name, value))
 
-    return six.moves.urllib.parse.urlencode(encode)
+    return parse.urlencode(encode)
 
 
 # Decoding
