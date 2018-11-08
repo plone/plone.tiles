@@ -112,12 +112,12 @@ This also applies to the value_type of a list or tuple:
     >>> encode(data, IUnsupported) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    ComponentLookupError: Cannot URL encode decimal of type <class 'zope.schema._field.Decimal'>
+    zope.interface.interfaces.ComponentLookupError: Cannot URL encode decimal of type <class 'zope.schema._field.Decimal'>
 
     >>> encode(data, IUnsupported, ignore=('decimal',)) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    ComponentLookupError: Cannot URL encode value type for list of type <class 'zope.schema._field.List'> : <class 'zope.schema._field.Decimal'>
+    zope.interface.interfaces.ComponentLookupError: Cannot URL encode value type for list of type <class 'zope.schema._field.List'> : <class 'zope.schema._field.Decimal'>
 
     >>> encode(data, IUnsupported, ignore=('decimal', 'list',))
     'bytes_line=abc'
@@ -135,7 +135,7 @@ Let's use a data dictionary that may have come back from a query string like the
 
     >>> data = dict(text_line=u'A', ascii_line=u'B', text=u'C\nD', ascii=u'E\nF', int=3, float=1.2, bool=False, weekday=u'Saturday')
     >>> sorted(decode(data, ISimple).items())
-    [('ascii', 'E\nF'), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('list', None), ('listchoice', None), ('text', u'C\nD'), ('text_line', u'A'), ('weekday', u'Saturday')]
+    [('ascii', 'E\nF'), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('list', None), ('listchoice', None), ('text', 'C\nD'), ('text_line', 'A'), ('weekday', 'Saturday')]
 
 If any values are missing from the input dictionary,
 they will default to ``missing_value``.
@@ -144,7 +144,7 @@ they will default to ``missing_value``.
 
     >>> data = dict(text_line=u'A', ascii_line=u'B', int=3, float=1.2, bool=False, weekday=u'Saturday')
     >>> sorted(decode(data, ISimple).items())
-    [('ascii', None), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('list', None), ('listchoice', None), ('text', u'Missing'), ('text_line', u'A'), ('weekday', u'Saturday')]
+    [('ascii', None), ('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('list', None), ('listchoice', None), ('text', 'Missing'), ('text_line', 'A'), ('weekday', 'Saturday')]
 
 If you pass ``missing=False``, the values are ignored instead.
 
@@ -152,7 +152,7 @@ If you pass ``missing=False``, the values are ignored instead.
 
     >>> data = dict(text_line=u'A', ascii_line=u'B', int=3, float=1.2, bool=False)
     >>> sorted(decode(data, ISimple, missing=False).items())
-    [('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('text_line', u'A')]
+    [('ascii_line', 'B'), ('bool', False), ('float', 1.2), ('int', 3), ('text_line', 'A')]
 
 Decoding also works for lists and their value types:
 
@@ -168,7 +168,7 @@ Decoding should work with lists and the ISimple schema
 
     >>> data = dict(list=['a', 'b'])
     >>> sorted(decode(data, ISimple, missing=False).items())
-    [('list', [u'a', u'b'])]
+    [('list', ['a', 'b'])]
 
 And list choice fields
 

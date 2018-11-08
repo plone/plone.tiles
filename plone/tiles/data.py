@@ -9,6 +9,7 @@ from plone.tiles.interfaces import ITileDataContext
 from plone.tiles.interfaces import ITileDataManager
 from plone.tiles.interfaces import ITileDataStorage
 from plone.tiles.interfaces import ITileType
+from six.moves.urllib import parse
 from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import getMultiAdapter
@@ -23,7 +24,7 @@ from zope.schema.interfaces import ISequence
 import json
 import logging
 import pkg_resources
-import urllib
+import six
 
 
 try:
@@ -223,7 +224,7 @@ def map_to_pairs(encoded_name, value):
         return ''
 
     for item_name, item_value in value.items():
-        if isinstance(item_value, unicode):
+        if isinstance(item_value, six.text_type):
             item_value = item_value.encode('utf-8')
 
         if isinstance(item_value, list) or isinstance(item_value, tuple):
@@ -231,7 +232,7 @@ def map_to_pairs(encoded_name, value):
                 marshall_type = guess_type(item_subvalue)
                 if isinstance(item_subvalue, bool):
                     item_subvalue = item_subvalue and '1' or ''
-                elif isinstance(item_subvalue, unicode):
+                elif isinstance(item_subvalue, six.text_type):
                     item_subvalue = item_subvalue.encode('utf-8')
                 encoded_name = '{0}.{1}{2}:list:{3}'.format(
                     prefix,
@@ -244,7 +245,7 @@ def map_to_pairs(encoded_name, value):
             marshall_type = guess_type(item_value)
             if isinstance(item_value, bool):
                 item_value = item_value and '1' or ''
-            elif isinstance(item_value, unicode):
+            elif isinstance(item_value, six.text_type):
                 item_value = item_value.encode('utf-8')
             encoded_name = '{0:s}.{1:s}{2:s}:{3:s}'.format(
                 prefix,
@@ -291,7 +292,7 @@ def encode(data, schema, ignore=()):
         value = data[name]
         if value is None:
             continue
-        elif isinstance(value, unicode):
+        elif isinstance(value, six.text_type):
             value = value.encode('utf-8')
 
         if ISequence.providedBy(field):
@@ -317,7 +318,7 @@ def encode(data, schema, ignore=()):
 
                 if isinstance(item, bool):
                     item = item and '1' or ''
-                elif isinstance(item, unicode):
+                elif isinstance(item, six.text_type):
                     item = item.encode('utf-8')
 
                 if isinstance(item, dict):
@@ -336,7 +337,7 @@ def encode(data, schema, ignore=()):
             else:
                 encode.append((encoded_name, value))
 
-    return urllib.urlencode(encode)
+    return parse.urlencode(encode)
 
 
 # Decoding
@@ -390,8 +391,8 @@ def decode(data, schema, missing=True):
         elif isinstance(value, (tuple, list)) and value:
             value = value[0]
 
-        if isinstance(value, str):
-            value = unicode(value, 'utf-8')
+        if isinstance(value, six.binary_type):
+            value = value.decode('utf-8')
 
         if field._type is not None and not isinstance(value, field._type):
             value = field_type(value)

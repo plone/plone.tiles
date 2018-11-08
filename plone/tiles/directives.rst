@@ -103,7 +103,7 @@ Let's show how these may be used by registering several tiles:
     ... </configure>
     ... """
 
-    >>> from StringIO import StringIO
+    >>> from six import StringIO
     >>> from zope.configuration import xmlconfig
     >>> xmlconfig.xmlconfig(StringIO(configuration))
 
@@ -118,7 +118,7 @@ Let's check how the tiles were registered:
     >>> tile1_type
     <TileType dummy1 (Dummy tile 1)>
     >>> tile1_type.description
-    u'This one shows all available options'
+    'This one shows all available options'
 
     >>> tile1_type.add_permission
     'plone.tiles.testing.DummyAdd'
@@ -164,12 +164,13 @@ Finally, let's check that we can look up the tiles:
 .. code-block:: python
 
     >>> from zope.publisher.browser import TestRequest
-    >>> from zope.interface import implements, alsoProvides
+    >>> from zope.interface import implementer, alsoProvides
 
     >>> from plone.tiles.testing import IDummyContext, IDummyLayer
 
-    >>> class Context(object):
-    ...     implements(IDummyContext)
+    >>> @implementer(IDummyContext)
+    ... class Context(object):
+    ...     pass
 
     >>> context = Context()
     >>> request = TestRequest()
@@ -182,7 +183,7 @@ Finally, let's check that we can look up the tiles:
     >>> tile1 = getMultiAdapter((context, layer_request), name='dummy1')
     >>> isinstance(tile1, DummyTileWithTemplate)
     True
-    >>> print tile1()
+    >>> print(tile1())
     <b>test!</b>
     >>> tile1.__name__
     'dummy1'
@@ -190,7 +191,7 @@ Finally, let's check that we can look up the tiles:
     >>> tile2 = getMultiAdapter((context, request), name='dummy2')
     >>> isinstance(tile2, DummyTile)
     True
-    >>> print tile2()
+    >>> print(tile2())
     dummy
     >>> tile2.__name__
     'dummy2'
@@ -198,7 +199,7 @@ Finally, let's check that we can look up the tiles:
     >>> tile3 = getMultiAdapter((context, request), name='dummy3')
     >>> isinstance(tile3, Tile)
     True
-    >>> print tile3()
+    >>> print(tile3())
     <b>test!</b>
     >>> tile3.__name__
     'dummy3'
@@ -206,7 +207,7 @@ Finally, let's check that we can look up the tiles:
     >>> tile4 = getMultiAdapter((context, request), name='dummy4')
     >>> isinstance(tile4, PersistentTile)
     True
-    >>> print tile4()
+    >>> print(tile4())
     <b>test!</b>
     >>> tile4.__name__
     'dummy4'
@@ -214,7 +215,7 @@ Finally, let's check that we can look up the tiles:
     >>> tile3_layer = getMultiAdapter((context, layer_request), name='dummy3')
     >>> isinstance(tile3_layer, DummyTile)
     True
-    >>> print tile3_layer()
+    >>> print(tile3_layer())
     dummy
     >>> tile3_layer.__name__
     'dummy3'

@@ -37,7 +37,7 @@ To use the package, you should first load its ZCML configuration:
     ... </configure>
     ... """
 
-    >>> from StringIO import StringIO
+    >>> from six import StringIO
     >>> from zope.configuration import xmlconfig
     >>> xmlconfig.xmlconfig(StringIO(configuration))
 
@@ -297,8 +297,8 @@ Therefore, there is a corresponding ``decode()`` method that may be used to ensu
     >>> marshaled = {'title': u'My tile', 'count': 5, 'cssClass': u'foo'}
 
     >>> from plone.tiles.data import decode
-    >>> decode(marshaled, ISampleTileData)
-    {'count': 5, 'cssClass': 'foo', 'title': u'My tile'}
+    >>> sorted(decode(marshaled, ISampleTileData).items())
+    [('count', 5), ('cssClass', 'foo'), ('title', 'My tile')]
 
 When saved into a layout, the tile link would now look like:
 
@@ -318,7 +318,7 @@ Let's simulate traversal once more and see how the data is now available to the 
     >>> tile = tile['tile1']
 
     >>> sorted(tile.data.items())
-    [('count', 5), ('cssClass', 'foo'), ('title', u'My title')]
+    [('count', 5), ('cssClass', 'foo'), ('title', 'My title')]
 
 Notice also how the data has been properly decoded according to the schema.
 
@@ -338,7 +338,7 @@ this one will be used instead:
     >>> tile = tile['tile1']
 
     >>> sorted(tile.data.items())
-    [(u'count', 6), (u'cssClass', u'bar'), (u'title', u'Your title')]
+    [('count', 6), ('cssClass', 'bar'), ('title', 'Your title')]
 
 This way we can use transient tiles safely in contexts where the tile data can be confused with raw data coming from a form, e.g. in an edit form.
 
@@ -367,7 +367,7 @@ We can also update the tile data:
 
     >>> dataManager.set({'count': 1, 'cssClass': 'bar', 'title': u'Another title'})
     >>> sorted(dataManager.get().items())
-    [('count', 1), ('cssClass', 'bar'), ('title', u'Another title')]
+    [('count', 1), ('cssClass', 'bar'), ('title', 'Another title')]
 
 The data can also be deleted:
 
@@ -453,13 +453,13 @@ By default, there is no data, and the field's missing value will be used.
     'tile2'
 
     >>> tile()
-    u'<b>You said</b> Missing!'
+    '<b>You said</b> Missing!'
 
 At this point, there is nothing in the annotations for the type either:
 
 .. code-block:: python
 
-    >>> dict(getattr(context, '__annotations__', {})).keys()
+    >>> list(dict(getattr(context, '__annotations__', {})).keys())
     []
 
 We can write data to the context's annotations using an ``ITileDataManager``:
@@ -467,23 +467,23 @@ We can write data to the context's annotations using an ``ITileDataManager``:
 .. code-block:: python
 
     >>> dataManager = ITileDataManager(tile)
-    >>> dataManager.set({'text': u'Hello!'})
+    >>> dataManager.set({'text': 'Hello!'})
 
 This writes data to annotations:
 
 .. code-block:: python
 
-    >>> dict(context.__annotations__).keys()
-    [u'plone.tiles.data.tile2']
+    >>> list(dict(context.__annotations__).keys())
+    ['plone.tiles.data.tile2']
     >>> context.__annotations__[u'plone.tiles.data.tile2']
-    {'text': u'Hello!'}
+    {'text': 'Hello!'}
 
 We can get this from the data manager too, of course:
 
 .. code-block:: python
 
     >>> dataManager.get()
-    {'text': u'Hello!'}
+    {'text': 'Hello!'}
 
 Note that as with transient tiles,
 the ``data`` attribute is cached and will only be looked up once.
@@ -495,10 +495,10 @@ If we now look up the tile again, we will get the new value:
     >>> tile = getMultiAdapter((context, request), name=u'sample.persistenttile')
     >>> tile = tile['tile2']
     >>> tile()
-    u'<b>You said</b> Hello!'
+    '<b>You said</b> Hello!'
 
     >>> tile.data
-    {'text': u'Hello!'}
+    {'text': 'Hello!'}
 
 We can also remove the annotation using the data manager:
 
@@ -533,7 +533,7 @@ Yet, just adding the flag, doesn't create new persistent annotations on GET requ
     <plone.tiles.data.PersistentTileDataManager object at ...>
 
     >>> sorted(ITileDataManager(tile).get().items(), key=lambda x: x[0])
-    [('count', 5), ('cssClass', 'foo'), ('title', u'My title')]
+    [('count', 5), ('cssClass', 'foo'), ('title', 'My title')]
 
     >>> list(IAnnotations(context).keys())
     []
@@ -546,13 +546,13 @@ That's because the data is persistent only once it's set:
     >>> data.update({'count': 6})
     >>> ITileDataManager(tile).set(data)
     >>> list(IAnnotations(context).keys())
-    [u'plone.tiles.data...']
+    ['plone.tiles.data...']
 
-    >>> sorted(IAnnotations(context).values()[0].items(), key=lambda x: x[0])
-    [('count', 6), ('cssClass', 'foo'), ('title', u'My title')]
+    >>> sorted(list(IAnnotations(context).values())[0].items(), key=lambda x: x[0])
+    [('count', 6), ('cssClass', 'foo'), ('title', 'My title')]
 
     >>> sorted(ITileDataManager(tile).get().items(), key=lambda x: x[0])
-    [('count', 6), ('cssClass', 'foo'), ('title', u'My title')]
+    [('count', 6), ('cssClass', 'foo'), ('title', 'My title')]
 
 Without the persistent flag, fixed transient data would be returned:
 
@@ -567,7 +567,7 @@ Without the persistent flag, fixed transient data would be returned:
 
     >>> data = ITileDataManager(tile).get()
     >>> sorted(data.items(), key=lambda x: x[0])
-    [('count', 5), ('cssClass', 'foo'), ('title', u'My title')]
+    [('count', 5), ('cssClass', 'foo'), ('title', 'My title')]
 
 Finally, the persistent override could also be deleted:
 
@@ -582,14 +582,14 @@ Finally, the persistent override could also be deleted:
     <plone.tiles.data.PersistentTileDataManager object at ...>
 
     >>> sorted(ITileDataManager(tile).get().items(), key=lambda x: x[0])
-    [('count', 6), ('cssClass', 'foo'), ('title', u'My title')]
+    [('count', 6), ('cssClass', 'foo'), ('title', 'My title')]
 
     >>> ITileDataManager(tile).delete()
     >>> list(IAnnotations(context).keys())
     []
 
     >>> sorted(ITileDataManager(tile).get().items(), key=lambda x: x[0])
-    [('count', 5), ('cssClass', 'foo'), ('title', u'My title')]
+    [('count', 5), ('cssClass', 'foo'), ('title', 'My title')]
 
     >>> request = TestRequest(
     ...     form={'title': u'My title', 'count': 5, 'cssClass': u'foo'},
@@ -614,15 +614,15 @@ We'll achieve that with a dummy adapter:
 
 .. code-block:: python
 
-    >>> from zope.interface import implements
-    >>> from zope.component import adapts
+    >>> from zope.interface import implementer
+    >>> from zope.component import adapter
 
     >>> from zope.traversing.browser.interfaces import IAbsoluteURL
     >>> from zope.publisher.interfaces.http import IHTTPRequest
 
-    >>> class DummyAbsoluteURL(object):
-    ...     implements(IAbsoluteURL)
-    ...     adapts(IContext, IHTTPRequest)
+    >>> @implementer(IAbsoluteURL)
+    ... @adapter(IContext, IHTTPRequest)
+    ... class DummyAbsoluteURL(object):
     ...
     ...     def __init__(self, context, request):
     ...         self.context = context
@@ -769,7 +769,7 @@ Data should not contain unfiltered field:
 .. code-block:: python
 
     >>> sorted(tile.data.items())
-    [('filtered', u'safe')]
+    [('filtered', 'safe')]
 
 
 Rendering the tile should not include ignored query string:

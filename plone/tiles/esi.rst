@@ -26,7 +26,7 @@ To use the package, you should first load its ZCML configuration.
     ... </configure>
     ... """
 
-    >>> from StringIO import StringIO
+    >>> from six import StringIO
     >>> from zope.configuration import xmlconfig
     >>> xmlconfig.xmlconfig(StringIO(configuration))
 
@@ -145,18 +145,18 @@ At this point, we can look up the ESI views:
     >>> head()
     Traceback (most recent call last):
     ...
-    Unauthorized: Unauthorized()
+    zExceptions.unauthorized.Unauthorized: Unauthorized()
 
 But we can only render them when we have the required permissions:
 
     >>> from AccessControl.SecurityManagement import newSecurityManager
     >>> from AccessControl.User import UnrestrictedUser
     >>> newSecurityManager(None, UnrestrictedUser('manager', '', ['Manager'], []))
-    >>> print head()
+    >>> print(head())
     <title>Title</title>
 
     >>> body = getMultiAdapter((tile, request), name='esi-body')
-    >>> print body()
+    >>> print(body())
     <b>My tile</b>
 
 Tiles without heads or bodies
@@ -186,7 +186,7 @@ We won't bother to register this for this test, instead just instantiating it di
     True
 
     >>> head = getMultiAdapter((tile, request), name='esi-head')
-    >>> print head()
+    >>> print(head())
     <title>Page title</title>
 
 Of course, the ESI body renderer would return the same thing,
@@ -195,7 +195,7 @@ since it can't extract a specific body either:
 .. code-block:: python
 
     >>> body = getMultiAdapter((tile, request), name='esi-body')
-    >>> print body()
+    >>> print(body())
     <title>Page title</title>
 
 In this case, we would likely end up with invalid HTML,
@@ -272,7 +272,7 @@ By default, the tile renders as normal:
 
 .. code-block:: python
 
-    >>> print tile()
+    >>> print(tile())
     <html><head><title>Title</title></head><body><b>My ESI tile</b></body></html>
 
 However, if we opt into ESI rendering via a request header, we get a different view:
@@ -281,7 +281,7 @@ However, if we opt into ESI rendering via a request header, we get a different v
 
     >>> from plone.tiles.interfaces import ESI_HEADER_KEY
     >>> request.environ[ESI_HEADER_KEY] = 'true'
-    >>> print tile() # doctest: +NORMALIZE_WHITESPACE
+    >>> print(tile()) # doctest: +NORMALIZE_WHITESPACE
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
@@ -297,7 +297,7 @@ This can be transformed into a proper ESI tag with ``substituteESILinks()``:
 .. code-block:: python
 
     >>> from plone.tiles.esi import substituteESILinks
-    >>> print substituteESILinks(tile()) # doctest: +NORMALIZE_WHITESPACE
+    >>> print(substituteESILinks(tile())) # doctest: +NORMALIZE_WHITESPACE
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns:esi="http://www.edge-delivery.org/esi/1.0" xmlns="http://www.w3.org/1999/xhtml">
@@ -313,7 +313,7 @@ This is done with a class variable 'head'
 .. code-block:: python
 
     >>> SampleESITile.head = True
-    >>> print tile() # doctest: +NORMALIZE_WHITESPACE
+    >>> print(tile()) # doctest: +NORMALIZE_WHITESPACE
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
