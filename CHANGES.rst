@@ -8,6 +8,21 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.0 (2018-11-21)
+------------------
+
+New features:
+
+
+- Add support for Python 3. [pbauer] (#29)
+
+
+Bug fixes:
+
+
+- Initialize towncrier. [gforcada] (#2548)
+
+
 2.1 (2018-07-05)
 ----------------
 
