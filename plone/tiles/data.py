@@ -357,7 +357,7 @@ def decode(data, schema, missing=True, primary=False):
 
     If primary is True, also fields that are marged as primary fields are
     decoded from the data. (Primary fields are not decoded by default,
-    because primary field are mainly used for rich text or binary fields 
+    because primary field are mainly used for rich text or binary fields
     and data is usually parsed from query string with length limitations.)
     """
 
