@@ -64,7 +64,8 @@ class BaseTileDataManager(object):
             # Try to decode the form data properly if we can
             try:
                 data = decode(self.tile.request.form,
-                              self.tileType.schema, missing=True)
+                              self.tileType.schema,
+                              missing=True, primary=True)
             except (ValueError, UnicodeDecodeError,):
                 LOGGER.exception(u'Could not convert form data to schema')
                 return self.data.copy()
@@ -342,7 +343,7 @@ def encode(data, schema, ignore=()):
 
 # Decoding
 
-def decode(data, schema, missing=True):
+def decode(data, schema, missing=True, primary=False):
     """Decode a data dict according to a schema. The returned dictionary will
     contain only keys matching schema names, and will force type values
     appropriately.
@@ -353,12 +354,17 @@ def decode(data, schema, missing=True):
 
     If missing is True, fields that are in the schema but not in the data will
     be set to field.missing_value. Otherwise, they are ignored.
+
+    If primary is True, also fields that are marged as primary fields are
+    decoded from the data. (Primary fields are not decoded by default,
+    because primary field are mainly used for rich text or binary fields 
+    and data is usually parsed from query string with length limitations.)
     """
 
     decoded = {}
 
     for name, field in getFields(schema).items():
-        if HAS_RFC822 and IPrimaryField.providedBy(field):
+        if not primary and HAS_RFC822 and IPrimaryField.providedBy(field):
             continue
 
         if name not in data:
