@@ -1,0 +1,1 @@
+Fixed issue where creating a Mosaic page with shared content layout with filled rich text fields ended up having empty rich text fields, because the rich text field is marked primary (as it should be), and primary fields were never parsed from query string by default.
