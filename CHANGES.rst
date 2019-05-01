@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.1 (2019-05-01)
+------------------
+
+Bug fixes:
+
+
+- Fixed issue where creating a Mosaic page with shared content layout with filled rich text fields ended up having empty rich text fields, because the rich text field is marked primary (as it should be), and primary fields were never parsed from query string by default. (#30)
+
+
 2.2.0 (2018-11-21)
 ------------------
 
