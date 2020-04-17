@@ -3,26 +3,12 @@ import: collective/buildout.plonetest:travis/default.yml
 matrix:
   include:
     - python: "2.7"
-      env:
-        PLONE_VERSION="5.2"
-        TARGET=test
+      env: PLONE_VERSION="5.2"
     - python: "3.6"
-      env:
-        PLONE_VERSION="5.2"
-        TARGET=test
+      env: PLONE_VERSION="5.2"
     - python: "3.7"
-      env:
-        PLONE_VERSION="5.2"
-        TARGET=test
+      env: PLONE_VERSION="5.2"
     - python: "3.7"
-      env:
-        PLONE_VERSION="5.2"
-        TARGET=coverage.sh
+      env: PLONE_VERSION="5.2"
     - python: "3.8"
-      env:
-        PLONE_VERSION="5.2"
-        TARGET=code-analysis
-script:
-  - bin/$TARGET
-after_success:
-  - if test $TARGET == "coverage.sh"; then bin/createcoverage --output-dir=parts/test/coverage && pip install -q coveralls && coveralls; fi
+      env: PLONE_VERSION="5.2"
