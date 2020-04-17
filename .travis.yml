@@ -1,26 +1,32 @@
-language: python
-sudo: false
-env:
-  - PLONE_VERSION=4.3.x
-  - PLONE_VERSION=5.0.x
-  - PLONE_VERSION=5.1.x
-python:
-  - "2.7"
+version: ~> 1.0
+import: collective/buildout.plonetest:travis/default.yml
 matrix:
-  fast_finish: true
-cache:
-  pip: true
-  directories:
-  - eggs
-  - downloads
-install:
-  - pip install -U pip setuptools zc.buildout
-  - buildout -N -c test-$PLONE_VERSION.cfg buildout:download-cache=downloads code-analysis:return-status-codes=True annotate
-  - buildout -N -c test-$PLONE_VERSION.cfg buildout:download-cache=downloads code-analysis:return-status-codes=True
+  include:
+    - python: "2.7"
+      env:
+        PLONE_VERSION="4.3"
+        TARGET=test
+    - python: "2.7"
+      env:
+        PLONE_VERSION="5.1"
+        TARGET=test
+    - python: "2.7"
+      env:
+        PLONE_VERSION="5.2"
+        TARGET=test
+    - python: "3.7"
+      env:
+        PLONE_VERSION="5.2"
+        TARGET=test
+    - python: "3.7"
+      env:
+        PLONE_VERSION="5.2"
+        TARGET=coverage.sh
+    - python: "3.8"
+      env:
+        PLONE_VERSION="5.2"
+        TARGET=code-analysis
 script:
-  - bin/code-analysis
-  - bin/test
+  - bin/$TARGET
 after_success:
-  - bin/createcoverage --output-dir=htmlcov
-  - pip install coveralls
-  - coveralls
+  - if test $TARGET == "coverage.sh"; then bin/createcoverage --output-dir=parts/test/coverage && pip install -q coveralls && coveralls; fi
