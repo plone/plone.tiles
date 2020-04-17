@@ -8,7 +8,5 @@ matrix:
       env: PLONE_VERSION="5.2"
     - python: "3.7"
       env: PLONE_VERSION="5.2"
-    - python: "3.7"
-      env: PLONE_VERSION="5.2"
     - python: "3.8"
       env: PLONE_VERSION="5.2"
