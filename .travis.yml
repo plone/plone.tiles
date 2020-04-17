@@ -14,6 +14,10 @@ matrix:
       env:
         PLONE_VERSION="5.2"
         TARGET=test
+    - python: "3.6"
+      env:
+        PLONE_VERSION="5.2"
+        TARGET=test
     - python: "3.7"
       env:
         PLONE_VERSION="5.2"
