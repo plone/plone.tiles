@@ -4,14 +4,6 @@ matrix:
   include:
     - python: "2.7"
       env:
-        PLONE_VERSION="4.3"
-        TARGET=test
-    - python: "2.7"
-      env:
-        PLONE_VERSION="5.1"
-        TARGET=test
-    - python: "2.7"
-      env:
         PLONE_VERSION="5.2"
         TARGET=test
     - python: "3.6"
