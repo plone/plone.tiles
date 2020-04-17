@@ -150,8 +150,8 @@ At this point, we can look up the ESI views:
 But we can only render them when we have the required permissions:
 
     >>> from AccessControl.SecurityManagement import newSecurityManager
-    >>> from AccessControl.User import UnrestrictedUser
-    >>> newSecurityManager(None, UnrestrictedUser('manager', '', ['Manager'], []))
+    >>> from AccessControl.User import Super
+    >>> newSecurityManager(None, Super('manager', '', ['Manager'], []))
     >>> print(head())
     <title>Title</title>
 
