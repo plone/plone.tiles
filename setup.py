@@ -5,23 +5,28 @@ from setuptools import setup
 import os
 
 
+def read(*path):
+    filename = os.path.join(*path)
+    with open(filename) as myfile:
+        return myfile.read() + '\n'
+
+
 version = '2.2.2.dev0'
 
 setup(
     name='plone.tiles',
     version=version,
     description='APIs for managing tiles',
-    long_description=open('README.rst').read() + '\n' +
-    open(os.path.join('plone', 'tiles', 'tiles.rst')).read() + '\n' +
-    open(os.path.join('plone', 'tiles', 'directives.rst')).read() + '\n' +
-    open(os.path.join('plone', 'tiles', 'esi.rst')).read() + '\n' +
-    open('CHANGES.rst').read(),
+    long_description=read('README.rst') +
+    read('plone', 'tiles', 'tiles.rst') +
+    read('plone', 'tiles', 'directives.rst') +
+    read('plone', 'tiles', 'esi.rst') +
+    read('CHANGES.rst'),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Plone',
         'Framework :: Plone :: 4.3',
-        'Framework :: Plone :: 5.0',
         'Framework :: Plone :: 5.1',
         'Framework :: Plone :: 5.2',
         'Framework :: Plone :: Core',

@@ -1,26 +1,16 @@
-language: python
-sudo: false
-env:
-  - PLONE_VERSION=4.3.x
-  - PLONE_VERSION=5.0.x
-  - PLONE_VERSION=5.1.x
-python:
-  - "2.7"
+version: ~> 1.0
+import: collective/buildout.plonetest:travis/default.yml
 matrix:
-  fast_finish: true
-cache:
-  pip: true
-  directories:
-  - eggs
-  - downloads
-install:
-  - pip install -U pip setuptools zc.buildout
-  - buildout -N -c test-$PLONE_VERSION.cfg buildout:download-cache=downloads code-analysis:return-status-codes=True annotate
-  - buildout -N -c test-$PLONE_VERSION.cfg buildout:download-cache=downloads code-analysis:return-status-codes=True
-script:
-  - bin/code-analysis
-  - bin/test
-after_success:
-  - bin/createcoverage --output-dir=htmlcov
-  - pip install coveralls
-  - coveralls
+  include:
+    - python: "2.7"
+      env: PLONE_VERSION="4.3"
+    - python: "2.7"
+      env: PLONE_VERSION="5.1"
+    - python: "2.7"
+      env: PLONE_VERSION="5.2"
+    - python: "3.6"
+      env: PLONE_VERSION="5.2"
+    - python: "3.7"
+      env: PLONE_VERSION="5.2"
+    - python: "3.8"
+      env: PLONE_VERSION="5.2"

@@ -12,4 +12,6 @@
 /include/
 /bin/
 /parts
-.installed.cfg
+/.installed.cfg
+/.coverage
+/htmlcov/
