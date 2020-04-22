@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.2 (2020-04-22)
+------------------
+
+Bug fixes:
+
+
+- Minor packaging updates. (#1)
+- Fixed tests on Travis.
+  [maurits] (#33)
+
+
 2.2.1 (2019-05-01)
 ------------------
 
