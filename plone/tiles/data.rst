@@ -112,12 +112,12 @@ This also applies to the value_type of a list or tuple:
     >>> encode(data, IUnsupported) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    ComponentLookupError: Cannot URL encode decimal of type <class 'zope.schema...Decimal'>
+    zope.interface.interfaces.ComponentLookupError: Cannot URL encode decimal of type <class 'zope.schema...Decimal'>
 
     >>> encode(data, IUnsupported, ignore=('decimal',)) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    ComponentLookupError: Cannot URL encode value type for list of type <class 'zope.schema._field.List'> : <class 'zope.schema...Decimal'>
+    zope.interface.interfaces.ComponentLookupError: Cannot URL encode value type for list of type <class 'zope.schema._field.List'> : <class 'zope.schema...Decimal'>
 
     >>> encode(data, IUnsupported, ignore=('decimal', 'list',))
     'bytes_line=abc'

@@ -10,17 +10,13 @@ import unittest
 
 class Py23DocChecker(doctest.OutputChecker):
     def check_output(self, want, got, optionflags):
-        # new:
-        want = re.sub(
-            'zope.interface.interfaces.ComponentLookupError',
-            'ComponentLookupError',
-            want)
-        # old:
-        want = re.sub(
-            'zope.component.interfaces.ComponentLookupError',
-            'ComponentLookupError',
-            want)
         if six.PY2:
+            # In Py 3 we get the full class path, in Py 2 only the class.
+            # The tests have the full path.
+            want = re.sub(
+                'zope.interface.interfaces.ComponentLookupError',
+                'ComponentLookupError',
+                want)
             want = re.sub(
                 'zExceptions.unauthorized.Unauthorized', 'Unauthorized', want)
             got = re.sub("u'(.*?)'", "'\\1'", got)

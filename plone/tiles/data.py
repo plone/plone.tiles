@@ -16,6 +16,7 @@ from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.interface import implementer
 from zope.interface import Interface
+from zope.interface.interfaces import ComponentLookupError
 from zope.schema import getFields
 from zope.schema import getFieldsInOrder
 from zope.schema.interfaces import ISequence
@@ -24,12 +25,6 @@ import json
 import logging
 import pkg_resources
 import six
-
-try:
-    from zope.interface.interfaces import ComponentLookupError
-except ImportError:
-    # BBB for Plone 4.3
-    from zope.component.interfaces import ComponentLookupError
 
 
 try:
