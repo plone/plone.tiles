@@ -10,11 +10,17 @@ import unittest
 
 class Py23DocChecker(doctest.OutputChecker):
     def check_output(self, want, got, optionflags):
+        # new:
+        want = re.sub(
+            'zope.interface.interfaces.ComponentLookupError',
+            'ComponentLookupError',
+            want)
+        # old:
+        want = re.sub(
+            'zope.component.interfaces.ComponentLookupError',
+            'ComponentLookupError',
+            want)
         if six.PY2:
-            want = re.sub(
-                'zope.interface.interfaces.ComponentLookupError',
-                'ComponentLookupError',
-                want)
             want = re.sub(
                 'zExceptions.unauthorized.Unauthorized', 'Unauthorized', want)
             got = re.sub("u'(.*?)'", "'\\1'", got)
