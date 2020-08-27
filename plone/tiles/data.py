@@ -14,9 +14,9 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
-from zope.component.interfaces import ComponentLookupError
 from zope.interface import implementer
 from zope.interface import Interface
+from zope.interface.interfaces import ComponentLookupError
 from zope.schema import getFields
 from zope.schema import getFieldsInOrder
 from zope.schema.interfaces import ISequence
