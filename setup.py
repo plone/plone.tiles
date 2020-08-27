@@ -11,7 +11,7 @@ def read(*path):
         return myfile.read() + '\n'
 
 
-version = '2.2.3.dev0'
+version = '2.3.0.dev0'
 
 setup(
     name='plone.tiles',
