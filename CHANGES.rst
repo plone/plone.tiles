@@ -8,6 +8,23 @@ Changelog
 
 .. towncrier release notes start
 
+2.3.0 (2020-09-07)
+------------------
+
+New features:
+
+
+- Drop Plone 4.3 support.
+  [maurits] (#3130)
+
+
+Bug fixes:
+
+
+- Fixed deprecation warning for ComponentLookupError.
+  [maurits] (#3130)
+
+
 2.2.2 (2020-04-22)
 ------------------
 
