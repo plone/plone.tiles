@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.3.1 (2021-10-07)
+------------------
+
+Bug fixes:
+
+
+- Fix incorrectly set condition for plone.protect.
+  [thet] (#33)
+
+
 2.3.0 (2020-09-07)
 ------------------
 
