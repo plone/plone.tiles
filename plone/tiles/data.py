@@ -23,7 +23,6 @@ from zope.schema.interfaces import ISequence
 import json
 import logging
 import pkg_resources
-import six
 
 
 try:

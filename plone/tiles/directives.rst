@@ -103,7 +103,7 @@ Let's show how these may be used by registering several tiles:
     ... </configure>
     ... """
 
-    >>> from six import StringIO
+    >>> from io import StringIO
     >>> from zope.configuration import xmlconfig
     >>> xmlconfig.xmlconfig(StringIO(configuration))
 
@@ -183,7 +183,7 @@ Finally, let's check that we can look up the tiles:
     >>> tile1 = getMultiAdapter((context, layer_request), name='dummy1')
     >>> isinstance(tile1, DummyTileWithTemplate)
     True
-    >>> print(tile1())
+    >>> print(tile1().strip())
     <b>test!</b>
     >>> tile1.__name__
     'dummy1'
@@ -199,7 +199,7 @@ Finally, let's check that we can look up the tiles:
     >>> tile3 = getMultiAdapter((context, request), name='dummy3')
     >>> isinstance(tile3, Tile)
     True
-    >>> print(tile3())
+    >>> print(tile3().strip())
     <b>test!</b>
     >>> tile3.__name__
     'dummy3'
@@ -207,7 +207,7 @@ Finally, let's check that we can look up the tiles:
     >>> tile4 = getMultiAdapter((context, request), name='dummy4')
     >>> isinstance(tile4, PersistentTile)
     True
-    >>> print(tile4())
+    >>> print(tile4().strip())
     <b>test!</b>
     >>> tile4.__name__
     'dummy4'

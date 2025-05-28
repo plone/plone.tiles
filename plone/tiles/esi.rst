@@ -26,7 +26,7 @@ To use the package, you should first load its ZCML configuration.
     ... </configure>
     ... """
 
-    >>> from six import StringIO
+    >>> from io import StringIO
     >>> from zope.configuration import xmlconfig
     >>> xmlconfig.xmlconfig(StringIO(configuration))
 

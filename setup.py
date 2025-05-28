@@ -53,7 +53,6 @@ setup(
         "plone.subrequest",
         "setuptools",
         "zope.annotation",
-        "zope.browserpage",
         "zope.component",
         "zope.configuration",
         "zope.interface",
@@ -61,7 +60,9 @@ setup(
         "zope.schema",
         "zope.security",
         "zope.traversing",
-        "Zope2",
+        "plone.protect",
+        "plone.supermodel",
+        "Zope",
     ],
     extras_require={
         "test": [
