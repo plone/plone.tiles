@@ -96,6 +96,6 @@ class TransientTileAbsoluteURL(BaseTileAbsoluteURL):
 
 
 class PersistentTileAbsoluteURL(BaseTileAbsoluteURL):
-    """Absolute URL for a persitent tile. Includes the tile traverser, but no
+    """Absolute URL for a persistent tile. Includes the tile traverser, but no
     tile data encoded in the query string.
     """

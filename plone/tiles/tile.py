@@ -79,7 +79,7 @@ class Tile(BrowserView):
 
     def __call__(self, *args, **kwargs):
         if getattr(self, "index", None) is None:
-            raise NotImplemented(
+            raise NotImplementedError(
                 'Override __call__ or set a class variable "index" to point '
                 "to a view page template file"
             )

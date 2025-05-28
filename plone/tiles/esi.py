@@ -63,7 +63,7 @@ class ConditionalESIRendering:
     head = False
 
     def render(self):
-        raise NotImplemented(
+        raise NotImplementedError(
             "Override render() or set a class variable 'index' to point to "
             "a view page template file"
         )

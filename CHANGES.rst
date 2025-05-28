@@ -116,8 +116,8 @@ Breaking changes:
   it gets removed after rendering when request is not CSRF-authorized.
   [datakurre]
 
-- Generic ESI helper check now taht the request is authorized to render
-  the tile according to the registered view permission fo the tile.
+- Generic ESI helper check now that the request is authorized to render
+  the tile according to the registered view permission to the tile.
   [datakurre]
 
 - Transactions of requests to ESI helper views are automatically aborted,
@@ -312,7 +312,7 @@ Bug fixes:
 - Use adapters for the Zope Publisher type casting
   [dukebody]
 
-- Conditionaly support z3c.relationfield's RelationChoice fields
+- Conditionally support z3c.relationfield's RelationChoice fields
   [dukebody]
 
 - Ignore type casting for fields without fixed type, like zope.schema.Choice
