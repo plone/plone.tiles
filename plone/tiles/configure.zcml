@@ -2,162 +2,183 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:zcml="http://namespaces.zope.org/zcml"
-    i18n_domain="plone.tiles">
+    i18n_domain="plone.tiles"
+    >
 
-    <!-- Data manager -->
-    <adapter factory=".data.transientTileDataManagerFactory" />
-    <adapter factory=".data.PersistentTileDataManager" />
-    <adapter factory=".data.defaultTileDataContext" />
-    <adapter factory=".data.defaultTileDataStorage" />
-    <adapter factory=".data.defaultPersistentTileDataStorage" />
+  <!-- Data manager -->
+  <adapter factory=".data.transientTileDataManagerFactory" />
+  <adapter factory=".data.PersistentTileDataManager" />
+  <adapter factory=".data.defaultTileDataContext" />
+  <adapter factory=".data.defaultTileDataStorage" />
+  <adapter factory=".data.defaultPersistentTileDataStorage" />
 
-    <!-- Absolute URL -->
-    <view
-        for=".interfaces.ITile"
-        name="absolute_url"
-        factory=".absoluteurl.TransientTileAbsoluteURL"
-        type="zope.publisher.interfaces.http.IHTTPRequest"
-        permission="zope.Public"
-        allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
+  <!-- Absolute URL -->
+  <view
+      name="absolute_url"
+      factory=".absoluteurl.TransientTileAbsoluteURL"
+      allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
+      for=".interfaces.ITile"
+      permission="zope.Public"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      />
+
+  <view
+      factory=".absoluteurl.TransientTileAbsoluteURL"
+      provides="zope.traversing.browser.interfaces.IAbsoluteURL"
+      for=".interfaces.ITile"
+      permission="zope.Public"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      />
+
+  <view
+      name="absolute_url"
+      factory=".absoluteurl.PersistentTileAbsoluteURL"
+      allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
+      for=".interfaces.IPersistentTile"
+      permission="zope.Public"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      />
+
+  <view
+      factory=".absoluteurl.PersistentTileAbsoluteURL"
+      provides="zope.traversing.browser.interfaces.IAbsoluteURL"
+      for=".interfaces.IPersistentTile"
+      permission="zope.Public"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      />
+
+  <!-- ESI -->
+  <browser:page
+      name="esi-head"
+      for=".interfaces.IESIRendered"
+      class=".esi.ESIHead"
+      permission="zope.Public"
+      />
+
+  <browser:page
+      name="esi-body"
+      for=".interfaces.IESIRendered"
+      class=".esi.ESIBody"
+      permission="zope.Public"
+      />
+
+  <configure zcml:condition="installed plone.protect">
+    <adapter
+        factory=".esi.ESIProtectTransform"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".esi.ESIHead
+             *"
+        name="plone.protect.autocsrf"
+        zcml:condition="installed plone.transformchain"
         />
-
-    <view
-        for=".interfaces.ITile"
-        factory=".absoluteurl.TransientTileAbsoluteURL"
-        type="zope.publisher.interfaces.http.IHTTPRequest"
-        permission="zope.Public"
-        provides="zope.traversing.browser.interfaces.IAbsoluteURL"
-        />
-
-    <view
-        for=".interfaces.IPersistentTile"
-        name="absolute_url"
-        factory=".absoluteurl.PersistentTileAbsoluteURL"
-        type="zope.publisher.interfaces.http.IHTTPRequest"
-        permission="zope.Public"
-        allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
-        />
-
-    <view
-        for=".interfaces.IPersistentTile"
-        factory=".absoluteurl.PersistentTileAbsoluteURL"
-        type="zope.publisher.interfaces.http.IHTTPRequest"
-        permission="zope.Public"
-        provides="zope.traversing.browser.interfaces.IAbsoluteURL"
-        />
-
-    <!-- ESI -->
-    <browser:page
-        name="esi-head"
-        for=".interfaces.IESIRendered"
-        class=".esi.ESIHead"
-        permission="zope.Public"
-        />
-
-    <browser:page
-        name="esi-body"
-        for=".interfaces.IESIRendered"
-        class=".esi.ESIBody"
-        permission="zope.Public"
-        />
-
-    <configure zcml:condition="installed plone.protect">
-        <adapter
-            name="plone.protect.autocsrf"
-            provides="plone.transformchain.interfaces.ITransform"
-            for=".esi.ESIHead *"
-            factory=".esi.ESIProtectTransform"
-            zcml:condition="installed plone.transformchain"
-            />
-
-        <adapter
-            name="plone.protect.autocsrf"
-            provides="plone.transformchain.interfaces.ITransform"
-            for=".esi.ESIBody *"
-            factory=".esi.ESIProtectTransform"
-            zcml:condition="installed plone.transformchain"
-            />
-
-        <adapter
-            name="plone.protect.autocsrf"
-            provides="plone.transformchain.interfaces.ITransform"
-            for=".tile.Tile *"
-            factory=".tile.TileProtectTransform"
-            zcml:condition="installed plone.transformchain"
-            />
-    </configure>
 
     <adapter
-      name="plone.tiles.tiletheming"
-      provides="plone.transformchain.interfaces.ITransform"
-      for=".tile.Tile *"
+        factory=".esi.ESIProtectTransform"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".esi.ESIBody
+             *"
+        name="plone.protect.autocsrf"
+        zcml:condition="installed plone.transformchain"
+        />
+
+    <adapter
+        factory=".tile.TileProtectTransform"
+        provides="plone.transformchain.interfaces.ITransform"
+        for=".tile.Tile
+             *"
+        name="plone.protect.autocsrf"
+        zcml:condition="installed plone.transformchain"
+        />
+  </configure>
+
+  <adapter
       factory=".tile.TileThemingTransform"
+      provides="plone.transformchain.interfaces.ITransform"
+      for=".tile.Tile
+           *"
+      name="plone.tiles.tiletheming"
       zcml:condition="installed plone.transformchain"
-    />
+      />
 
-    <!-- Field Type converters -->
-    <adapter for="zope.schema.interfaces.IBytesLine"
-             factory="plone.tiles.fieldtypeconverters.NoConverter"
-             />
+  <!-- Field Type converters -->
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.NoConverter"
+      for="zope.schema.interfaces.IBytesLine"
+      />
 
-    <adapter for="zope.schema.interfaces.IASCIILine"
-             factory="plone.tiles.fieldtypeconverters.NoConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.NoConverter"
+      for="zope.schema.interfaces.IASCIILine"
+      />
 
-    <adapter for="zope.schema.interfaces.ITextLine"
-             factory="plone.tiles.fieldtypeconverters.NoConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.NoConverter"
+      for="zope.schema.interfaces.ITextLine"
+      />
 
-    <adapter for="zope.schema.interfaces.IURI"
-             factory="plone.tiles.fieldtypeconverters.NoConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.NoConverter"
+      for="zope.schema.interfaces.IURI"
+      />
 
-    <adapter for="zope.schema.interfaces.IId"
-             factory="plone.tiles.fieldtypeconverters.NoConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.NoConverter"
+      for="zope.schema.interfaces.IId"
+      />
 
-    <adapter for="zope.schema.interfaces.IDottedName"
-             factory="plone.tiles.fieldtypeconverters.NoConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.NoConverter"
+      for="zope.schema.interfaces.IDottedName"
+      />
 
-    <adapter for="zope.schema.interfaces.IChoice"
-             factory="plone.tiles.fieldtypeconverters.NoConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.NoConverter"
+      for="zope.schema.interfaces.IChoice"
+      />
 
-    <adapter for="zope.schema.interfaces.IBytes"
-             factory="plone.tiles.fieldtypeconverters.TextConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.TextConverter"
+      for="zope.schema.interfaces.IBytes"
+      />
 
-    <adapter for="zope.schema.interfaces.IText"
-             factory="plone.tiles.fieldtypeconverters.TextConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.TextConverter"
+      for="zope.schema.interfaces.IText"
+      />
 
-    <adapter for="zope.schema.interfaces.IASCII"
-             factory="plone.tiles.fieldtypeconverters.TextConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.TextConverter"
+      for="zope.schema.interfaces.IASCII"
+      />
 
-    <adapter for="zope.schema.interfaces.IInt"
-             factory="plone.tiles.fieldtypeconverters.LongConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.LongConverter"
+      for="zope.schema.interfaces.IInt"
+      />
 
-    <adapter for="zope.schema.interfaces.IFloat"
-             factory="plone.tiles.fieldtypeconverters.FloatConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.FloatConverter"
+      for="zope.schema.interfaces.IFloat"
+      />
 
-    <adapter for="zope.schema.interfaces.IBool"
-             factory="plone.tiles.fieldtypeconverters.BoolConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.BoolConverter"
+      for="zope.schema.interfaces.IBool"
+      />
 
-    <adapter for="zope.schema.interfaces.ITuple"
-             factory="plone.tiles.fieldtypeconverters.TupleConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.TupleConverter"
+      for="zope.schema.interfaces.ITuple"
+      />
 
-    <adapter for="zope.schema.interfaces.IList"
-             factory="plone.tiles.fieldtypeconverters.ListConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.ListConverter"
+      for="zope.schema.interfaces.IList"
+      />
 
-    <adapter for="zope.schema.interfaces.IDict"
-             factory="plone.tiles.fieldtypeconverters.DictConverter"
-             />
+  <adapter
+      factory="plone.tiles.fieldtypeconverters.DictConverter"
+      for="zope.schema.interfaces.IDict"
+      />
 
 </configure>

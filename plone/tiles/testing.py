@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from plone.testing import Layer
 from plone.testing import z2
 from plone.testing import zca
@@ -12,8 +10,9 @@ from zope.interface import Interface
 
 # For directive tests
 
+
 class IDummySchema(Interface):
-    foo = schema.TextLine(title=u'Foo')
+    foo = schema.TextLine(title="Foo")
 
 
 class IDummyContext(Interface):
@@ -27,7 +26,7 @@ class IDummyLayer(Interface):
 class DummyTile(Tile):
 
     def __call__(self):
-        return u'dummy'
+        return "dummy"
 
 
 class DummyTileWithTemplate(PersistentTile):
@@ -38,22 +37,23 @@ class PloneTiles(Layer):
     defaultBases = (z2.STARTUP,)
 
     def setUp(self):
-        self['configurationContext'] = context = zca.stackConfigurationContext(
-            self.get('configurationContext')
+        self["configurationContext"] = context = zca.stackConfigurationContext(
+            self.get("configurationContext")
         )
         import zope.annotation
-        xmlconfig.file('configure.zcml', zope.annotation, context=context)
+
+        xmlconfig.file("configure.zcml", zope.annotation, context=context)
         import plone.tiles
-        xmlconfig.file('configure.zcml', plone.tiles, context=context)
+
+        xmlconfig.file("configure.zcml", plone.tiles, context=context)
 
     def tearDown(self):
-        del self['configurationContext']
+        del self["configurationContext"]
 
 
 PLONE_TILES_FIXTURE = PloneTiles()
 
 
 PLONE_TILES_INTEGRATION_TESTING = z2.IntegrationTesting(
-    bases=(PLONE_TILES_FIXTURE,),
-    name='PloneTiles:Functional'
+    bases=(PLONE_TILES_FIXTURE,), name="PloneTiles:Functional"
 )

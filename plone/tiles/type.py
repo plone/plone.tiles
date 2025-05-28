@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
 from plone.tiles.interfaces import ITileType
 from zope.interface import implementer
 
 
 @implementer(ITileType)
-class TileType(object):
-    """A utility that describes a type of tile
-    """
+class TileType:
+    """A utility that describes a type of tile"""
 
     def __init__(
         self,
@@ -18,7 +16,7 @@ class TileType(object):
         delete_permission=None,
         description=None,
         icon=None,
-        schema=None
+        schema=None,
     ):
 
         if delete_permission is None:
@@ -38,7 +36,4 @@ class TileType(object):
         self.schema = schema
 
     def __repr__(self):
-        return u"<TileType {0} ({1})>".format(
-            self.__name__,
-            self.title
-        )
+        return f"<TileType {self.__name__} ({self.title})>"
