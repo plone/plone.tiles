@@ -662,6 +662,13 @@ For convenience, the tile URL is also available under the ``url`` property:
     >>> transientTile.url
     'http://example.com/context/@@sample.tile/tile1?title=My+title&cssClass=foo&count%3Along=5'
 
+We also implement the ``absolute_url()`` method.
+
+.. code-block:: python
+
+    >>> transientTile.absolute_url()
+    'http://example.com/context/@@sample.tile/tile1?title=My+title&cssClass=foo&count%3Along=5'
+
 The tile absolute URL structure remains unaltered if the data is
 coming from a `_tiledata` JSON-encoded parameter instead of from the request
 parameters directly:

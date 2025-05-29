@@ -96,6 +96,9 @@ class Tile(BrowserView):
     def url(self):
         return absoluteURL(self, self.request)
 
+    def absolute_url(self):
+        return self.url
+
 
 @implementer(IPersistentTile)
 class PersistentTile(Tile):
