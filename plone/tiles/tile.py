@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITile
 from plone.tiles.interfaces import ITileDataManager
@@ -45,23 +44,20 @@ class Tile(BrowserView):
             # __getitem__.
 
             if self.__doc__ is None:
-                self.__doc__ = 'For Zope 2, to keep the ZPublisher happy'
+                self.__doc__ = "For Zope 2, to keep the ZPublisher happy"
 
             # Note: X-Tile-Url was added to make it easier for editor to know
             # the URL of a new tile after receiving the redirected response
             # from a tile form. That's why it's only set for customizable tiles
             # (tiles with id).
             if self.id is not None:
-                self.request.response.setHeader(
-                    'X-Tile-Url',
-                    self.url
-                )
+                self.request.response.setHeader("X-Tile-Url", self.url)
 
             return self
 
         # Also allow views on tiles even without @@.
         viewName = name
-        if viewName.startswith('@@'):
+        if viewName.startswith("@@"):
             viewName = name[2:]
         view = queryMultiAdapter((self, self.request), name=viewName)
         if view is not None:
@@ -72,8 +68,7 @@ class Tile(BrowserView):
         raise KeyError(name)
 
     def browserDefault(self, request):
-        """By default, tiles render themselves with no browser-default view
-        """
+        """By default, tiles render themselves with no browser-default view"""
         return self, ()
 
     def publishTraverse(self, request, name):
@@ -83,10 +78,10 @@ class Tile(BrowserView):
         return self[name]
 
     def __call__(self, *args, **kwargs):
-        if getattr(self, 'index', None) is None:
-            raise NotImplemented(
-                u'Override __call__ or set a class variable "index" to point '
-                u'to a view page template file'
+        if getattr(self, "index", None) is None:
+            raise NotImplementedError(
+                'Override __call__ or set a class variable "index" to point '
+                "to a view page template file"
             )
         return self.index(*args, **kwargs)
 
@@ -109,7 +104,7 @@ class PersistentTile(Tile):
     """
 
 
-class TileThemingTransform(object):
+class TileThemingTransform:
     """Disable plone.app.theming for tile responses"""
 
     order = 8800
@@ -119,7 +114,7 @@ class TileThemingTransform(object):
         self.request = request
 
     def transform(self, result, encoding):
-        self.request.response.setHeader('X-Theme-Disabled', '1')
+        self.request.response.setHeader("X-Theme-Disabled", "1")
         return None
 
     def transformBytes(self, result, encoding):
@@ -132,7 +127,7 @@ class TileThemingTransform(object):
         return self.transform(result, encoding)
 
 
-class TileProtectTransform(object):
+class TileProtectTransform:
     """Replacement transform for plone.protect's ProtectTransform, to drop
     X-Tile-Url-header from unauthorized responses and disable the default
     ProtectTransform for authorized responses (to avoid causing issues
@@ -146,12 +141,14 @@ class TileProtectTransform(object):
         self.request = request
         try:
             from plone.protect.auto import ProtectTransform
+
             self.protect = ProtectTransform(published, request)
         except ImportError:
             self.protect = None
 
     def transform(self, result, encoding):
         from plone.protect import CheckAuthenticator
+
         CheckAuthenticator(self.request)
         return None
 
@@ -159,8 +156,8 @@ class TileProtectTransform(object):
         try:
             return self.transform(result, encoding)
         except Forbidden:
-            if 'x-tile-url' in self.request.response.headers:
-                del self.request.response.headers['x-tile-url']
+            if "x-tile-url" in self.request.response.headers:
+                del self.request.response.headers["x-tile-url"]
             if self.protect is not None:
                 return self.protect.transformBytes(result, encoding)
             else:
@@ -170,8 +167,8 @@ class TileProtectTransform(object):
         try:
             return self.transform(result, encoding)
         except Forbidden:
-            if 'x-tile-url' in self.request.response.headers:
-                del self.request.response.headers['x-tile-url']
+            if "x-tile-url" in self.request.response.headers:
+                del self.request.response.headers["x-tile-url"]
             if self.protect is not None:
                 return self.protect.transformUnicode(result, encoding)
             else:
@@ -181,8 +178,8 @@ class TileProtectTransform(object):
         try:
             return self.transform(result, encoding)
         except Forbidden:
-            if 'x-tile-url' in self.request.response.headers:
-                del self.request.response.headers['x-tile-url']
+            if "x-tile-url" in self.request.response.headers:
+                del self.request.response.headers["x-tile-url"]
             if self.protect is not None:
                 return self.protect.transformIterable(result, encoding)
             else:

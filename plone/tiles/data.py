@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from persistent.dict import PersistentDict
 from plone.subrequest import ISubRequest
 from plone.tiles.directives import IGNORE_QUERYSTRING_KEY
@@ -9,7 +8,7 @@ from plone.tiles.interfaces import ITileDataContext
 from plone.tiles.interfaces import ITileDataManager
 from plone.tiles.interfaces import ITileDataStorage
 from plone.tiles.interfaces import ITileType
-from six.moves.urllib import parse
+from urllib import parse
 from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import getMultiAdapter
@@ -24,50 +23,56 @@ from zope.schema.interfaces import ISequence
 import json
 import logging
 import pkg_resources
-import six
 
 
 try:
-    pkg_resources.get_distribution('plone.rfc822')
+    pkg_resources.get_distribution("plone.rfc822")
 except pkg_resources.DistributionNotFound:
     HAS_RFC822 = False
 else:
     from plone.rfc822.interfaces import IPrimaryField
+
     HAS_RFC822 = True
 
 
-ANNOTATIONS_KEY_PREFIX = u'plone.tiles.data'
-LOGGER = logging.getLogger('plone.tiles')
+ANNOTATIONS_KEY_PREFIX = "plone.tiles.data"
+LOGGER = logging.getLogger("plone.tiles")
 
 
 @adapter(ITile)
 @implementer(ITileDataManager)
 def transientTileDataManagerFactory(tile):
-    if tile.request.get('X-Tile-Persistent'):
+    if tile.request.get("X-Tile-Persistent"):
         return PersistentTileDataManager(tile)
     else:
         return TransientTileDataManager(tile)
 
 
-class BaseTileDataManager(object):
+class BaseTileDataManager:
 
     def get_default_request_data(self):
         """
         from request form
         """
         # try to use a '_tiledata' parameter in the request
-        if '_tiledata' in self.tile.request.form:
-            data = json.loads(self.tile.request.form['_tiledata'])
+        if "_tiledata" in self.tile.request.form:
+            data = json.loads(self.tile.request.form["_tiledata"])
         elif self.tileType is None or self.tileType.schema is None:
             data = self.tile.request.form.copy()
         else:
             # Try to decode the form data properly if we can
             try:
-                data = decode(self.tile.request.form,
-                              self.tileType.schema,
-                              missing=True, primary=True)
-            except (ValueError, UnicodeDecodeError,):
-                LOGGER.exception(u'Could not convert form data to schema')
+                data = decode(
+                    self.tile.request.form,
+                    self.tileType.schema,
+                    missing=True,
+                    primary=True,
+                )
+            except (
+                ValueError,
+                UnicodeDecodeError,
+            ):
+                LOGGER.exception("Could not convert form data to schema")
                 return self.data.copy()
         # we're assuming this data is potentially unsafe so we need to check
         # the ignore querystring field setting
@@ -78,13 +83,14 @@ class BaseTileDataManager(object):
             return data
 
         # first off, we only care to filter if it is a GET request
-        if getattr(self.tile.request, 'REQUEST_METHOD', 'GET') != 'GET':
+        if getattr(self.tile.request, "REQUEST_METHOD", "GET") != "GET":
             return data
 
         # now, pay attention to schema hints for form data
         if self.tileType is not None and self.tileType.schema is not None:
-            for name in self.tileType.schema.queryTaggedValue(
-                    IGNORE_QUERYSTRING_KEY) or []:
+            for name in (
+                self.tileType.schema.queryTaggedValue(IGNORE_QUERYSTRING_KEY) or []
+            ):
                 if name in data:
                     del data[name]
 
@@ -103,12 +109,14 @@ class TransientTileDataManager(BaseTileDataManager):
         self.tileType = queryUtility(ITileType, name=tile.__name__)
 
         self.context = getMultiAdapter(
-            (tile.context, tile.request, tile), ITileDataContext)
+            (tile.context, tile.request, tile), ITileDataContext
+        )
         self.storage = getMultiAdapter(
-            (self.context, tile.request, tile), ITileDataStorage)
+            (self.context, tile.request, tile), ITileDataStorage
+        )
 
         if IAnnotations.providedBy(self.storage):
-            self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
+            self.key = ".".join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
         else:
             self.key = str(tile.id)
 
@@ -151,12 +159,14 @@ class PersistentTileDataManager(BaseTileDataManager):
         self.tileType = queryUtility(ITileType, name=tile.__name__)
 
         self.context = getMultiAdapter(
-            (tile.context, tile.request, tile), ITileDataContext)
+            (tile.context, tile.request, tile), ITileDataContext
+        )
         self.storage = getMultiAdapter(
-            (self.context, tile.request, tile), ITileDataStorage)
+            (self.context, tile.request, tile), ITileDataStorage
+        )
 
         if IAnnotations.providedBy(self.storage):
-            self.key = '.'.join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
+            self.key = ".".join([ANNOTATIONS_KEY_PREFIX, str(tile.id)])
         else:
             self.key = str(tile.id)
 
@@ -190,7 +200,7 @@ def defaultTileDataContext(context, request, tile):
 @implementer(ITileDataStorage)
 @adapter(Interface, Interface, ITile)
 def defaultTileDataStorage(context, request, tile):
-    if tile.request.get('X-Tile-Persistent'):
+    if tile.request.get("X-Tile-Persistent"):
         return defaultPersistentTileDataStorage(context, request, tile)
     else:
         return IAnnotations(tile.request, tile.request.form)
@@ -210,49 +220,43 @@ def map_to_pairs(encoded_name, value):
     a dictionary value, yields (encoded_name, value) pairs to be included
     in the final encode.
     """
-    prefix, postfix = encoded_name.split(':', 1)
-    postfix = postfix.replace('record:list', 'records')
+    prefix, postfix = encoded_name.split(":", 1)
+    postfix = postfix.replace("record:list", "records")
 
     def guess_type(v):
         if isinstance(v, str):
-            return ''
+            return ""
         if isinstance(v, bool):
-            return ':boolean'
+            return ":boolean"
         if isinstance(v, int):
-            return ':int'
+            return ":int"
         if isinstance(v, float):
-            return ':float'
-        return ''
+            return ":float"
+        return ""
 
     for item_name, item_value in value.items():
-        if isinstance(item_value, six.text_type):
-            item_value = item_value.encode('utf-8')
+        if isinstance(item_value, str):
+            item_value = item_value.encode("utf-8")
 
         if isinstance(item_value, list) or isinstance(item_value, tuple):
             for item_subvalue in item_value:
                 marshall_type = guess_type(item_subvalue)
                 if isinstance(item_subvalue, bool):
-                    item_subvalue = item_subvalue and '1' or ''
-                elif isinstance(item_subvalue, six.text_type):
-                    item_subvalue = item_subvalue.encode('utf-8')
-                encoded_name = '{0}.{1}{2}:list:{3}'.format(
-                    prefix,
-                    item_name,
-                    marshall_type,
-                    postfix
+                    item_subvalue = item_subvalue and "1" or ""
+                elif isinstance(item_subvalue, str):
+                    item_subvalue = item_subvalue.encode("utf-8")
+                encoded_name = "{}.{}{}:list:{}".format(
+                    prefix, item_name, marshall_type, postfix
                 )
                 yield encoded_name, item_subvalue
         else:
             marshall_type = guess_type(item_value)
             if isinstance(item_value, bool):
-                item_value = item_value and '1' or ''
-            elif isinstance(item_value, six.text_type):
-                item_value = item_value.encode('utf-8')
-            encoded_name = '{0:s}.{1:s}{2:s}:{3:s}'.format(
-                prefix,
-                item_name,
-                marshall_type,
-                postfix
+                item_value = item_value and "1" or ""
+            elif isinstance(item_value, str):
+                item_value = item_value.encode("utf-8")
+            encoded_name = "{:s}.{:s}{:s}:{:s}".format(
+                prefix, item_name, marshall_type, postfix
             )
             yield encoded_name, item_value
 
@@ -280,58 +284,54 @@ def encode(data, schema, ignore=()):
         converter = IFieldTypeConverter(field, None)
         if converter is None:
             raise ComponentLookupError(
-                u'Cannot URL encode {0} of type {1}'.format(
-                    name,
-                    field.__class__
-                )
+                f"Cannot URL encode {name} of type {field.__class__}"
             )
 
         encoded_name = name
         if converter.token:
-            encoded_name = ':'.join([name, converter.token])
+            encoded_name = ":".join([name, converter.token])
 
         value = data[name]
         if value is None:
             continue
-        elif isinstance(value, six.text_type):
-            value = value.encode('utf-8')
+        elif isinstance(value, str):
+            value = value.encode("utf-8")
 
         if ISequence.providedBy(field):
             value_type_converter = IFieldTypeConverter(field.value_type, None)
             if value_type_converter is None:
                 raise ComponentLookupError(
-                    u'Cannot URL encode value type for {0} of type '
-                    u'{1} : {2}'.format(
-                        name,
-                        field.__class__,
-                        field.value_type.__class__
-                    )
+                    "Cannot URL encode value type for {} of type "
+                    "{} : {}".format(name, field.__class__, field.value_type.__class__)
                 )
 
             if value_type_converter.token:
-                encoded_name = ':'.join([
-                    name,
-                    value_type_converter.token,
-                    converter.token
-                ])
+                encoded_name = ":".join(
+                    [name, value_type_converter.token, converter.token]
+                )
 
             for item in value:
 
                 if isinstance(item, bool):
-                    item = item and '1' or ''
-                elif isinstance(item, six.text_type):
-                    item = item.encode('utf-8')
+                    item = item and "1" or ""
+                elif isinstance(item, str):
+                    item = item.encode("utf-8")
 
                 if isinstance(item, dict):
                     encode.extend(map_to_pairs(encoded_name, item))
                 else:
-                    encode.append((encoded_name, item,))
+                    encode.append(
+                        (
+                            encoded_name,
+                            item,
+                        )
+                    )
 
         else:
             # The :bool converter just does bool() value, but urlencode() does
             # str() on the object. The result is False => 'False' => True :(
             if isinstance(value, bool):
-                value = value and '1' or ''
+                value = value and "1" or ""
 
             if isinstance(value, dict):
                 encode.extend(map_to_pairs(encoded_name, value))
@@ -342,6 +342,7 @@ def encode(data, schema, ignore=()):
 
 
 # Decoding
+
 
 def decode(data, schema, missing=True, primary=False):
     """Decode a data dict according to a schema. The returned dictionary will
@@ -377,19 +378,32 @@ def decode(data, schema, missing=True, primary=False):
             continue
 
         field_type = field._type
-        if isinstance(field_type, (tuple, list,)):
+        if isinstance(
+            field_type,
+            (
+                tuple,
+                list,
+            ),
+        ):
             field_type = field_type[-1]
 
         if ISequence.providedBy(field):
             converted = []
 
             value_type_field_type = field.value_type._type
-            if isinstance(value_type_field_type, (tuple, list,)):
+            if isinstance(
+                value_type_field_type,
+                (
+                    tuple,
+                    list,
+                ),
+            ):
                 value_type_field_type = value_type_field_type[-1]
 
             for item in value:
                 if field.value_type._type and not isinstance(
-                        item, field.value_type._type):
+                    item, field.value_type._type
+                ):
                     item = value_type_field_type(item)
                 converted.append(item)
 
@@ -397,8 +411,8 @@ def decode(data, schema, missing=True, primary=False):
         elif isinstance(value, (tuple, list)) and value:
             value = value[0]
 
-        if isinstance(value, six.binary_type):
-            value = value.decode('utf-8')
+        if isinstance(value, bytes):
+            value = value.decode("utf-8")
 
         if field._type is not None and not isinstance(value, field._type):
             value = field_type(value)

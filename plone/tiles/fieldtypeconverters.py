@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-
 from plone.tiles.interfaces import IFieldTypeConverter
 from zope.interface import implementer
 
 
 @implementer(IFieldTypeConverter)
-class NoConverter(object):
+class NoConverter:
 
     def __init__(self, field):
         self.field = field
@@ -14,28 +12,28 @@ class NoConverter(object):
 
 
 class TextConverter(NoConverter):
-    token = 'text'
+    token = "text"
 
 
 class LongConverter(NoConverter):
-    token = 'long'
+    token = "long"
 
 
 class FloatConverter(NoConverter):
-    token = 'float'
+    token = "float"
 
 
 class BoolConverter(NoConverter):
-    token = 'boolean'
+    token = "boolean"
 
 
 class TupleConverter(NoConverter):
-    token = 'tuple'
+    token = "tuple"
 
 
 class ListConverter(NoConverter):
-    token = 'list'
+    token = "list"
 
 
 class DictConverter(NoConverter):
-    token = 'record'
+    token = "record"

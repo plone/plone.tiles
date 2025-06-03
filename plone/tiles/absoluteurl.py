@@ -1,20 +1,19 @@
-# -*- coding: utf-8 -*-
 from plone.tiles.data import encode
 from plone.tiles.interfaces import ITileDataManager
 from plone.tiles.interfaces import ITileType
-from six.moves.urllib import parse
+from urllib import parse
 from zope.annotation import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 from zope.traversing.browser.interfaces import IAbsoluteURL
 
-_safe = '@+'
+
+_safe = "@+"
 
 
 class BaseTileAbsoluteURL(AbsoluteURL):
-    """Convenience base class
-    """
+    """Convenience base class"""
 
     def __str__(self):
         tile = self.context
@@ -25,15 +24,15 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         context = tile.__parent__
 
         if name is None or context is None:
-            raise TypeError('Insufficient context to determine URL')
+            raise TypeError("Insufficient context to determine URL")
 
-        tileFragment = '@@' + parse.quote(name.encode('utf-8'), _safe)
+        tileFragment = "@@" + parse.quote(name.encode("utf-8"), _safe)
         if tid:
-            tileFragment += '/' + parse.quote(tid.encode('utf-8'), _safe)
+            tileFragment += "/" + parse.quote(tid.encode("utf-8"), _safe)
 
         absolute_url = getMultiAdapter((context, request), IAbsoluteURL)
         try:
-            tileFragment = '/'.join([str(absolute_url), tileFragment])
+            tileFragment = "/".join([str(absolute_url), tileFragment])
         except TypeError:  # Not enough context to get URL information
             pass
 
@@ -47,16 +46,15 @@ class BaseTileAbsoluteURL(AbsoluteURL):
         name = tile.__name__
         context = tile.__parent__
 
-        tileFragment = '@@' + parse.quote(name.encode('utf-8'), _safe)
+        tileFragment = "@@" + parse.quote(name.encode("utf-8"), _safe)
         if tid:
-            tileFragment += '/' + parse.quote(tid.encode('utf-8'), _safe)
+            tileFragment += "/" + parse.quote(tid.encode("utf-8"), _safe)
 
-        base = tuple(
-            getMultiAdapter((context, request), IAbsoluteURL).breadcrumbs())
+        base = tuple(getMultiAdapter((context, request), IAbsoluteURL).breadcrumbs())
         base += (
             {
-                'name': name,
-                'url': '/'.join([base[-1]['url'], tileFragment]),
+                "name": name,
+                "url": "/".join([base[-1]["url"], tileFragment]),
             },
         )
 
@@ -69,7 +67,7 @@ class TransientTileAbsoluteURL(BaseTileAbsoluteURL):
     """
 
     def __str__(self):
-        url = super(TransientTileAbsoluteURL, self).__str__()
+        url = super().__str__()
         manager = ITileDataManager(self.context)
 
         # Transient looking tile with id is only really transient
@@ -90,14 +88,14 @@ class TransientTileAbsoluteURL(BaseTileAbsoluteURL):
         # and not persisted, it should also be kept in query string
         tileType = queryUtility(ITileType, name=self.context.__name__)
         if tileType is not None and tileType.schema is not None:
-            if '?' in url:
-                url += '&' + encode(data, tileType.schema)
+            if "?" in url:
+                url += "&" + encode(data, tileType.schema)
             else:
-                url += '?' + encode(data, tileType.schema)
+                url += "?" + encode(data, tileType.schema)
         return url
 
 
 class PersistentTileAbsoluteURL(BaseTileAbsoluteURL):
-    """Absolute URL for a persitent tile. Includes the tile traverser, but no
+    """Absolute URL for a persistent tile. Includes the tile traverser, but no
     tile data encoded in the query string.
     """

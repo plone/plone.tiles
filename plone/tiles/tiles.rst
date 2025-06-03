@@ -37,7 +37,7 @@ To use the package, you should first load its ZCML configuration:
     ... </configure>
     ... """
 
-    >>> from six import StringIO
+    >>> from io import StringIO
     >>> from zope.configuration import xmlconfig
     >>> xmlconfig.xmlconfig(StringIO(configuration))
 
@@ -511,7 +511,7 @@ We can also remove the annotation using the data manager:
 Overriding transient data with persistent
 -----------------------------------------
 
-To be able to re-use the same centrally managed tile based layouts for multiple context objects,
+To be able to reuse the same centrally managed tile based layouts for multiple context objects,
 but still allow optional customization for tiles,
 it's possible to override otherwise transient tile configuration with context specific persistent configuration.
 

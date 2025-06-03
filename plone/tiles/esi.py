@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.tiles.interfaces import ESI_HEADER
 from plone.tiles.interfaces import ESI_HEADER_KEY
 from plone.tiles.interfaces import IESIRendered
@@ -21,22 +20,26 @@ except ImportError:
     from zope.security import checkPermission
 
 
-X_FRAME_OPTIONS = os.environ.get('PLONE_X_FRAME_OPTIONS', 'SAMEORIGIN')
+X_FRAME_OPTIONS = os.environ.get("PLONE_X_FRAME_OPTIONS", "SAMEORIGIN")
 
-HEAD_CHILDREN = re.compile(r'<head[^>]*>(.*)</head>', re.I | re.S)
-BODY_CHILDREN = re.compile(r'<body[^>]*>(.*)</body>', re.I | re.S)
+HEAD_CHILDREN = re.compile(r"<head[^>]*>(.*)</head>", re.I | re.S)
+BODY_CHILDREN = re.compile(r"<body[^>]*>(.*)</body>", re.I | re.S)
 
-ESI_NAMESPACE_MAP = {'esi': 'http://www.edge-delivery.org/esi/1.0'}
-_ESI_HREF = u'href="{url}/@@{esiMode}?{queryString}"'
-ESI_TEMPLATE = u'''\
+ESI_NAMESPACE_MAP = {"esi": "http://www.edge-delivery.org/esi/1.0"}
+_ESI_HREF = 'href="{url}/@@{esiMode}?{queryString}"'
+ESI_TEMPLATE = (
+    """\
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <body>
-        <a class="_esi_placeholder" rel="esi" ''' + _ESI_HREF + '''></a>
+        <a class="_esi_placeholder" rel="esi" """
+    + _ESI_HREF
+    + """></a>
     </body>
 </html>
-'''
+"""
+)
 
 
 def substituteESILinks(rendered):
@@ -47,37 +50,37 @@ def substituteESILinks(rendered):
     """
 
     rendered = re.sub(
-        r'<html',
-        '<html xmlns:esi="{0}"'.format(ESI_NAMESPACE_MAP['esi']),
-        rendered,
-        1
+        r"<html", '<html xmlns:esi="{}"'.format(ESI_NAMESPACE_MAP["esi"]), rendered, 1
     )
     return re.sub(
         r'<a class="_esi_placeholder" rel="esi" href="([^"]+)"></a>',
         r'<esi:include src="\1" />',
-        rendered
+        rendered,
     )
 
 
-class ConditionalESIRendering(object):
+class ConditionalESIRendering:
     head = False
 
     def render(self):
-        raise NotImplemented(
-            u"Override render() or set a class variable 'index' to point to "
-            u"a view page template file")
+        raise NotImplementedError(
+            "Override render() or set a class variable 'index' to point to "
+            "a view page template file"
+        )
 
     def __call__(self, *args, **kwargs):
-        if self.request.getHeader(ESI_HEADER, 'false').lower() == 'true':
-            mode = 'esi-body'
+        if self.request.getHeader(ESI_HEADER, "false").lower() == "true":
+            mode = "esi-body"
             if self.head:
-                mode = 'esi-head'
+                mode = "esi-head"
             return ESI_TEMPLATE.format(
-                url=(self.request.get('PATH_INFO') and
-                     self.request.get('PATH_INFO').replace(' ', '%20') or
-                     self.request.getURL()),
-                queryString=self.request.get('QUERY_STRING', ''),
-                esiMode=mode
+                url=(
+                    self.request.get("PATH_INFO")
+                    and self.request.get("PATH_INFO").replace(" ", "%20")
+                    or self.request.getURL()
+                ),
+                queryString=self.request.get("QUERY_STRING", ""),
+                esiMode=mode,
             )
         # Do not hide AttributeError inside index()
         try:
@@ -88,6 +91,7 @@ class ConditionalESIRendering(object):
 
 
 # Convenience base classes
+
 
 @implementer(IESIRendered)
 class ESITile(ConditionalESIRendering, Tile):
@@ -113,13 +117,12 @@ class ESIPersistentTile(ConditionalESIRendering, PersistentTile):
 
 # ESI views
 
+
 class ESIHead(BrowserView):
-    """Render the head portion of a tile independently.
-    """
+    """Render the head portion of a tile independently."""
 
     def __call__(self):
-        """Return the children of the <head> tag as a fragment.
-        """
+        """Return the children of the <head> tag as a fragment."""
         # Check for the registered view permission
         try:
             type_ = queryUtility(ITileType, self.context.__name__)
@@ -136,7 +139,7 @@ class ESIHead(BrowserView):
         document = self.context()  # render the tile
 
         # Disable the theme so we don't <html/>-wrapped
-        self.request.response.setHeader('X-Theme-Disabled', '1')
+        self.request.response.setHeader("X-Theme-Disabled", "1")
 
         match = HEAD_CHILDREN.search(document)
         if not match:
@@ -145,12 +148,10 @@ class ESIHead(BrowserView):
 
 
 class ESIBody(BrowserView):
-    """Render the head portion of a tile independently.
-    """
+    """Render the head portion of a tile independently."""
 
     def __call__(self):
-        """Return the children of the <head> tag as a fragment.
-        """
+        """Return the children of the <head> tag as a fragment."""
         # Check for the registered view permission
         try:
             type_ = queryUtility(ITileType, self.context.__name__)
@@ -167,7 +168,7 @@ class ESIBody(BrowserView):
         document = self.context()  # render the tile
 
         # Disable the theme so we don't <html/>-wrapped
-        self.request.response.setHeader('X-Theme-Disabled', '1')
+        self.request.response.setHeader("X-Theme-Disabled", "1")
 
         match = BODY_CHILDREN.search(document)
         if not match:
@@ -175,7 +176,7 @@ class ESIBody(BrowserView):
         return match.group(1).strip()
 
 
-class ESIProtectTransform(object):
+class ESIProtectTransform:
     """Replacement transform for plone.protect's ProtectTransform,
     because ESI tile responses' HTML should not be transformed to
     avoid wrapping them with <html>-tag
@@ -189,14 +190,14 @@ class ESIProtectTransform(object):
 
     def transform(self, result, encoding):
         from plone.protect.interfaces import IDisableCSRFProtection
+
         # clickjacking protection from plone.protect
         if X_FRAME_OPTIONS:
-            if not self.request.response.getHeader('X-Frame-Options'):
-                self.request.response.setHeader(
-                    'X-Frame-Options', X_FRAME_OPTIONS)
+            if not self.request.response.getHeader("X-Frame-Options"):
+                self.request.response.setHeader("X-Frame-Options", X_FRAME_OPTIONS)
         # drop X-Tile-Url
-        if 'x-tile-url' in self.request.response.headers:
-            del self.request.response.headers['x-tile-url']
+        if "x-tile-url" in self.request.response.headers:
+            del self.request.response.headers["x-tile-url"]
         # ESI requests are always GET request and should not mutate DB
         # unless they provide IDisableCSRFProtection
         if not IDisableCSRFProtection.providedBy(self.request):

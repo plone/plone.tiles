@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from zope.interface import Interface
 from zope.interface.common.mapping import IMapping
 from zope.interface.interfaces import IInterface
@@ -7,30 +6,28 @@ from zope.publisher.interfaces.browser import IBrowserView
 import zope.schema
 
 
-ESI_HEADER = 'X-ESI-Enabled'
-ESI_HEADER_KEY = 'HTTP_' + ESI_HEADER.replace('-', '_').upper()
+ESI_HEADER = "X-ESI-Enabled"
+ESI_HEADER_KEY = "HTTP_" + ESI_HEADER.replace("-", "_").upper()
 
 
 class ITileType(Interface):
-    """A utility that describes a type of tile
-    """
+    """A utility that describes a type of tile"""
 
-    __name__ = zope.schema.DottedName(
-        title=u'Tile name (same as utility name)')
+    __name__ = zope.schema.DottedName(title="Tile name (same as utility name)")
 
-    title = zope.schema.TextLine(title=u'Title')
+    title = zope.schema.TextLine(title="Title")
 
-    description = zope.schema.Text(title=u'Description', required=False)
+    description = zope.schema.Text(title="Description", required=False)
 
-    icon = zope.schema.Text(title=u'Icon', required=False)
+    icon = zope.schema.Text(title="Icon", required=False)
 
-    add_permission = zope.schema.Id(title=u'Zope 3 IPermission utility name')
+    add_permission = zope.schema.Id(title="Zope 3 IPermission utility name")
 
     schema = zope.schema.Object(
-        title=u'Tile schema',
-        description=u'Describes configurable data for this tile and allows a '
-                    u'form to be rendered to edit it. Set to None if the tile '
-                    u'has no configurable schema',
+        title="Tile schema",
+        description="Describes configurable data for this tile and allows a "
+        "form to be rendered to edit it. Set to None if the tile "
+        "has no configurable schema",
         schema=IInterface,
         required=False,
     )
@@ -56,49 +53,47 @@ class IBasicTile(IBrowserView):
     """
 
     __name__ = zope.schema.DottedName(
-        title=u'The name of the type of this tile',
-        description=u'This should be a dotted name prefixed with the '
-                    u'package that defined the tile',
+        title="The name of the type of this tile",
+        description="This should be a dotted name prefixed with the "
+        "package that defined the tile",
     )
 
     id = zope.schema.DottedName(
-        title=u'Tile instance id',
-        description=u'The id is normally set using sub-path traversal'
-                    u'A given tile type may be used multiple times on '
-                    u'the same page, each with a unique id. The id must '
-                    u'be unique even across multiple layouts for the '
-                    u'same context.'
+        title="Tile instance id",
+        description="The id is normally set using sub-path traversal"
+        "A given tile type may be used multiple times on "
+        "the same page, each with a unique id. The id must "
+        "be unique even across multiple layouts for the "
+        "same context.",
     )
 
 
 class ITile(IBasicTile):
-    """A tile with some data (probably from a query string).
-    """
+    """A tile with some data (probably from a query string)."""
 
     data = zope.schema.Dict(
-        title=u"The tile's configuration data",
-        description=u'This attribute cannot be set, but the dictionary may '
-                    u'be updated',
-        key_type=zope.schema.Id(title=u'The data element name'),
-        value_type=zope.schema.Field(title=u'The value'),
+        title="The tile's configuration data",
+        description="This attribute cannot be set, but the dictionary may "
+        "be updated",
+        key_type=zope.schema.Id(title="The data element name"),
+        value_type=zope.schema.Field(title="The value"),
         required=True,
         readonly=True,
         default={},
     )
 
     url = zope.schema.URI(
-        title=u'Tile URL',
-        description=u'This is the canonical URL for the tile. In the '
-                    u'case of transient tiles with data, this may '
-                    u'include a query string with parameters. Provided '
-                    u'that the `id` attribute is set, it will also '
-                    u'include a sub-path with this in it.',
+        title="Tile URL",
+        description="This is the canonical URL for the tile. In the "
+        "case of transient tiles with data, this may "
+        "include a query string with parameters. Provided "
+        "that the `id` attribute is set, it will also "
+        "include a sub-path with this in it.",
     )
 
 
 class IPersistentTile(ITile):
-    """A tile with full-blown persistent data (stored in annotations).
-    """
+    """A tile with full-blown persistent data (stored in annotations)."""
 
 
 class IESIRendered(Interface):
@@ -129,12 +124,10 @@ class ITileDataManager(Interface):
         """
 
     def set(data):
-        """Persist the given data dict.
-        """
+        """Persist the given data dict."""
 
     def delete():
-        """Delete the data record for this tile.
-        """
+        """Delete the data record for this tile."""
 
 
 class ITileDataContext(Interface):
@@ -170,8 +163,10 @@ class ITileDataStorage(IMapping):
 class IFieldTypeConverter(Interface):
     """Field type converter for querystring parameters for Zope."""
 
-    token = zope.schema.TextLine(title=u'Token',
-                                 description=u"""
+    token = zope.schema.TextLine(
+        title="Token",
+        description="""
                                  String parameter appended to the field id
                                  for the Zope Publisher to cast it.
-                                 """)
+                                 """,
+    )

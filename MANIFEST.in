@@ -1,6 +1,7 @@
 recursive-include plone *
 include setup.py setup.cfg *.rst LICENSE.GPL LICENSE.txt
-exclude requirements.txt buildout.cfg test-*.cfg
+exclude requirements.txt
+exclude .coveragerc
 global-exclude *.pyc
 include pyproject.toml
 recursive-exclude news *
