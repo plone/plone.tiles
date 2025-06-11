@@ -1,1 +1,1 @@
-Implement `Tile.absolute_url()` to fix canonical header introduced in `plone.namedfile`. @petschki
+Implement `PersistentTile.absolute_url()` to fix canonical header introduced in `plone.namedfile`. @petschki

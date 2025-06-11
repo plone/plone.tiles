@@ -96,15 +96,17 @@ class Tile(BrowserView):
     def url(self):
         return absoluteURL(self, self.request)
 
-    def absolute_url(self):
-        return self.url
-
 
 @implementer(IPersistentTile)
 class PersistentTile(Tile):
     """Base class for persistent tiles. Identical to `Tile`, except that the
     data dict is never serialized with the URL.
     """
+
+    def absolute_url(self):
+        # the "absolute_url" adapter for persistent tiles never has query parameters.
+        # We can safely return self.url here.
+        return self.url
 
 
 class TileThemingTransform:
