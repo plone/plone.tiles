@@ -103,6 +103,11 @@ class PersistentTile(Tile):
     data dict is never serialized with the URL.
     """
 
+    def absolute_url(self):
+        # the "absolute_url" adapter for persistent tiles never has query parameters.
+        # We can safely return self.url here.
+        return self.url
+
 
 class TileThemingTransform:
     """Disable plone.app.theming for tile responses"""
