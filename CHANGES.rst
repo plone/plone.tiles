@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.1 (2025-06-19)
+------------------
+
+Bug fixes:
+
+
+- Implement `PersistentTile.absolute_url()` to fix canonical header introduced in `plone.namedfile`. @petschki
+
+
 3.0.0 (2025-06-05)
 ------------------
 

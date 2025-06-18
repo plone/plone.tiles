@@ -10,7 +10,7 @@ def read(*path):
         return myfile.read() + "\n"
 
 
-version = "3.0.1.dev0"
+version = "3.0.1"
 
 setup(
     name="plone.tiles",
