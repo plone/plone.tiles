@@ -1,3 +1,5 @@
+from importlib.metadata import distribution
+from importlib.metadata import PackageNotFoundError
 from persistent.dict import PersistentDict
 from plone.subrequest import ISubRequest
 from plone.tiles.directives import IGNORE_QUERYSTRING_KEY
@@ -22,12 +24,11 @@ from zope.schema.interfaces import ISequence
 
 import json
 import logging
-import pkg_resources
 
 
 try:
-    pkg_resources.get_distribution("plone.rfc822")
-except pkg_resources.DistributionNotFound:
+    distribution("plone.rfc822")
+except PackageNotFoundError:
     HAS_RFC822 = False
 else:
     from plone.rfc822.interfaces import IPrimaryField
