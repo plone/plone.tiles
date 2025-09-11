@@ -1,26 +1,23 @@
+from pathlib import Path
 from setuptools import find_packages
 from setuptools import setup
 
-import os
-
-
-def read(*path):
-    filename = os.path.join(*path)
-    with open(filename) as myfile:
-        return myfile.read() + "\n"
-
 
 version = "3.0.3.dev0"
+
+tiles_path = Path("src") / "plone" / "tiles"
 
 setup(
     name="plone.tiles",
     version=version,
     description="APIs for managing tiles",
-    long_description=read("README.rst")
-    + read("plone", "tiles", "tiles.rst")
-    + read("plone", "tiles", "directives.rst")
-    + read("plone", "tiles", "esi.rst")
-    + read("CHANGES.rst"),
+    long_description=(
+        f"{Path('README.rst').read_text()}\n"
+        f"{(tiles_path / 'tiles.rst').read_text()}\n"
+        f"{(tiles_path / 'directives.rst').read_text()}\n"
+        f"{(tiles_path / 'esi.rst').read_text()}\n"
+        f"{Path('CHANGES.rst').read_text()}\n"
+    ),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
@@ -46,8 +43,9 @@ setup(
     author_email="optilude@gmail.com",
     url="https://github.com/plone/plone.tiles",
     license="GPL version 2",
-    packages=find_packages(),
+    packages=find_packages("src"),
     namespace_packages=["plone"],
+    package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
     python_requires=">=3.8",
