@@ -43,7 +43,6 @@ setup(
     python_requires=">=3.10",
     install_requires=[
         "plone.subrequest",
-        "setuptools",
         "zope.annotation",
         "zope.component",
         "zope.configuration",
