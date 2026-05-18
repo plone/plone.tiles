@@ -2,7 +2,7 @@ from pathlib import Path
 from setuptools import setup
 
 
-version = "4.0.0"
+version = "4.0.1.dev0"
 
 tiles_path = Path("src") / "plone" / "tiles"
 
