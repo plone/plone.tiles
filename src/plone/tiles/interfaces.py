@@ -5,7 +5,6 @@ from zope.publisher.interfaces.browser import IBrowserView
 
 import zope.schema
 
-
 ESI_HEADER = "X-ESI-Enabled"
 ESI_HEADER_KEY = "HTTP_" + ESI_HEADER.replace("-", "_").upper()
 
