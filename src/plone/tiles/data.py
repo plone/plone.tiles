@@ -25,7 +25,6 @@ from zope.schema.interfaces import ISequence
 import json
 import logging
 
-
 try:
     distribution("plone.rfc822")
 except PackageNotFoundError:

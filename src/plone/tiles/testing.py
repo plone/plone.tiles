@@ -7,7 +7,6 @@ from zope import schema
 from zope.configuration import xmlconfig
 from zope.interface import Interface
 
-
 # For directive tests
 
 

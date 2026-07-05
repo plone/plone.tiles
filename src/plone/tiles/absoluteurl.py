@@ -8,7 +8,6 @@ from zope.component import queryUtility
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 from zope.traversing.browser.interfaces import IAbsoluteURL
 
-
 _safe = "@+"
 
 

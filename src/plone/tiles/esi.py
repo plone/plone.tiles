@@ -13,7 +13,6 @@ import os
 import re
 import transaction
 
-
 try:
     from AccessControl.security import checkPermission
 except ImportError:
