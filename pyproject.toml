@@ -4,7 +4,74 @@
 [build-system]
 requires = ["setuptools>=68.2,<83", "wheel"]
 
+# START-MARKER-MANUAL-CONFIG
+# Anything from here until END-MARKER-MANUAL-CONFIG
+# will be kept by plone.meta
 
+[project]
+name = "plone.tiles"
+version = "4.0.1.dev0"
+description = "APIs for managing tiles"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Plone",
+    "Framework :: Plone :: 6.2",
+    "Framework :: Plone :: Core",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+license = "GPL-2.0-only"
+dynamic = ["readme"]
+requires-python = ">=3.10"
+authors = [
+    {name = "Martin Aspeli",email = "optilude@gmail.com"},
+]
+maintainers = [
+    {name = "Plone Foundation and contributors",email = "plone-developers@lists.sourceforge.net"},
+]
+dependencies = [
+    "Zope",
+    "plone.protect",
+    "plone.subrequest",
+    "plone.supermodel",
+    "zope.annotation",
+    "zope.component",
+    "zope.configuration",
+    "zope.interface",
+    "zope.publisher",
+    "zope.schema",
+    "zope.security",
+    "zope.traversing",
+]
+keywords = ["plone", "tiles"]
+
+[project.optional-dependencies]
+test = [
+    "plone.rfc822",
+    "plone.testing [zca, z2]",
+]
+
+[project.urls]
+Source = "https://github.com/plone/plone.tiles"
+Issues = "https://github.com/plone/Products.CMFPlone/issues"
+Changelog = "https://github.com/plone/plone.tiles/blob/master/CHANGES.rst"
+
+[tool.setuptools.dynamic]
+readme = {file = [
+    "README.rst",
+    "src/plone/tiles/tiles.rst",
+    "src/plone/tiles/directives.rst",
+    "src/plone/tiles/esi.rst",
+    "CHANGES.rst"]}
+# END-MARKER-MANUAL-CONFIG
 
 [tool.towncrier]
 directory = "news/"
