@@ -1,6 +1,6 @@
 from importlib.metadata import distribution
 from importlib.metadata import PackageNotFoundError
-from persistent.dict import PersistentDict
+from persistent.mapping import PersistentMapping
 from plone.subrequest import ISubRequest
 from plone.tiles.directives import IGNORE_QUERYSTRING_KEY
 from plone.tiles.interfaces import IFieldTypeConverter
@@ -184,7 +184,7 @@ class PersistentTileDataManager(BaseTileDataManager):
         return data
 
     def set(self, data):
-        self.storage[self.key] = PersistentDict(data)
+        self.storage[self.key] = PersistentMapping(data)
 
     def delete(self):
         if self.key in self.storage:
