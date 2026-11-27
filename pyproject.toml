@@ -10,7 +10,7 @@ requires = ["setuptools>=68.2,<83", "wheel"]
 
 [project]
 name = "plone.tiles"
-version = "4.0.1"
+version = "4.0.2.dev0"
 description = "APIs for managing tiles"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
